@@ -73,8 +73,9 @@ final class ChargeController {
   private var chargerConnected = true
   private var light: MagSafeLight = .system
   private var refreshCount = 0
-  private var timer: Timer?
-  private var powerSource: CFRunLoopSource?
+  // Touched from deinit, which is not main-actor isolated; both are only set on the main thread.
+  private nonisolated(unsafe) var timer: Timer?
+  private nonisolated(unsafe) var powerSource: CFRunLoopSource?
   private let sleepGuard = SleepGuard()
 
   init(
@@ -90,6 +91,13 @@ final class ChargeController {
     self.settings = store.load()
     self.options = store.loadOptions()
     self.lastCalibration = store.lastCalibration
+  }
+
+  // The power-source callback holds an unretained pointer to this controller, so it must be
+  // removed before the controller goes away.
+  deinit {
+    timer?.invalidate()
+    if let powerSource { CFRunLoopRemoveSource(CFRunLoopGetMain(), powerSource, .defaultMode) }
   }
 
   var limitRange: ClosedRange<Int> { backend.limitRange }

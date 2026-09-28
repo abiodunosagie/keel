@@ -97,3 +97,18 @@ final class SchedulerTests: XCTestCase {
     XCTAssertEqual(second.tasks.map(\.action), [.topUp])
   }
 }
+
+final class PowerLogTests: XCTestCase {
+  func testReadsChargeAndSourceFromPmsetLog() {
+    let log = """
+    2026-09-27 08:06:13 +0100 Sleep               \tEntering DarkWake state due to 'Clamshell Sleep':TCPKeepAlive=active Using Batt (Charge:41%)
+    2026-09-27 11:46:51 +0100 Wake                \tWake from Hibernate [CDNVA] : due to lid charger Using AC (Charge:1%)
+    2026-09-27 12:00:00 +0100 Assertions          \tPID 123 Created PreventUserIdleSystemSleep
+    """
+    let samples = PowerLog.parse(log)
+    XCTAssertEqual(samples.map(\.percent), [41, 1])
+    XCTAssertEqual(samples.map(\.pluggedIn), [false, true])
+    XCTAssertNil(samples[0].watts)
+    XCTAssertEqual(samples[0].date, Date(timeIntervalSince1970: 1_790_492_773))
+  }
+}

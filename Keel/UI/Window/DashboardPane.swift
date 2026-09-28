@@ -5,6 +5,7 @@ struct DashboardPane: View {
   @Environment(ChargeController.self) private var controller
   @Environment(BatteryHistory.self) private var history
   @State private var range: ChartRange = .day
+  @State private var metric: ChartMetric = .charge
   @State private var averageMinutes = 15
 
   var body: some View {
@@ -48,10 +49,19 @@ struct DashboardPane: View {
   }
 
   private var chartPanel: some View {
-    let samples = history.samples(since: .now.addingTimeInterval(-range.seconds))
+    let from = Date.now.addingTimeInterval(-range.seconds)
+    let points = history.samples(since: from).compactMap { sample -> ChartPoint? in
+      guard let value = metric.value(of: sample) else { return nil }
+      return ChartPoint(date: sample.date, value: value)
+    }
     return VStack(alignment: .leading, spacing: 10) {
-      HStack {
-        Text("Charge level").font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.ink)
+      HStack(spacing: 10) {
+        Picker("Chart", selection: $metric) {
+          ForEach(ChartMetric.allCases) { Text($0.title).tag($0) }
+        }
+        .labelsHidden()
+        .pickerStyle(.segmented)
+        .fixedSize()
         Spacer()
         Picker("Range", selection: $range) {
           ForEach(ChartRange.allCases) { Text($0.title).tag($0) }
@@ -60,28 +70,39 @@ struct DashboardPane: View {
         .pickerStyle(.segmented)
         .fixedSize()
       }
-      if samples.count < 2 {
-        Text("Collecting data. The chart fills in as Keel records a reading every minute.")
+      if points.count < 2 {
+        Text(metric.emptyText)
           .font(.system(size: 12))
           .foregroundStyle(Theme.ink3)
-          .frame(maxWidth: .infinity, minHeight: 120)
+          .frame(maxWidth: .infinity, minHeight: 150)
       } else {
         Chart {
-          ForEach(samples) { sample in
-            AreaMark(x: .value("Time", sample.date), y: .value("Percent", sample.percent))
-              .foregroundStyle(Theme.held.opacity(0.15))
-            LineMark(x: .value("Time", sample.date), y: .value("Percent", sample.percent))
-              .foregroundStyle(Theme.held)
+          ForEach(points) { point in
+            AreaMark(x: .value("Time", point.date), yStart: .value("Base", metric.domain.lowerBound),
+                     yEnd: .value(metric.title, point.value))
+              .foregroundStyle(metric.color.opacity(0.14))
+            LineMark(x: .value("Time", point.date), y: .value(metric.title, point.value))
+              .foregroundStyle(metric.color)
           }
-          if let limit = controller.appliedLimit {
+          if metric == .charge, let limit = controller.appliedLimit {
             RuleMark(y: .value("Limit", limit))
               .foregroundStyle(Theme.held.opacity(0.6))
               .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
           }
+          if metric == .temperature, controller.settings.heatProtection {
+            RuleMark(y: .value("Max", controller.settings.maxTemperature))
+              .foregroundStyle(Theme.heat.opacity(0.6))
+              .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+          }
         }
-        .chartYScale(domain: 0...100)
-        .frame(height: 140)
+        .chartXScale(domain: from...Date.now)
+        .chartYScale(domain: metric.domain(for: points.map(\.value)))
+        .chartYAxis { AxisMarks { AxisGridLine(); AxisValueLabel() } }
+        .frame(height: 150)
       }
+      Text(metric.footnote)
+        .font(.system(size: 11))
+        .foregroundStyle(Theme.ink3)
     }
     .padding(14)
     .panel(radius: 10)
@@ -122,4 +143,69 @@ enum ChartRange: String, CaseIterable, Identifiable {
   var id: String { rawValue }
   var title: String { self == .hour ? "1 h" : self == .day ? "24 h" : "7 days" }
   var seconds: TimeInterval { self == .hour ? 3600 : self == .day ? 86_400 : 604_800 }
+}
+
+struct ChartPoint: Identifiable {
+  var date: Date
+  var value: Double
+  var id: Date { date }
+}
+
+enum ChartMetric: String, CaseIterable, Identifiable {
+  case charge, power, temperature
+
+  var id: String { rawValue }
+
+  var title: String {
+    switch self {
+    case .charge: return "Charge"
+    case .power: return "Power"
+    case .temperature: return "Temperature"
+    }
+  }
+
+  var color: Color {
+    switch self {
+    case .charge: return Theme.held
+    case .power: return Theme.accent
+    case .temperature: return Theme.moving
+    }
+  }
+
+  var domain: ClosedRange<Double> {
+    switch self {
+    case .charge: return 0...100
+    case .power: return 0...10
+    case .temperature: return 20...45
+    }
+  }
+
+  // Charge keeps a fixed 0 to 100 scale; the others grow to fit the data.
+  func domain(for values: [Double]) -> ClosedRange<Double> {
+    guard self != .charge, let high = values.max(), let low = values.min() else { return domain }
+    return min(domain.lowerBound, low.rounded(.down))...max(domain.upperBound, (high * 1.1).rounded(.up))
+  }
+
+  func value(of sample: BatterySample) -> Double? {
+    switch self {
+    case .charge: return Double(sample.percent)
+    case .power: return sample.watts
+    case .temperature: return sample.temperature
+    }
+  }
+
+  var emptyText: String {
+    switch self {
+    case .charge: return "No readings in this range yet."
+    case .power, .temperature: return "Collecting data. Keel records a reading every minute."
+    }
+  }
+
+  var footnote: String {
+    switch self {
+    case .charge: return "Keel's readings every minute, plus the levels macOS logged at each sleep and wake. Dashed line: your limit."
+    case .power: return "Watts the whole Mac used, recorded every minute."
+    case .temperature: return "Battery temperature, recorded every minute. Dashed line: Heat Protection's limit."
+    }
+  }
 }

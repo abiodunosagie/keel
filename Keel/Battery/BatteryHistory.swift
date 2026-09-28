@@ -5,7 +5,9 @@ import Observation
 struct BatterySample: Codable, Equatable, Identifiable, Sendable {
   var date: Date
   var percent: Int
-  var watts: Double // whole-Mac power draw
+  // Whole-Mac power draw. nil for readings imported from the macOS power log, which only
+  // records the charge level.
+  var watts: Double?
   var temperature: Double?
   var pluggedIn: Bool
 
@@ -33,7 +35,22 @@ final class BatteryHistory {
     }
   }
 
+  // Fills the time before Keel's first reading with the charge levels macOS logged at every
+  // sleep and wake (`pmset -g log`, about the last week), so the chart shows real history at once.
+  func importPowerLog() async {
+    let firstOwn = samples.first(where: { $0.watts != nil })?.date ?? .now
+    let imported = await Task.detached(priority: .utility) { PowerLog.read() }.value
+    let older = imported.filter { $0.date < firstOwn && $0.date > firstOwn.addingTimeInterval(-Self.keep) }
+    let known = Set(samples.map(\.date))
+    let fresh = older.filter { !known.contains($0.date) }
+    guard !fresh.isEmpty else { return }
+    samples = (fresh + samples).sorted { $0.date < $1.date }
+    unsaved += fresh.count
+    flush()
+  }
+
   func start(reading: @escaping @MainActor () -> BatterySnapshot?) {
+    if let snapshot = reading() { record(snapshot, at: .now) }
     timer = Timer.scheduledTimer(withTimeInterval: Self.interval, repeats: true) { [weak self] _ in
       MainActor.assumeIsolated {
         guard let snapshot = reading() else { return }
@@ -69,8 +86,9 @@ final class BatteryHistory {
   // Average power draw over the last `minutes`, for the time-remaining estimate.
   func averageWatts(lastMinutes minutes: Int, now: Date = .now) -> Double? {
     let recent = samples(since: now.addingTimeInterval(-Double(minutes) * 60))
-    guard !recent.isEmpty else { return nil }
-    return recent.map(\.watts).reduce(0, +) / Double(recent.count)
+    let watts = recent.compactMap(\.watts)
+    guard !watts.isEmpty else { return nil }
+    return watts.reduce(0, +) / Double(watts.count)
   }
 
   nonisolated private static func defaultFileURL() -> URL? {

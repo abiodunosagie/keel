@@ -63,6 +63,7 @@ final class AppModel {
     await helper.replaceIfOutdated()
     await controller.start()
     history.start(reading: { [controller] in controller.snapshot })
+    await history.importPowerLog()
     scheduler.start()
   }
 

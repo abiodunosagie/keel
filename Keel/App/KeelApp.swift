@@ -6,13 +6,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     Task { await AppModel.shared.start() }
   }
 
-  // Quitting waits for the final limit write, so macOS is never left on a temporary limit.
+  private var hasReplied = false
+
+  // Quitting waits for the final limit write, so macOS is never left on a temporary limit, but
+  // never more than a few seconds: a stuck helper call must not block Quit.
   func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
     Task {
       await AppModel.shared.prepareForQuit()
-      sender.reply(toApplicationShouldTerminate: true)
+      reply(sender)
+    }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+      MainActor.assumeIsolated { self?.reply(sender) }
     }
     return .terminateLater
+  }
+
+  private func reply(_ sender: NSApplication) {
+    guard !hasReplied else { return }
+    hasReplied = true
+    sender.reply(toApplicationShouldTerminate: true)
   }
 }
 

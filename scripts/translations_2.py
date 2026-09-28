@@ -258,6 +258,11 @@ TR = {
 "macOS shows %lld%%.": ["O macOS mostra %lld%%.", "macOS affiche %lld %%.", "macOS muestra %lld%%.", "macOS zeigt %lld %%."],
 "macOS sometimes charges to 100% to recalibrate its battery gauge. It goes back to the limit afterwards.": ["Por vezes o macOS carrega até 100% para recalibrar o indicador da bateria. Depois volta ao limite.", "macOS charge parfois à 100% pour recalibrer sa jauge. Il revient ensuite à la limite.", "A veces macOS carga al 100% para recalibrar el indicador de batería. Después vuelve al límite.", "macOS lädt manchmal auf 100%, um seine Akkuanzeige neu zu kalibrieren. Danach geht es zurück zum Limit."],
 "missed": ["falhada", "manquée", "perdida", "verpasst"],
-"negotiated %@ at %@": ["negociado %@ a %@", "négocié %@ à %@", "negociado %@ a %@", "ausgehandelt %@ bei %@"],
 "ran at wake": ["correu ao acordar", "exécutée au réveil", "ejecutada al despertar", "beim Aufwachen gelaufen"],
+"%@ Wh in %@": ["%@ Wh em %@", "%@ Wh en %@", "%@ Wh en %@", "%@ Wh in %@"],
+"Calibration: %@": ["Calibração: %@", "Calibration : %@", "Calibración: %@", "Kalibrierung: %@"],
+"It's at %lld%%, above your %lld%% limit, probably from charging while Keel wasn't running. Use Discharge to bring it down.": ["Está a %lld%%, acima do seu limite de %lld%%, provavelmente por ter carregado com o Keel fechado. Use Descarregar para a baixar.", "Elle est à %lld %%, au-dessus de votre limite de %lld %%, sans doute chargée pendant que Keel ne tournait pas. Utilisez Décharger pour la faire descendre.", "Está al %lld%%, por encima de tu límite del %lld%%, probablemente por cargar con Keel cerrado. Usa Descargar para bajarla.", "Er steht bei %lld %%, über deinem Limit von %lld %%, vermutlich vom Laden ohne Keel. Nutze Entladen, um ihn zu senken."],
+"n/a": ["n/d", "n.d.", "n/d", "k. A."],
+"negotiated %@ V at %@ A": ["negociado %@ V a %@ A", "négocié %@ V à %@ A", "negociado %@ V a %@ A", "ausgehandelt %@ V bei %@ A"],
+"none": ["nenhum", "aucun", "ninguno", "keins"],
 }

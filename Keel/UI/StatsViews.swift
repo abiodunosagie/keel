@@ -93,8 +93,8 @@ struct StatsRow: View {
     StatStrip(items: [
       (String(localized: "Health"), Format.percent(snapshot.health)),
       (String(localized: "Cycles"), "\(snapshot.cycleCount)"),
-      (String(localized: "Temp"), snapshot.temperature.map { String(format: "%.1f°", $0) } ?? "n/a"),
-      (String(localized: "Adapter"), snapshot.adapterWatts.map { "\($0) W" } ?? "none"),
+      (String(localized: "Temp"), snapshot.temperature.map { "\(Format.number($0, digits: 1))°" } ?? String(localized: "n/a")),
+      (String(localized: "Adapter"), snapshot.adapterWatts.map { "\($0) W" } ?? String(localized: "none")),
     ], valueSize: 13, padding: 7)
     .padding(.top, 10)
     .overlay(alignment: .top) { Rectangle().fill(Theme.line).frame(height: 1) }

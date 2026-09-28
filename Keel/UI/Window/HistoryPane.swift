@@ -77,7 +77,7 @@ struct HistoryPane: View {
           ForEach(insights.sessions.prefix(12)) { session in
             HStack {
               Text("\(session.startPercent)% to \(session.endPercent)%").foregroundStyle(Theme.ink)
-              Text(String(format: "%.1f Wh in %@", session.energyWh, Format.duration(max(1, session.minutes))))
+              Text(String(localized: "\(Format.number(session.energyWh, digits: 1)) Wh in \(Format.duration(max(1, session.minutes)))"))
                 .foregroundStyle(Theme.ink2)
               Spacer()
               Text(session.start.formatted(date: .abbreviated, time: .shortened))

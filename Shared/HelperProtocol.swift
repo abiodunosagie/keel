@@ -6,7 +6,7 @@ enum HelperIdentity {
   static let appIdentifier = "com.abiodunosagie.Keel"
   static let teamIdentifier = "R87873B42W"
   // Bumped whenever the helper's behaviour changes, so the app can re-register a stale copy.
-  static let version = 3
+  static let version = 4
   // The lowest charge Keel ever runs the battery down to with the charger cut. Calibration
   // aims for it and the helper enforces it on its own.
   static let batteryFloor = 10
@@ -41,6 +41,7 @@ enum HelperIdentity {
   // Keeps the Mac awake with the lid closed (pmset disablesleep), for calibration. Undone when
   // the app goes away or the helper stops.
   func setSleepDisabled(_ disabled: Bool, reply: @escaping (Bool) -> Void)
+  func isSleepDisabled(reply: @escaping (Bool) -> Void)
   func setPowerMode(_ mode: PowerMode, reply: @escaping (Bool) -> Void)
   // Restores everything and exits so launchd starts the helper from the updated Keel.app on
   // the next connection. Updates need no new approval this way.

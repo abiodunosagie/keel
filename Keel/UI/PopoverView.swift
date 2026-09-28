@@ -14,9 +14,14 @@ struct PopoverView: View {
         PopoverEditor()
       } else if let snapshot = controller.snapshot {
         ForEach(model.popoverLayout.visible) { card in
-          view(for: card, snapshot: snapshot)
-            // Simultaneous, so holding a card never steals the slider's drag or a button tap.
-            .simultaneousGesture(LongPressGesture(minimumDuration: 0.6).onEnded { _ in model.isEditingPopover = true })
+          if card.isInteractive {
+            // The slider and buttons keep their own gestures; hold any other card to edit.
+            view(for: card, snapshot: snapshot)
+          } else {
+            view(for: card, snapshot: snapshot)
+              .contentShape(Rectangle())
+              .onLongPressGesture(minimumDuration: 0.6) { model.isEditingPopover = true }
+          }
         }
       } else {
         Text("No battery found.").foregroundStyle(Theme.ink2)

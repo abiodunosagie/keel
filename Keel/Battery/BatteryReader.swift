@@ -67,7 +67,7 @@ enum BatteryReader {
   // AdapterDetails carries the charger's name, rating and negotiated voltage and current.
   static func charger(from details: [String: Any]?) -> ChargerInfo? {
     guard let details, let watts = (details["Watts"] as? NSNumber)?.intValue, watts > 0 else { return nil }
-    let name = (details["Name"] as? String) ?? (details["Description"] as? String) ?? String(localized: "\(watts) W charger")
+    let name = (details["Name"] as? String) ?? (details["Description"] as? String) ?? "\(watts) W"
     return ChargerInfo(
       name: name,
       manufacturer: details["Manufacturer"] as? String,

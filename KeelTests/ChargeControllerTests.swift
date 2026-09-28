@@ -52,12 +52,21 @@ final class FakeCharger: ChargerControl {
 
   func isChargerConnected() async -> Bool? { connected }
 
+  var sleepDisabled = false
+  var sleepCalls: [Bool] = []
+
+  func isSleepDisabled() async -> Bool? { sleepDisabled }
+
   func setMagSafeLight(_ light: MagSafeLight) async -> Bool {
     lights.append(light)
     return true
   }
 
-  func setSleepDisabled(_ disabled: Bool) async -> Bool { true }
+  func setSleepDisabled(_ disabled: Bool) async -> Bool {
+    sleepCalls.append(disabled)
+    sleepDisabled = disabled
+    return true
+  }
 }
 
 @MainActor
@@ -249,6 +258,23 @@ final class ChargeControllerTests: XCTestCase {
     XCTAssertEqual(charger.connectedCalls.first, false)
     XCTAssertEqual(charger.connectedCalls.last, true)
     XCTAssertTrue(charger.connected, "the reconnect is retried until the charger is back")
+  }
+
+  func testSleepIsSentAgainAfterTheHelperRestoredIt() async {
+    let charger = FakeCharger()
+    battery = makeBattery(percent: 100)
+    let controller = await makeController()
+    controller.charger = charger
+    controller.startCalibration()
+    await refresh(controller)
+    XCTAssertEqual(charger.sleepCalls, [true])
+    // The helper restarted and put sleep back; the next read-back notices and Keel resends.
+    charger.sleepDisabled = false
+    for _ in 0..<ChargeController.reconcileEvery {
+      await refresh(controller)
+    }
+    await refresh(controller)
+    XCTAssertEqual(charger.sleepCalls, [true, true])
   }
 
   func testCalibrationStopsWhenTheHelperGoesAway() async {

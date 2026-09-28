@@ -12,7 +12,7 @@ struct CalibrationPane: View {
     RowGroup {
       HStack(spacing: 6) {
         ForEach(Array(Self.steps.enumerated()), id: \.offset) { index, step in
-          stepChip(index == 4 ? String(localized: "Back to \(controller.settings.limit)%") : step.title, index: index)
+          stepChip(index == 4 ? String(localized: "Back to \(controller.effectiveSettings.limit)%") : step.title, index: index)
         }
       }
       .padding(.horizontal, 14)

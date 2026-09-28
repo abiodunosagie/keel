@@ -42,7 +42,15 @@ final class HelperClient: ChargerControl {
       log.notice("Helper not ready: \(String(describing: self.status), privacy: .public)")
       return
     }
-    let running = await version()
+    // A helper that was just launched can miss the first call; only a helper that stays silent
+    // counts as unreachable.
+    var running = await version()
+    for _ in 0..<2 where running == nil {
+      try? await Task.sleep(for: .seconds(1))
+      connection?.invalidate()
+      connection = nil
+      running = await version()
+    }
     log.notice("Helper running version \(running.map(String.init) ?? "none", privacy: .public), app expects \(HelperIdentity.version, privacy: .public)")
     guard let running else {
       // Registered but unreachable: an old helper from before an update, which the app can no
@@ -112,6 +120,10 @@ final class HelperClient: ChargerControl {
   @discardableResult
   func setSleepDisabled(_ disabled: Bool) async -> Bool {
     await call { proxy, done in proxy.setSleepDisabled(disabled) { done($0) } } ?? false
+  }
+
+  func isSleepDisabled() async -> Bool? {
+    await call { proxy, done in proxy.isSleepDisabled { done($0) } }
   }
 
   func readChipPower() async -> ChipPower? {

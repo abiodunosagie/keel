@@ -36,6 +36,15 @@ enum PowerSettings {
     pmset(["-a", "disablesleep", disabled ? "1" : "0"])
   }
 
+  // pmset -g prints "SleepDisabled  1" while sleep is off.
+  static var isSleepDisabled: Bool {
+    guard let output = Shell.run("/usr/bin/pmset", ["-g"])?.output else { return false }
+    return output.split(separator: "\n").contains { line in
+      let fields = line.split(whereSeparator: \.isWhitespace)
+      return fields.count >= 2 && fields[0] == "SleepDisabled" && fields[1] == "1"
+    }
+  }
+
   static func setPowerMode(_ mode: PowerMode) -> Bool {
     pmset(["-a", "powermode", String(mode.rawValue)])
   }
@@ -52,7 +61,9 @@ enum ChipPowerReader {
   static func sample() -> (cpu: Double, gpu: Double, ane: Double)? {
     let arguments = ["-n", "1", "-i", "\(intervalMilliseconds)", "--samplers", "cpu_power,gpu_power,ane_power",
                      "-f", "plist"]
-    guard let result = Shell.run("/usr/bin/powermetrics", arguments), result.status == 0 else { return nil }
+    guard let result = Shell.run("/usr/bin/powermetrics", arguments, timeout: 10), result.status == 0 else {
+      return nil
+    }
     // The plist ends with a NUL; keep what comes before it.
     let text = result.output.split(separator: "\0", maxSplits: 1).first.map(String.init) ?? result.output
     guard let data = text.data(using: .utf8),
@@ -92,7 +103,7 @@ func restoreDefaults() {
 
 final class HelperService: NSObject, HelperProtocol, NSXPCListenerDelegate, @unchecked Sendable {
   // All state and all writes happen on this queue.
-  private let queue = DispatchQueue(label: "com.abiodunosagie.Keel.Helper")
+  let queue = DispatchQueue(label: "com.abiodunosagie.Keel.Helper")
   // Only connections that have delivered a message count: XPC only delivers messages from
   // peers that pass the code-signing requirement, so an unsigned process that connects and
   // stays silent can never keep the helper from restoring everything when Keel goes away.
@@ -149,6 +160,11 @@ final class HelperService: NSObject, HelperProtocol, NSXPCListenerDelegate, @unc
       return
     }
     queue.async { reply(MagSafe.set(light)) }
+  }
+
+  func isSleepDisabled(reply: @escaping (Bool) -> Void) {
+    trustCaller()
+    queue.async { reply(PowerSettings.isSleepDisabled) }
   }
 
   func setSleepDisabled(_ disabled: Bool, reply: @escaping (Bool) -> Void) {
@@ -231,18 +247,20 @@ termination.resume()
 // An update replaces this file while the old helper still runs, and the app then can't verify
 // the old process's signature. So the helper restores everything and exits as soon as its file
 // is replaced; launchd starts the new one on the next connection.
+let service = HelperService()
+
+// Only a delete or rename counts: that is what replacing the app does. A touch or an
+// attribute change (which any process of the user could make) must not restart the helper.
 let executable = URL(fileURLWithPath: CommandLine.arguments[0]).resolvingSymlinksInPath().path
 let descriptor = open(executable, O_EVTONLY)
 let watcher = DispatchSource.makeFileSystemObjectSource(
-  fileDescriptor: descriptor, eventMask: [.delete, .rename, .write, .attrib], queue: .main
+  fileDescriptor: descriptor, eventMask: [.delete, .rename], queue: service.queue
 )
 watcher.setEventHandler {
   restoreDefaults()
   exit(0)
 }
 if descriptor >= 0 { watcher.resume() }
-
-let service = HelperService()
 let listener = NSXPCListener(machServiceName: HelperIdentity.label)
 listener.delegate = service
 listener.resume()

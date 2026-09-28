@@ -48,6 +48,18 @@ enum ChargerProblem: Equatable, Sendable {
   // The battery controller is slowing charging (heat or a limited charger).
   case slowCharging
 
+  enum Kind: Equatable {
+    case noPower, tooWeak, slowCharging
+  }
+
+  var kind: Kind {
+    switch self {
+    case .noPower: return .noPower
+    case .tooWeak: return .tooWeak
+    case .slowCharging: return .slowCharging
+    }
+  }
+
   var message: String {
     switch self {
     case .noPower:
@@ -191,28 +203,28 @@ final class PowerInsights {
     return true
   }
 
+  // Confirms on the kind of problem, not its numbers: the Mac's load changes every reading, so
+  // comparing whole values would never see the same problem twice in a row.
   private func trackProblem(_ snapshot: BatterySnapshot, drainExpected: Bool) {
     let found = Self.problem(in: snapshot, drainExpected: drainExpected)
-    if found == nil || found != candidate {
-      candidate = found
+    if found?.kind != candidate?.kind {
       candidateCount = found == nil ? 0 : 1
-    } else {
+    } else if found != nil {
       candidateCount += 1
     }
+    candidate = found
     if !snapshot.isPluggedIn { announced = false }
     let confirmed = candidateCount >= Self.problemConfirmations ? candidate : nil
-    if confirmed != problem {
-      problem = confirmed
-      if let confirmed, !announced {
-        announced = true
-        if case .tooWeak = confirmed, let name = snapshot.charger?.name,
-           let index = chargers.firstIndex(where: { $0.charger.name == name }) {
-          chargers[index].shortfalls += 1
-          save()
-        }
-        onProblem?(confirmed)
-      }
+    let isNew = confirmed?.kind != problem?.kind
+    problem = confirmed
+    guard isNew, let confirmed, !announced else { return }
+    announced = true
+    if case .tooWeak = confirmed, let charger = snapshot.charger,
+       let index = chargers.firstIndex(where: { $0.charger.name == charger.name && $0.charger.watts == charger.watts }) {
+      chargers[index].shortfalls += 1
+      save()
     }
+    onProblem?(confirmed)
   }
 
   static func problem(in snapshot: BatterySnapshot, drainExpected: Bool) -> ChargerProblem? {

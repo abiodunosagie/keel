@@ -83,7 +83,7 @@ struct AppearancePane: View {
       SettingRow(title: String(localized: "Hot battery alert"), detail: String(localized: "Warn once each time the battery gets this hot.")) {
         HStack(spacing: 10) {
           Stepper(value: $controller.options.temperatureAlertLimit, in: HeatGuard.temperatureRange, step: 1) {
-            ValueChip(text: String(format: "%.0f °C", controller.options.temperatureAlertLimit))
+            ValueChip(text: "\(Format.number(controller.options.temperatureAlertLimit, digits: 0)) °C")
           }
           .disabled(!controller.options.temperatureAlert)
           Toggle("Hot battery alert", isOn: $controller.options.temperatureAlert).labelsHidden().toggleStyle(.switch)

@@ -27,9 +27,11 @@ final class Notifier {
     case .temperatureHigh(let temperature):
       content.title = String(localized: "Battery is hot")
       content.body = String(localized: "The battery is at \(Format.temperature(temperature)). Heat ages it faster; give the Mac some air or a lighter load.")
-    case .overLimitOnLaunch(let percent, let limit):
+    case .overLimitOnLaunch(let percent, let limit, let dischargesItself):
       content.title = String(localized: "Battery above your limit")
-      content.body = String(localized: "It's at \(percent)%, above your \(limit)% limit, probably from charging while Keel wasn't running. Automatic Discharge brings it down on the charger.")
+      content.body = dischargesItself
+        ? String(localized: "It's at \(percent)%, above your \(limit)% limit, probably from charging while Keel wasn't running. Automatic Discharge brings it down on the charger.")
+        : String(localized: "It's at \(percent)%, above your \(limit)% limit, probably from charging while Keel wasn't running. Use Discharge to bring it down.")
     }
     let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
     Task {

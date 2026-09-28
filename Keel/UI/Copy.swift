@@ -33,14 +33,20 @@ enum Format {
   }
 
   static func watts(_ value: Double) -> String {
-    String(format: "%.1f W", abs(value))
+    "\(number(abs(value), digits: 1)) W"
+  }
+
+  // Decimals in the reader's own style: 12,5 in German, French, Spanish and Portuguese.
+  // (CSV export keeps a dot on purpose, for spreadsheets.)
+  static func number(_ value: Double, digits: Int) -> String {
+    value.formatted(.number.precision(.fractionLength(digits)))
   }
 
   static func percent(_ value: Double) -> String {
-    String(format: "%.1f%%", value)
+    "\(number(value, digits: 1))%"
   }
 
   static func temperature(_ value: Double) -> String {
-    String(format: "%.1f°C", value)
+    "\(number(value, digits: 1)) °C"
   }
 }

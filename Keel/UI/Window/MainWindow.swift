@@ -44,35 +44,18 @@ struct MainWindow: View {
   }
 }
 
-// A pane heading and one-line explanation, as in the mockup. Literal text is looked up in the
-// string catalog; text built at runtime arrives already translated.
+// A pane heading and one-line explanation, as in the mockup. Callers pass text already
+// translated with String(localized:).
 struct PaneHeader: View {
-  let title: Text
-  let lede: Text
-
-  init(title: LocalizedStringKey, lede: LocalizedStringKey) {
-    self.title = Text(title)
-    self.lede = Text(lede)
-  }
-
-  @_disfavoredOverload
-  init(title: LocalizedStringKey, lede: String) {
-    self.title = Text(title)
-    self.lede = Text(verbatim: lede)
-  }
-
-  @_disfavoredOverload
-  init(title: String, lede: String) {
-    self.title = Text(verbatim: title)
-    self.lede = Text(verbatim: lede)
-  }
+  let title: String
+  let lede: String
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      title
+      Text(verbatim: title)
         .font(.system(size: 20, weight: .semibold))
         .foregroundStyle(Theme.ink)
-      lede
+      Text(verbatim: lede)
         .font(.system(size: 13))
         .foregroundStyle(Theme.ink2)
         .fixedSize(horizontal: false, vertical: true)
@@ -98,39 +81,19 @@ struct RowGroup<Content: View>: View {
   }
 }
 
-// One setting: title and explanation on the left, the control on the right. Literal text is
-// looked up in the string catalog; text built at runtime arrives already translated.
+// One setting: title and explanation on the left, the control on the right. Callers pass
+// text already translated with String(localized:).
 struct SettingRow<Control: View>: View {
-  let title: Text
-  let detail: Text?
-  let control: Control
-
-  init(title: LocalizedStringKey, detail: LocalizedStringKey?, @ViewBuilder control: () -> Control) {
-    self.title = Text(title)
-    self.detail = detail.map { Text($0) }
-    self.control = control()
-  }
-
-  @_disfavoredOverload
-  init(title: String, detail: String?, @ViewBuilder control: () -> Control) {
-    self.title = Text(verbatim: title)
-    self.detail = detail.map { Text(verbatim: $0) }
-    self.control = control()
-  }
-
-  @_disfavoredOverload
-  init(title: LocalizedStringKey, detail: String?, @ViewBuilder control: () -> Control) {
-    self.title = Text(title)
-    self.detail = detail.map { Text(verbatim: $0) }
-    self.control = control()
-  }
+  let title: String
+  var detail: String?
+  @ViewBuilder let control: Control
 
   var body: some View {
     HStack(alignment: .center, spacing: 16) {
       VStack(alignment: .leading, spacing: 2) {
-        title.font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.ink)
+        Text(verbatim: title).font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.ink)
         if let detail {
-          detail
+          Text(verbatim: detail)
             .font(.system(size: 11.5))
             .foregroundStyle(Theme.ink3)
             .fixedSize(horizontal: false, vertical: true)

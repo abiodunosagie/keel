@@ -15,10 +15,10 @@ struct MenuBarRendering {
       parts.append("\(Int(percent.rounded()))%")
     }
     if options.menuBarWatts, let snapshot, let watts = PowerFlow(snapshot: snapshot).sourceWatts {
-      parts.append(String(format: "%.0fW", watts))
+      parts.append("\(Format.number(watts, digits: 0))W")
     }
     if options.menuBarTemperature, let temperature = snapshot?.temperature {
-      parts.append(String(format: "%.0f°", temperature))
+      parts.append("\(Format.number(temperature, digits: 0))°")
     }
     return parts.isEmpty ? "" : " " + parts.joined(separator: " ")
   }

@@ -34,7 +34,7 @@ struct ChargePane: View {
       }
       SettingRow(title: String(localized: "Max temperature"), detail: String(localized: "Apple advises keeping the Mac below 35 °C.")) {
         Stepper(value: $controller.settings.maxTemperature, in: HeatGuard.temperatureRange, step: 1) {
-          ValueChip(text: String(format: "%.0f °C", controller.settings.maxTemperature))
+          ValueChip(text: "\(Format.number(controller.settings.maxTemperature, digits: 0)) °C")
         }
         .disabled(!controller.settings.heatProtection)
       }

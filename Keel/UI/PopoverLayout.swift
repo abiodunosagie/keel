@@ -7,6 +7,9 @@ struct PopoverLayout: Codable, Equatable, Sendable {
 
     var id: String { rawValue }
 
+    // Cards with their own controls, where a long press would fight a drag or a tap.
+    var isInteractive: Bool { self == .limit || self == .actions }
+
     var title: String {
       switch self {
       case .summary: return String(localized: "Battery level")

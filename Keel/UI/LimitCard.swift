@@ -50,7 +50,7 @@ struct LimitCard: View {
     switch controller.mode {
     case .topUp: return String(localized: "Top Up is on: charging to 100% until you unplug.")
     case .discharge: return String(localized: "Running on battery down to your limit.")
-    case .calibration(let step): return String(localized: "Calibrating: \(step.title.lowercased()).")
+    case .calibration(let step): return String(localized: "Calibrating: \(step.title).")
     case .normal: break
     }
     if let network = controller.networkLimit {

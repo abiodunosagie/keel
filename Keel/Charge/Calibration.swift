@@ -14,6 +14,7 @@ enum CalibrationStep: Codable, Equatable, Sendable {
     case .chargeFull: return String(localized: "Charge to 100%")
     case .dischargeLow: return String(localized: "Discharge to \(Calibration.floor)%")
     case .rechargeFull: return String(localized: "Charge to 100%")
+    // Matches Calibration.holdDuration; change both together.
     case .hold: return String(localized: "Hold for an hour")
     case .returnToLimit: return String(localized: "Back to limit")
     }

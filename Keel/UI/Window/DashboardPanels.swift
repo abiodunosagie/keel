@@ -102,7 +102,7 @@ struct ChargerPanel: View {
     var parts: [String] = []
     if let manufacturer = charger.manufacturer { parts.append(manufacturer) }
     if let volts = charger.volts, let amps = charger.amps {
-      parts.append(String(localized: "negotiated \(String(format: "%.0f V", volts)) at \(String(format: "%.2f A", amps))"))
+      parts.append(String(localized: "negotiated \(Format.number(volts, digits: 0)) V at \(Format.number(amps, digits: 2)) A"))
     }
     if let powerIn = snapshot.powerIn { parts.append(String(localized: "\(Format.watts(powerIn)) coming in now")) }
     return parts.joined(separator: ", ") + "."

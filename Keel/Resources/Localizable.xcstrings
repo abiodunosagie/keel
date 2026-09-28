@@ -175,6 +175,35 @@
         }
       }
     },
+    "%@ Wh in %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Wh in %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Wh en %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Wh en %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Wh em %@"
+          }
+        }
+      }
+    },
     "%@ can't keep up with the Mac's %@, so the battery is draining.": {
       "extractionState": "manual",
       "localizations": {
@@ -403,35 +432,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld W"
-          }
-        }
-      }
-    },
-    "%lld W charger": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld-W-Netzteil"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cargador de %lld W"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chargeur %lld W"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Carregador de %lld W"
           }
         }
       }
@@ -2097,35 +2097,6 @@
         }
       }
     },
-    "Calibrate %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kalibrieren: %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Calibrar: %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Calibrer : %@"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Calibrar: %@"
-          }
-        }
-      }
-    },
     "Calibrate every two weeks": {
       "extractionState": "manual",
       "localizations": {
@@ -2161,7 +2132,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kalibriert"
+            "value": "Wird kalibriert"
           }
         },
         "es": {
@@ -2383,6 +2354,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "A calibração, a luz MagSafe e os modos de energia estão disponíveis."
+          }
+        }
+      }
+    },
+    "Calibration: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kalibrierung: %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calibración: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calibration : %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calibração: %@"
           }
         }
       }
@@ -5080,6 +5080,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "Está a %lld%%, acima do seu limite de %lld%%, provavelmente por ter carregado com o Keel fechado. A Descarga automática baixa-a com o carregador ligado."
+          }
+        }
+      }
+    },
+    "It's at %lld%%, above your %lld%% limit, probably from charging while Keel wasn't running. Use Discharge to bring it down.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er steht bei %lld %%, über deinem Limit von %lld %%, vermutlich vom Laden ohne Keel. Nutze Entladen, um ihn zu senken."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Está al %lld%%, por encima de tu límite del %lld%%, probablemente por cargar con Keel cerrado. Usa Descargar para bajarla."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elle est à %lld %%, au-dessus de votre limite de %lld %%, sans doute chargée pendant que Keel ne tournait pas. Utilisez Décharger pour la faire descendre."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Está a %lld%%, acima do seu limite de %lld%%, provavelmente por ter carregado com o Keel fechado. Use Descarregar para a baixar."
           }
         }
       }
@@ -12421,31 +12450,89 @@
         }
       }
     },
-    "negotiated %@ at %@": {
+    "n/a": {
       "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "ausgehandelt %@ bei %@"
+            "value": "k. A."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "negociado %@ a %@"
+            "value": "n/d"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "négocié %@ à %@"
+            "value": "n.d."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "negociado %@ a %@"
+            "value": "n/d"
+          }
+        }
+      }
+    },
+    "negotiated %@ V at %@ A": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ausgehandelt %@ V bei %@ A"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "negociado %@ V a %@ A"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "négocié %@ V à %@ A"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "negociado %@ V a %@ A"
+          }
+        }
+      }
+    },
+    "none": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "keins"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ninguno"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aucun"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nenhum"
           }
         }
       }

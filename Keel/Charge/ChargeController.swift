@@ -11,7 +11,7 @@ enum ChargeEvent: Equatable, Sendable {
   case calibrationStopped(String)
   case chargerProblem(String)
   case temperatureHigh(Double)
-  case overLimitOnLaunch(percent: Int, limit: Int)
+  case overLimitOnLaunch(percent: Int, limit: Int, dischargesItself: Bool)
 }
 
 // The privileged side: the charger switch and the MagSafe light. HelperClient in the app, a
@@ -25,6 +25,7 @@ protocol ChargerControl: AnyObject {
   func setSleepDisabled(_ disabled: Bool) async -> Bool
   // nil when the helper can't be asked.
   func isChargerConnected() async -> Bool?
+  func isSleepDisabled() async -> Bool?
 }
 
 struct NetworkLimit: Equatable, Sendable {
@@ -222,7 +223,8 @@ final class ChargeController {
     guard options.overLimitAlert, let snapshot, isAvailable else { return }
     let target = ChargePolicy.target(settings: effectiveSettings, hardwareOffset: hardwareOffset.value, limitRange: limitRange)
     guard target < limitRange.upperBound, snapshot.macOSPercent > target + 2 else { return }
-    onEvent?(.overLimitOnLaunch(percent: snapshot.macOSPercent, limit: target))
+    onEvent?(.overLimitOnLaunch(percent: snapshot.macOSPercent, limit: target,
+                                dischargesItself: settings.automaticDischarge))
   }
 
   // One alert per crossing; it re-arms once the battery is 2 °C below the limit.
@@ -459,6 +461,11 @@ final class ChargeController {
         guard let connected = await charger.isChargerConnected(), let self else { return }
         self.chargerConnected = connected
       }
+      // Same for sleep: if the helper restarted and restored it, Keel sends it again.
+      track { [weak self] in
+        guard let disabled = await charger.isSleepDisabled(), let self else { return }
+        self.sleepGuard.reconcile(lidSleepDisabled: disabled)
+      }
     }
   }
 
@@ -509,8 +516,8 @@ final class ChargeController {
     let calibrating = calibrationStep != nil
     let movingToLimit = options.keepAwakeUntilLimit && (state == .charging || state == .discharging)
     sleepGuard.set(awake: calibrating || movingToLimit)
-    if let charger, charger.isReady {
-      sleepGuard.setLidSleepDisabled(calibrating, using: charger)
+    if let charger, charger.isReady, sleepGuard.needsLidSleepChange(to: calibrating) {
+      track { _ = await charger.setSleepDisabled(calibrating) }
     }
   }
 

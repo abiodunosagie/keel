@@ -25,9 +25,15 @@ final class SleepGuard {
 
   // Closing the lid sleeps the Mac even with the assertion, so calibration also turns sleep
   // off entirely through the helper, which undoes it when Keel quits.
-  func setLidSleepDisabled(_ disabled: Bool, using charger: ChargerControl) {
-    guard disabled != lidSleepDisabled else { return }
+  // What the helper reports; a mismatch makes the next update send the setting again.
+  func reconcile(lidSleepDisabled actual: Bool) {
+    lidSleepDisabled = actual
+  }
+
+  // True when the helper needs to be told; the caller sends it.
+  func needsLidSleepChange(to disabled: Bool) -> Bool {
+    guard disabled != lidSleepDisabled else { return false }
     lidSleepDisabled = disabled
-    Task { _ = await charger.setSleepDisabled(disabled) }
+    return true
   }
 }

@@ -164,7 +164,7 @@ struct OnboardingView: View {
           : String(localized: "A healthy level while plugged in.")) { EmptyView() }
         SettingRow(title: plan.heatProtection ? String(localized: "Heat Protection on, 35 °C") : String(localized: "Heat Protection off"),
                    detail: String(localized: "Pauses charging while the battery is hot.")) { EmptyView() }
-        SettingRow(title: plan.calibration.map { String(localized: "Calibrate \($0.title.lowercased())") } ?? String(localized: "No scheduled calibration"),
+        SettingRow(title: plan.calibration.map { String(localized: "Calibration: \($0.title)") } ?? String(localized: "No scheduled calibration"),
                    detail: plan.calibration == nil
                      ? String(localized: "Using the battery keeps its reading accurate on its own.")
                      : String(localized: "Keeps the battery's percentage accurate. Needs Keel Helper.")) { EmptyView() }

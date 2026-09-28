@@ -16,7 +16,7 @@ struct EnergyAppsPanel: View {
   private var summary: String {
     guard let apps else { return String(localized: "Measuring…") }
     guard !apps.isEmpty else { return String(localized: "No app is using much energy right now.") }
-    return apps.map { "\($0.name) \(String(format: "%.1f", $0.impact))" }.joined(separator: ", ")
+    return apps.map { "\($0.name) \(Format.number($0.impact, digits: 1))" }.joined(separator: ", ")
       + String(localized: ". Energy impact, as in Activity Monitor.")
   }
 }

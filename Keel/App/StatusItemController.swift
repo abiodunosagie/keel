@@ -64,6 +64,9 @@ final class StatusItemController: NSObject {
     button.imagePosition = .imageLeading
     button.title = rendering.text
     button.toolTip = String(localized: "Keel: \(controller.state.title)")
+    // VoiceOver reads this, not the tooltip, and the drawn icons have no text of their own.
+    let level = controller.displayPercent.map { " \(Int($0.rounded()))%" } ?? ""
+    button.setAccessibilityLabel(String(localized: "Keel: \(controller.state.title)") + level)
   }
 
   @objc private func clicked(_ sender: NSStatusBarButton) {
@@ -84,6 +87,8 @@ final class StatusItemController: NSObject {
   private func showMenu() {
     let controller = model.controller
     let menu = NSMenu()
+    // Items carry their own enabled state; AppKit would otherwise enable every item with an action.
+    menu.autoenablesItems = false
     menu.addItem(menuItem(controller.isTopUpActive ? String(localized: "Stop Top Up") : String(localized: "Top Up"), enabled: controller.isTopUpActive
       || controller.snapshot?.isPluggedIn == true) {
       controller.isTopUpActive ? controller.stopTopUp() : controller.startTopUp()
@@ -96,7 +101,7 @@ final class StatusItemController: NSObject {
     menu.addItem(.separator())
     for limit in [80, 85, 90, 95, 100] {
       let item = menuItem(String(localized: "Limit \(limit)%"), enabled: true) { controller.setLimit(limit) }
-      item.state = controller.settings.limit == limit ? .on : .off
+      item.state = controller.effectiveSettings.limit == limit ? .on : .off
       menu.addItem(item)
     }
     menu.addItem(.separator())

@@ -54,11 +54,13 @@ final class InsightsTests: XCTestCase {
     let insights = PowerInsights(fileURL: nil)
     var reported: [ChargerProblem] = []
     insights.onProblem = { reported.append($0) }
-    let weak = plugged(percent: 60, charging: false, amperage: -2, powerIn: 20, load: 45)
-    for step in 0..<PowerInsights.problemConfirmations {
-      insights.update(weak, drainExpected: false, now: start.addingTimeInterval(Double(step) * 5))
+    // The load changes every reading, as it does on a real Mac.
+    let loads = [45.0, 47.3, 44.1]
+    for (step, load) in loads.enumerated() {
+      insights.update(plugged(percent: 60, charging: false, amperage: -2, powerIn: 20, load: load),
+                      drainExpected: false, now: start.addingTimeInterval(Double(step) * 5))
     }
-    XCTAssertEqual(reported, [.tooWeak(chargerWatts: 86, loadWatts: 45)])
+    XCTAssertEqual(reported, [.tooWeak(chargerWatts: 86, loadWatts: 44.1)])
     XCTAssertEqual(insights.chargers[0].shortfalls, 1)
   }
 

@@ -39,7 +39,20 @@ final class Automation: NSObject, CLLocationManagerDelegate {
       defaults.set(try? JSONEncoder().encode(settings), forKey: Self.settingsKey)
       if settings.calendarTopUp, !oldValue.calendarTopUp { requestCalendarAccess() }
       if !settings.networkRules.isEmpty, oldValue.networkRules.isEmpty { requestLocationAccess() }
-      check()
+      scheduleCheck()
+    }
+  }
+
+  // Typing in a text field changes the settings on every key; the calendar scan waits until the
+  // typing pauses.
+  private var pendingCheck: Task<Void, Never>?
+
+  private func scheduleCheck() {
+    pendingCheck?.cancel()
+    pendingCheck = Task { [weak self] in
+      try? await Task.sleep(for: .milliseconds(800))
+      guard !Task.isCancelled else { return }
+      self?.check()
     }
   }
 
@@ -55,7 +68,7 @@ final class Automation: NSObject, CLLocationManagerDelegate {
   private var timer: Timer?
   private var displayOffDoneForIdle = false
   private var lidWasClosed = false
-  private var handledEvents: Set<String>
+  private var handledEvents: [String]
 
   init(controller: ChargeController, defaults: UserDefaults = .standard) {
     self.controller = controller
@@ -66,7 +79,7 @@ final class Automation: NSObject, CLLocationManagerDelegate {
     } else {
       settings = AutomationSettings()
     }
-    handledEvents = Set(defaults.stringArray(forKey: Self.handledEventsKey) ?? [])
+    handledEvents = defaults.stringArray(forKey: Self.handledEventsKey) ?? []
     super.init()
     location.delegate = self
   }
@@ -89,17 +102,19 @@ final class Automation: NSObject, CLLocationManagerDelegate {
   // MARK: Wi-Fi limits
 
   private func checkNetwork() {
-    currentNetwork = CWWiFiClient.shared().interface()?.ssid()
-    let rule = currentNetwork.flatMap { name in settings.networkRules.first { $0.network == name } }
-    let wanted = rule.map { NetworkLimit(network: $0.network, limit: controller.limitRange.clamped($0.limit)) }
-    if wanted != lastAppliedNetwork {
-      // Only a change of network moves the limit, so a manual change sticks while on it.
-      lastAppliedNetwork = wanted
-      controller.networkLimit = wanted
-    }
+    let reading = CWWiFiClient.shared().interface()?.ssid()
+    guard let network = NetworkTracker.settle(reading, state: &networkTracker) else { return }
+    currentNetwork = network.name
+    // Only a real change of network, or an edited rule list, moves the limit, so a manual change
+    // sticks while the Mac stays on the same network.
+    guard network.changed || settings.networkRules != appliedRules else { return }
+    appliedRules = settings.networkRules
+    let rule = network.name.flatMap { name in settings.networkRules.first { $0.network == name } }
+    controller.networkLimit = rule.map { NetworkLimit(network: $0.network, limit: controller.limitRange.clamped($0.limit)) }
   }
 
-  private var lastAppliedNetwork: NetworkLimit?
+  private var networkTracker = NetworkTracker()
+  private var appliedRules: [NetworkRule] = []
 
   private func requestLocationAccess() {
     switch location.authorizationStatus {
@@ -138,16 +153,36 @@ final class Automation: NSObject, CLLocationManagerDelegate {
     let horizon = now.addingTimeInterval(7 * 86_400)
     let predicate = events.predicateForEvents(withStart: now, end: horizon, calendars: nil)
     let keywords = Self.keywords(settings.calendarKeywords)
+    // Only trips still ahead: one already under way (a multi-day conference) must not hide the
+    // next one.
     let trips = events.events(matching: predicate)
-      .filter { Self.matches($0.title ?? "", keywords: keywords) }
+      .filter { $0.startDate > now && Self.matches($0.title ?? "", keywords: keywords) }
       .sorted { $0.startDate < $1.startDate }
     nextTrip = trips.first.map { ($0.title ?? String(localized: "Event"), $0.startDate) }
-    guard let trip = trips.first, let id = trip.eventIdentifier, !handledEvents.contains(id) else { return }
+    let candidates = trips.map { Trip(key: Self.occurrenceKey($0), start: $0.startDate) }
     let lead = TimeInterval(settings.calendarLeadHours) * 3600
-    guard trip.startDate.timeIntervalSince(now) <= lead, controller.snapshot?.isPluggedIn == true else { return }
+    guard controller.snapshot?.isPluggedIn == true,
+          let due = Self.tripToTopUp(candidates, handled: Set(handledEvents), now: now, lead: lead) else { return }
     controller.startTopUp()
-    handledEvents.insert(id)
-    defaults.set(Array(handledEvents.suffix(200)), forKey: Self.handledEventsKey)
+    handledEvents.append(due.key)
+    handledEvents = Array(handledEvents.suffix(200))
+    defaults.set(handledEvents, forKey: Self.handledEventsKey)
+  }
+
+  struct Trip: Equatable {
+    var key: String
+    var start: Date
+  }
+
+  // Each occurrence of a repeating event counts on its own: the identifier is shared, the start
+  // date is not.
+  static func occurrenceKey(_ event: EKEvent) -> String {
+    "\(event.eventIdentifier ?? event.title ?? "")|\(Int(event.startDate.timeIntervalSince1970))"
+  }
+
+  // The first trip inside the lead window that hasn't been topped up for yet.
+  nonisolated static func tripToTopUp(_ trips: [Trip], handled: Set<String>, now: Date, lead: TimeInterval) -> Trip? {
+    trips.first { !handled.contains($0.key) && $0.start > now && $0.start.timeIntervalSince(now) <= lead }
   }
 
   nonisolated static func keywords(_ text: String) -> [String] {
@@ -203,6 +238,29 @@ final class Automation: NSObject, CLLocationManagerDelegate {
     defer { IOObjectRelease(service) }
     let value = IORegistryEntryCreateCFProperty(service, "AppleClamshellState" as CFString, kCFAllocatorDefault, 0)
     return (value?.takeRetainedValue() as? Bool) ?? false
+  }
+}
+
+// Turns raw SSID readings into network changes. CoreWLAN sometimes returns nil for a moment
+// (wake, roaming); only several nil readings in a row count as leaving Wi-Fi.
+struct NetworkTracker: Equatable {
+  static let nilReadingsToLeave = 3
+
+  private(set) var current: String?? = .none // .none: nothing settled yet
+  private var nilReadings = 0
+
+  // The settled network (nil = no Wi-Fi) and whether it changed, or nil while a nil reading is
+  // still unconfirmed.
+  static func settle(_ reading: String?, state: inout NetworkTracker) -> (name: String?, changed: Bool)? {
+    if reading == nil {
+      state.nilReadings += 1
+      if state.nilReadings < nilReadingsToLeave, state.current != nil { return nil }
+    } else {
+      state.nilReadings = 0
+    }
+    let changed = state.current != .some(reading)
+    state.current = .some(reading)
+    return (reading, changed)
   }
 }
 

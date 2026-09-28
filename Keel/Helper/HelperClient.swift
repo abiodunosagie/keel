@@ -62,11 +62,14 @@ final class HelperClient: ChargerControl {
     }
   }
 
-  func uninstall() async {
+  // Throws when macOS keeps the helper registered, so Remove Keel can stop before trashing the
+  // app a root daemon still points at.
+  func uninstall() async throws {
     connection?.invalidate()
     connection = nil
-    try? await service.unregister()
-    refreshStatus()
+    defer { refreshStatus() }
+    guard service.status != .notRegistered, service.status != .notFound else { return }
+    try await service.unregister()
   }
 
   func version() async -> Int? {

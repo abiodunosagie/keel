@@ -59,6 +59,12 @@ enum PowerSettings {
 enum SafetyFloor {
   static let percent = 10
 
+  // Fails closed: a battery that can't be read counts as empty.
+  static var isAtOrBelow: Bool {
+    guard let current = batteryPercent() else { return true }
+    return current <= percent
+  }
+
   static func batteryPercent() -> Int? {
     let service = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("AppleSmartBattery"))
     guard service != IO_OBJECT_NULL else { return nil }
@@ -78,7 +84,10 @@ func restoreDefaults() {
 final class HelperService: NSObject, HelperProtocol, NSXPCListenerDelegate, @unchecked Sendable {
   // All state and all writes happen on this queue.
   private let queue = DispatchQueue(label: "com.abiodunosagie.Keel.Helper")
-  private var connections = Set<ObjectIdentifier>()
+  // Only connections that have delivered a message count: XPC only delivers messages from
+  // peers that pass the code-signing requirement, so an unsigned process that connects and
+  // stays silent can never keep the helper from restoring everything when Keel goes away.
+  private var trusted = Set<ObjectIdentifier>()
   private var watchdog: DispatchSourceTimer?
 
   func listener(_ listener: NSXPCListener, shouldAcceptNewConnection connection: NSXPCConnection) -> Bool {
@@ -87,19 +96,27 @@ final class HelperService: NSObject, HelperProtocol, NSXPCListenerDelegate, @unc
     connection.exportedObject = self
     let id = ObjectIdentifier(connection)
     connection.invalidationHandler = { [weak self] in self?.connectionEnded(id) }
-    queue.sync { _ = connections.insert(id) }
     connection.resume()
     return true
   }
 
+  // Called at the top of every method: the caller has passed the signing requirement.
+  private func trustCaller() {
+    guard let connection = NSXPCConnection.current() else { return }
+    let id = ObjectIdentifier(connection)
+    queue.sync { _ = trusted.insert(id) }
+  }
+
   func version(reply: @escaping (Int) -> Void) {
+    trustCaller()
     reply(HelperIdentity.version)
   }
 
   func setChargerConnected(_ connected: Bool, reply: @escaping (Bool, String?) -> Void) {
+    trustCaller()
     queue.async {
-      if !connected, let percent = SafetyFloor.batteryPercent(), percent <= SafetyFloor.percent {
-        reply(false, "The battery is at \(percent)%. Keel won't run it lower than \(SafetyFloor.percent)%.")
+      if !connected, SafetyFloor.isAtOrBelow {
+        reply(false, "The battery is at \(SafetyFloor.percent)% or lower, or can't be read. Keel won't run it lower.")
         return
       }
       guard Charger.set(connected: connected) else {
@@ -112,10 +129,12 @@ final class HelperService: NSObject, HelperProtocol, NSXPCListenerDelegate, @unc
   }
 
   func isChargerConnected(reply: @escaping (Bool) -> Void) {
+    trustCaller()
     queue.async { reply(Charger.isConnected) }
   }
 
   func setMagSafeLight(_ light: MagSafeLight, reply: @escaping (Bool) -> Void) {
+    trustCaller()
     guard [MagSafeLight.system, .green, .orange].contains(light) else {
       reply(false)
       return
@@ -124,10 +143,12 @@ final class HelperService: NSObject, HelperProtocol, NSXPCListenerDelegate, @unc
   }
 
   func setSleepDisabled(_ disabled: Bool, reply: @escaping (Bool) -> Void) {
+    trustCaller()
     queue.async { reply(PowerSettings.setSleepDisabled(disabled)) }
   }
 
   func exitForUpdate(reply: @escaping () -> Void) {
+    trustCaller()
     queue.async {
       restoreDefaults()
       reply()
@@ -137,6 +158,7 @@ final class HelperService: NSObject, HelperProtocol, NSXPCListenerDelegate, @unc
   }
 
   func setPowerMode(_ mode: PowerMode, reply: @escaping (Bool) -> Void) {
+    trustCaller()
     // An out-of-range raw value from a hostile client never reaches pmset.
     guard PowerMode.allCases.contains(mode) else {
       reply(false)
@@ -149,8 +171,7 @@ final class HelperService: NSObject, HelperProtocol, NSXPCListenerDelegate, @unc
   // draining, or stays awake, with nobody watching.
   private func connectionEnded(_ id: ObjectIdentifier) {
     queue.async {
-      self.connections.remove(id)
-      guard self.connections.isEmpty else { return }
+      guard self.trusted.remove(id) != nil, self.trusted.isEmpty else { return }
       restoreDefaults()
       self.stopWatchdog()
     }
@@ -161,7 +182,7 @@ final class HelperService: NSObject, HelperProtocol, NSXPCListenerDelegate, @unc
     let timer = DispatchSource.makeTimerSource(queue: queue)
     timer.schedule(deadline: .now() + 30, repeating: 30)
     timer.setEventHandler { [weak self] in
-      guard let percent = SafetyFloor.batteryPercent(), percent <= SafetyFloor.percent else { return }
+      guard SafetyFloor.isAtOrBelow else { return }
       Charger.set(connected: true)
       self?.stopWatchdog()
     }

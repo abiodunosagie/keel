@@ -7,6 +7,7 @@ struct GeneralPane: View {
   @State private var loginError: String?
   @State private var powerMode: PowerMode?
   @State private var confirmRemove = false
+  @State private var removeError: String?
 
   var body: some View {
     PaneHeader(title: "General", lede: "Keel Helper, power mode, login and removal.")
@@ -27,7 +28,7 @@ struct GeneralPane: View {
           .labelsHidden()
           .toggleStyle(.switch)
       }
-      SettingRow(title: "Remove Keel", detail: "Puts back the charge limit macOS had before Keel, removes the helper and the login item, and moves Keel to the Trash.") {
+      SettingRow(title: "Remove Keel", detail: removeError ?? "Puts back the charge limit macOS had before Keel, removes the helper and the login item, and moves Keel to the Trash.") {
         Button("Remove…", role: .destructive) { confirmRemove = true }
       }
       SettingRow(title: "Quit Keel", detail: "The charge limit stays on unless you turned that off under Charge.") {
@@ -64,7 +65,12 @@ struct GeneralPane: View {
 
   private func remove() async {
     await model.controller.restoreOriginalLimit()
-    await helper.uninstall()
+    do {
+      try await helper.uninstall()
+    } catch {
+      removeError = "macOS didn't remove Keel Helper, so Keel stays installed. Try again, or switch it off in System Settings > General > Login Items."
+      return
+    }
     try? await SMAppService.mainApp.unregister()
     NSWorkspace.shared.recycle([Bundle.main.bundleURL]) { _, _ in
       Task { @MainActor in NSApp.terminate(nil) }

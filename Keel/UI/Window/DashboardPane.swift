@@ -23,29 +23,14 @@ struct DashboardPane: View {
   }
 
   private func tiles(_ snapshot: BatterySnapshot) -> some View {
-    HStack(spacing: 0) {
-      tile("Full charge capacity", "\(snapshot.fullChargeCapacity.formatted()) mAh")
-      divider
-      tile("Design capacity", "\(snapshot.designCapacity.formatted()) mAh")
-      divider
-      tile("Health", String(format: "%.1f%%", snapshot.health))
-      divider
-      tile("Cycles", "\(snapshot.cycleCount)")
-    }
+    StatStrip(items: [
+      ("Full charge capacity", "\(snapshot.fullChargeCapacity.formatted()) mAh"),
+      ("Design capacity", "\(snapshot.designCapacity.formatted()) mAh"),
+      ("Health", Format.percent(snapshot.health)),
+      ("Cycles", "\(snapshot.cycleCount)"),
+    ], valueSize: 18, padding: 14)
+    .padding(.vertical, 14)
     .panel(radius: 10)
-  }
-
-  private var divider: some View {
-    Rectangle().fill(Theme.line).frame(width: 1)
-  }
-
-  private func tile(_ title: String, _ value: String) -> some View {
-    VStack(alignment: .leading, spacing: 4) {
-      Text(title).font(.system(size: 11)).foregroundStyle(Theme.ink3)
-      Text(value).font(Theme.mono(18, weight: .semibold)).foregroundStyle(Theme.ink)
-    }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(14)
   }
 
   private var chartPanel: some View {

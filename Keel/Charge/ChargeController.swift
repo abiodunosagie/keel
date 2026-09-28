@@ -20,6 +20,8 @@ protocol ChargerControl: AnyObject {
   func setChargerConnected(_ connected: Bool) async -> String?
   func setMagSafeLight(_ light: MagSafeLight) async -> Bool
   func setSleepDisabled(_ disabled: Bool) async -> Bool
+  // nil when the helper can't be asked.
+  func isChargerConnected() async -> Bool?
 }
 
 // Reads the battery on a timer and on every power change, runs ChargePolicy and hands the result
@@ -73,6 +75,9 @@ final class ChargeController {
   private var chargerConnected = true
   private var light: MagSafeLight = .system
   private var refreshCount = 0
+  private var effects: [UUID: Task<Void, Never>] = [:]
+  // Set once Keel is quitting or being removed; no more limit writes after that.
+  private var isStopped = false
   // Touched from deinit, which is not main-actor isolated; both are only set on the main thread.
   private nonisolated(unsafe) var timer: Timer?
   private nonisolated(unsafe) var powerSource: CFRunLoopSource?
@@ -101,6 +106,11 @@ final class ChargeController {
   }
 
   var limitRange: ClosedRange<Int> { backend.limitRange }
+
+  // Shown instead of the controls on a Mac without the macOS charge limit.
+  var unavailableReason: String {
+    ChargeBackendError.unavailable.errorDescription ?? ""
+  }
 
   var displayPercent: Double? {
     snapshot?.percent(useHardware: settings.useHardwarePercent)
@@ -148,6 +158,7 @@ final class ChargeController {
       state = .unavailable
       return
     }
+    stopCalibrationIfHelperGone()
 
     if settings.heatProtection, snapshot.isPluggedIn, mode == .normal {
       let wasPaused = heatGuard.isPaused
@@ -212,10 +223,11 @@ final class ChargeController {
   func pauseCharging() {
     guard let snapshot else { return }
     mode = .normal
-    settings.limit = ChargePolicy.limitHoldingCurrentLevel(
+    let limit = ChargePolicy.limitHoldingCurrentLevel(
       snapshot: snapshot, settings: settings, hardwareOffset: hardwareOffset.value, limitRange: limitRange
     )
-    refresh()
+    // Setting a new limit refreshes through didSet; an unchanged one still needs the mode change applied.
+    if limit == settings.limit { refresh() } else { settings.limit = limit }
   }
 
   var canPauseHere: Bool {
@@ -252,8 +264,9 @@ final class ChargeController {
 
   // Called when Keel quits. Leaves macOS on the steady limit, never on a temporary one, or
   // removes the limit when the owner chose not to keep it while Keel is closed.
-  func prepareForQuit() {
-    applyTask?.cancel()
+  func prepareForQuit() async {
+    await stopWriting()
+    await settle()
     let limit: Int?
     if options.keepLimitWhenClosed, let snapshot {
       limit = ChargePolicy.decide(
@@ -263,14 +276,24 @@ final class ChargeController {
     } else {
       limit = nil
     }
-    try? backend.apply(limit: limit)
+    let backend = backend
+    _ = await Task.detached { try? backend.apply(limit: limit) }.value
     if calibrationStep != nil { store.calibrationWasRunning = false }
+  }
+
+  // Stops new limit writes and waits for one in flight, so a final write can't be overtaken by
+  // an older one landing after it.
+  private func stopWriting() async {
+    isStopped = true
+    timer?.invalidate()
+    timer = nil
+    pendingLimit = nil
+    await settle()
   }
 
   // Puts macOS back the way it was before Keel first ran.
   func restoreOriginalLimit() async {
-    timer?.invalidate()
-    timer = nil
+    await stopWriting()
     mode = .normal
     let backend = backend
     let original = store.originalLimit
@@ -279,9 +302,26 @@ final class ChargeController {
   }
 
   // Test hook: waits for an in-flight limit write to finish.
-  func awaitPendingApply() async {
-    while let task = applyTask {
-      await task.value
+  // Waits until the limit write and every helper call or read-back started so far have
+  // finished. Quitting uses it; tests use it instead of guessing with sleeps.
+  func settle() async {
+    while true {
+      if let task = applyTask {
+        await task.value
+      } else if let effect = effects.values.first {
+        await effect.value
+      } else {
+        return
+      }
+    }
+  }
+
+  // Runs a side effect as a tracked task so settle() can wait for it.
+  private func track(_ body: @escaping @MainActor () async -> Void) {
+    let id = UUID()
+    effects[id] = Task { [weak self] in
+      await body()
+      self?.effects[id] = nil
     }
   }
 
@@ -318,7 +358,7 @@ final class ChargeController {
 
   // One write at a time. A change that arrives mid-write is applied as soon as it finishes.
   private func apply(_ limit: Int?) {
-    guard applied != .known(limit) else { return }
+    guard !isStopped, applied != .known(limit) else { return }
     guard applyTask == nil else {
       pendingLimit = .some(limit)
       return
@@ -351,26 +391,45 @@ final class ChargeController {
       return
     }
     let backend = backend
-    Task { [weak self] in
-      let actual = await Task.detached(priority: .utility) { try? backend.currentLimit() }.value
-      guard let self, let actual, actual != expected, self.applyTask == nil else { return }
+    track { [weak self] in
+      let read = await Task.detached(priority: .utility) { Result { try backend.currentLimit() } }.value
+      // A failed read proves nothing; "no limit" (nil) is a real answer and is compared.
+      guard let self, case .success(let actual) = read, actual != expected, self.applyTask == nil else { return }
       self.log.notice("macOS limit changed outside Keel, re-applying")
       self.applied = .unknown
       self.refresh()
+    }
+    // The helper may have reconnected the charger on its own (its 10% floor), so the
+    // bookkeeping is checked against the real switch too.
+    if let charger, charger.isReady {
+      track { [weak self] in
+        guard let connected = await charger.isChargerConnected(), let self else { return }
+        self.chargerConnected = connected
+      }
     }
   }
 
   private func setCharger(connected: Bool) {
     guard connected != chargerConnected, let charger, charger.isReady else { return }
     chargerConnected = connected
-    Task { [weak self] in
+    track { [weak self] in
       guard let failure = await charger.setChargerConnected(connected) else { return }
       guard let self else { return }
-      self.chargerConnected = true
+      // The switch didn't move, so the bookkeeping goes back to what is really true and the
+      // next refresh tries again.
+      self.chargerConnected = !connected
       if self.calibrationStep != nil {
         self.stopCalibration(reason: failure)
       }
     }
+  }
+
+  // Calibration can't run on without the helper: stop it rather than leave the charger in an
+  // unknown state. The helper reconnects the charger itself when it stops.
+  private func stopCalibrationIfHelperGone() {
+    guard calibrationStep != nil, charger?.isReady != true else { return }
+    chargerConnected = true
+    stopCalibration(reason: "Keel Helper stopped, so calibration stopped.")
   }
 
   // Green when held at the limit, orange while moving toward it, as AlDente does. With the
@@ -388,7 +447,7 @@ final class ChargeController {
     }
     guard wanted != light else { return }
     light = wanted
-    Task { _ = await charger.setMagSafeLight(wanted) }
+    track { _ = await charger.setMagSafeLight(wanted) }
   }
 
   // Calibration keeps the Mac awake throughout; "keep awake until the limit" only while it is

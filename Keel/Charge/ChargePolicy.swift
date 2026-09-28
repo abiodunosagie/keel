@@ -45,6 +45,8 @@ struct HeatGuard: Equatable, Sendable {
   }
 
   static let window: TimeInterval = 5 * 60
+  // What the Max temperature setting allows, in °C. Apple advises below 35.
+  static let temperatureRange: ClosedRange<Double> = 25...45
 
   private(set) var phase: Phase = .idle
 

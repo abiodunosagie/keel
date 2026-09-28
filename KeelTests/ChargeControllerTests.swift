@@ -42,10 +42,15 @@ final class FakeCharger: ChargerControl {
   var lights: [MagSafeLight] = []
   var failure: String?
 
+  var connected = true
+
   func setChargerConnected(_ connected: Bool) async -> String? {
     connectedCalls.append(connected)
+    if failure == nil { self.connected = connected }
     return failure
   }
+
+  func isChargerConnected() async -> Bool? { connected }
 
   func setMagSafeLight(_ light: MagSafeLight) async -> Bool {
     lights.append(light)
@@ -80,13 +85,13 @@ final class ChargeControllerTests: XCTestCase {
       backend: backend, store: SettingsStore(defaults: defaults), clock: { [unowned self] in now }
     ) { [unowned self] in battery }
     await controller.start()
-    await controller.awaitPendingApply()
+    await controller.settle()
     return controller
   }
 
   private func refresh(_ controller: ChargeController) async {
     controller.refresh()
-    await controller.awaitPendingApply()
+    await controller.settle()
   }
 
   func testAppliesTheLimitOnceAndNotAgainWhenUnchanged() async {
@@ -101,7 +106,7 @@ final class ChargeControllerTests: XCTestCase {
     battery = makeBattery(percent: 85, charging: true)
     let controller = await makeController()
     controller.startTopUp()
-    await controller.awaitPendingApply()
+    await controller.settle()
     XCTAssertEqual(controller.state, .topUp)
 
     battery = makeBattery(percent: 99, pluggedIn: false)
@@ -121,15 +126,16 @@ final class ChargeControllerTests: XCTestCase {
     battery = makeBattery(percent: 85, charging: true)
     let controller = await makeController()
     controller.startTopUp()
-    await controller.awaitPendingApply()
-    controller.prepareForQuit()
+    await controller.prepareForQuit()
     XCTAssertEqual(backend.applied.last, 80)
+    await refresh(controller)
+    XCTAssertEqual(backend.applied.last, 80, "no writes after quitting")
   }
 
   func testQuittingWithoutKeepingTheLimitRemovesIt() async {
     let controller = await makeController()
     controller.options.keepLimitWhenClosed = false
-    controller.prepareForQuit()
+    await controller.prepareForQuit()
     XCTAssertEqual(backend.applied.last, .some(nil))
   }
 
@@ -139,22 +145,42 @@ final class ChargeControllerTests: XCTestCase {
     for _ in 0..<ChargeController.reconcileEvery {
       await refresh(controller)
     }
-    // The read-back runs in its own task; give it a moment to land.
-    for _ in 0..<100 where backend.applied.count < 2 {
-      await Task.yield()
+    XCTAssertEqual(backend.applied, [80, 80])
+  }
+
+  func testReappliesWhenSomethingElseRemovesTheLimit() async {
+    let controller = await makeController()
+    backend.setExternally(nil)
+    for _ in 0..<ChargeController.reconcileEvery {
       await refresh(controller)
     }
     XCTAssertEqual(backend.applied, [80, 80])
+  }
+
+  func testChargerBookkeepingFollowsTheHelper() async {
+    let charger = FakeCharger()
+    battery = makeBattery(percent: 100)
+    let controller = await makeController()
+    controller.charger = charger
+    controller.startCalibration()
+    await refresh(controller)
+    XCTAssertEqual(charger.connectedCalls, [false])
+    // The helper reconnects on its own at its floor; the next read-back notices.
+    charger.connected = true
+    for _ in 0..<ChargeController.reconcileEvery {
+      await refresh(controller)
+    }
+    XCTAssertEqual(charger.connectedCalls, [false, false], "Keel cuts it again while calibration still wants it cut")
   }
 
   func testDischargeStopsAtTheLimit() async {
     battery = makeBattery(percent: 90, amperage: -1.5)
     let controller = await makeController()
     controller.settings.automaticDischarge = false
-    await controller.awaitPendingApply()
+    await controller.settle()
     XCTAssertEqual(backend.applied.last, 90)
     controller.startDischarge()
-    await controller.awaitPendingApply()
+    await controller.settle()
     XCTAssertEqual(backend.applied.last, 80)
     battery = makeBattery(percent: 80)
     await refresh(controller)
@@ -176,12 +202,12 @@ final class ChargeControllerTests: XCTestCase {
     controller.startCalibration()
     await refresh(controller)
     XCTAssertEqual(controller.calibrationStep, .dischargeLow)
-    await Task.yield()
+    await controller.settle()
     XCTAssertEqual(charger.connectedCalls, [false])
 
     battery = makeBattery(percent: 10, amperage: -2)
     await refresh(controller)
-    await Task.yield()
+    await controller.settle()
     XCTAssertEqual(controller.calibrationStep, .rechargeFull)
     XCTAssertEqual(charger.connectedCalls, [false, true])
   }
@@ -196,9 +222,45 @@ final class ChargeControllerTests: XCTestCase {
     controller.onEvent = { events.append($0) }
     controller.startCalibration()
     await refresh(controller)
-    for _ in 0..<50 where controller.calibrationStep != nil { await Task.yield() }
+    await controller.settle()
     XCTAssertNil(controller.calibrationStep)
     XCTAssertEqual(events, [.calibrationStopped("The charger switch didn't respond.")])
+  }
+
+  func testFailedReconnectIsRetried() async {
+    let charger = FakeCharger()
+    battery = makeBattery(percent: 100)
+    let controller = await makeController()
+    controller.charger = charger
+    controller.startCalibration()
+    await refresh(controller)
+    await controller.settle()
+    XCTAssertEqual(charger.connectedCalls, [false])
+
+    charger.failure = "The charger switch didn't respond."
+    battery = makeBattery(percent: 10)
+    await refresh(controller)
+    await controller.settle()
+    XCTAssertNil(controller.calibrationStep)
+
+    charger.failure = nil
+    await refresh(controller)
+    await controller.settle()
+    XCTAssertEqual(charger.connectedCalls.first, false)
+    XCTAssertEqual(charger.connectedCalls.last, true)
+    XCTAssertTrue(charger.connected, "the reconnect is retried until the charger is back")
+  }
+
+  func testCalibrationStopsWhenTheHelperGoesAway() async {
+    let charger = FakeCharger()
+    battery = makeBattery(percent: 100)
+    let controller = await makeController()
+    controller.charger = charger
+    controller.startCalibration()
+    await refresh(controller)
+    charger.isReady = false
+    await refresh(controller)
+    XCTAssertNil(controller.calibrationStep)
   }
 
   func testInterruptedCalibrationIsReportedOnLaunch() async {
@@ -261,10 +323,10 @@ final class ChargeControllerTests: XCTestCase {
     let controller = await makeController()
     controller.charger = charger
     controller.options.magSafeLight = .auto
-    await Task.yield()
+    await controller.settle()
     battery = makeBattery(percent: 80)
     await refresh(controller)
-    await Task.yield()
+    await controller.settle()
     XCTAssertEqual(charger.lights, [.orange, .green])
   }
 

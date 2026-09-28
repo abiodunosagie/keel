@@ -84,7 +84,7 @@ final class Scheduler {
     lastCheck = now
     for item in due {
       if item.outcome != .skipped { perform(item.task.action) }
-      history.insert(TaskRun(taskID: item.task.id, title: item.task.action.title, dueAt: item.dueAt,
+      history.insert(TaskRun(title: item.task.action.title, dueAt: item.dueAt,
                              ranAt: now, outcome: item.outcome), at: 0)
       if item.task.repeats == .never, var finished = tasks.first(where: { $0.id == item.task.id }) {
         finished.isActive = false
@@ -108,8 +108,8 @@ final class Scheduler {
       controller.startDischarge()
     case .startCalibration:
       controller.startCalibration()
-    case .powerMode(let raw):
-      guard let mode = PowerMode(rawValue: raw), let helper else { return }
+    case .powerMode(let mode):
+      guard let helper else { return }
       Task { await helper.setPowerMode(mode) }
     }
   }

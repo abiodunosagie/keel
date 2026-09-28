@@ -11,7 +11,8 @@ enum Theme {
   static let line = dynamic(light: 0x1B2226, dark: 0xFFFFFF, lightAlpha: 0.10, darkAlpha: 0.09)
   static let ink = dynamic(light: 0x1B2226, dark: 0xEEF2F4)
   static let ink2 = dynamic(light: 0x55626B, dark: 0xA9B5BC)
-  static let ink3 = dynamic(light: 0x8A969E, dark: 0x728089)
+  // Secondary text at 11 pt, kept at 4.5:1 or better against the panels.
+  static let ink3 = dynamic(light: 0x66727A, dark: 0x8D9AA3)
   static let held = dynamic(light: 0x3F9A5C, dark: 0x63C283)
   static let moving = dynamic(light: 0xD9822B, dark: 0xF0A14D)
   static let heat = dynamic(light: 0xC8483A, dark: 0xEC6A5B)

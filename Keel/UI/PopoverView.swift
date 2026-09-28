@@ -15,7 +15,7 @@ struct PopoverView: View {
           LimitCard()
           ActionRow(open: open)
         } else {
-          Text(ChargeBackendError.unavailable.errorDescription ?? "")
+          Text(controller.unavailableReason)
             .font(.callout)
             .foregroundStyle(Theme.ink2)
         }

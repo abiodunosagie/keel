@@ -6,8 +6,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     Task { await AppModel.shared.start() }
   }
 
-  func applicationWillTerminate(_ notification: Notification) {
-    AppModel.shared.prepareForQuit()
+  // Quitting waits for the final limit write, so macOS is never left on a temporary limit.
+  func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+    Task {
+      await AppModel.shared.prepareForQuit()
+      sender.reply(toApplicationShouldTerminate: true)
+    }
+    return .terminateLater
   }
 }
 
@@ -35,7 +40,7 @@ struct KeelApp: App {
         .environment(model.scheduler)
         .environment(model.history)
     }
-    .windowResizability(.contentSize)
+    .windowResizability(.contentMinSize)
     .defaultPosition(.center)
   }
 }

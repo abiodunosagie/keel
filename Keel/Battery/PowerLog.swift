@@ -3,16 +3,8 @@ import Foundation
 // Reads the charge levels macOS writes to its power log at every sleep, wake and power change.
 enum PowerLog {
   nonisolated static func read() -> [BatterySample] {
-    let process = Process()
-    let pipe = Pipe()
-    process.executableURL = URL(fileURLWithPath: "/usr/bin/pmset")
-    process.arguments = ["-g", "log"]
-    process.standardOutput = pipe
-    process.standardError = FileHandle.nullDevice
-    guard (try? process.run()) != nil else { return [] }
-    let data = pipe.fileHandleForReading.readDataToEndOfFile()
-    process.waitUntilExit()
-    return parse(String(decoding: data, as: UTF8.self))
+    guard let result = Shell.run("/usr/bin/pmset", ["-g", "log"]) else { return [] }
+    return parse(result.output)
   }
 
   // Lines look like:

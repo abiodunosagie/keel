@@ -33,7 +33,7 @@ struct ChargePane: View {
         Toggle("Heat Protection", isOn: $controller.settings.heatProtection).labelsHidden().toggleStyle(.switch)
       }
       SettingRow(title: "Max temperature", detail: "Apple advises keeping the Mac below 35 °C.") {
-        Stepper(value: $controller.settings.maxTemperature, in: 25...45, step: 1) {
+        Stepper(value: $controller.settings.maxTemperature, in: HeatGuard.temperatureRange, step: 1) {
           ValueChip(text: String(format: "%.0f °C", controller.settings.maxTemperature))
         }
         .disabled(!controller.settings.heatProtection)

@@ -128,7 +128,10 @@ final class HelperClient: ChargerControl {
     connection.setCodeSigningRequirement(HelperIdentity.helperRequirement)
     connection.remoteObjectInterface = NSXPCInterface(with: HelperProtocol.self)
     connection.invalidationHandler = { [weak self] in
-      Task { @MainActor in self?.connection = nil }
+      Task { @MainActor in
+        self?.connection = nil
+        self?.refreshStatus()
+      }
     }
     connection.resume()
     self.connection = connection

@@ -76,7 +76,9 @@ struct PauseChargingIntent: AppIntent {
   @MainActor
   func perform() async throws -> some IntentResult {
     let controller = AppModel.shared.controller
-    guard controller.canPauseHere else { throw IntentError.notPossible("macOS can't hold the battery below 80%.") }
+    guard controller.canPauseHere else {
+      throw IntentError.notPossible("macOS can't hold the battery below \(controller.limitRange.lowerBound)%.")
+    }
     controller.pauseCharging()
     return .result()
   }

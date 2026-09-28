@@ -67,9 +67,9 @@ final class AppModel {
     scheduler.start()
   }
 
-  func prepareForQuit() {
+  func prepareForQuit() async {
     guard !Self.isRunningTests else { return }
-    controller.prepareForQuit()
+    await controller.prepareForQuit()
     history.flush()
   }
 }

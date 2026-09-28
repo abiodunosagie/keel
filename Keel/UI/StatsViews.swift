@@ -30,10 +30,13 @@ struct PowerFlowRow: View {
 
 // The numbers behind the ribbon. Battery watts are positive while charging.
 struct PowerFlow {
+  // Battery currents below this are gauge noise, not real charging or discharging.
+  static let noiseWatts = 0.3
+
   let snapshot: BatterySnapshot
 
   // The battery covers a load spike or is being run down while plugged in.
-  var fromBattery: Bool { snapshot.batteryWatts < -0.3 }
+  var fromBattery: Bool { snapshot.batteryWatts < -Self.noiseWatts }
 
   var sourceTitle: String {
     if snapshot.isPluggedIn { return fromBattery ? "Charger + battery" : "Charger" }
@@ -46,14 +49,14 @@ struct PowerFlow {
   }
 
   var destinationTitle: String {
-    snapshot.batteryWatts > 0.3 ? "Mac + battery" : "Mac"
+    snapshot.batteryWatts > Self.noiseWatts ? "Mac + battery" : "Mac"
   }
 
   var destinationWatts: Double? { sourceWatts }
 
   // How much of the ribbon's far end goes into the battery, 0 when nothing does.
   var batteryShare: Double {
-    guard let total = sourceWatts, total > 0, snapshot.batteryWatts > 0.3 else { return 0 }
+    guard let total = sourceWatts, total > 0, snapshot.batteryWatts > Self.noiseWatts else { return 0 }
     return min(1, snapshot.batteryWatts / total)
   }
 }
@@ -87,29 +90,35 @@ struct StatsRow: View {
   let snapshot: BatterySnapshot
 
   var body: some View {
-    HStack(spacing: 0) {
-      stat("Health", String(format: "%.1f%%", snapshot.health))
-      divider
-      stat("Cycles", "\(snapshot.cycleCount)")
-      divider
-      stat("Temp", snapshot.temperature.map { String(format: "%.1f°", $0) } ?? "n/a")
-      divider
-      stat("Adapter", snapshot.adapterWatts.map { "\($0) W" } ?? "none")
-    }
+    StatStrip(items: [
+      ("Health", Format.percent(snapshot.health)),
+      ("Cycles", "\(snapshot.cycleCount)"),
+      ("Temp", snapshot.temperature.map { String(format: "%.1f°", $0) } ?? "n/a"),
+      ("Adapter", snapshot.adapterWatts.map { "\($0) W" } ?? "none"),
+    ], valueSize: 13, padding: 7)
     .padding(.top, 10)
     .overlay(alignment: .top) { Rectangle().fill(Theme.line).frame(height: 1) }
   }
+}
 
-  private var divider: some View {
-    Rectangle().fill(Theme.line).frame(width: 1, height: 36)
-  }
+// Labels over monospaced values, split by hairlines: the popover's stats and the dashboard tiles.
+struct StatStrip: View {
+  let items: [(String, String)]
+  var valueSize: CGFloat = 13
+  var padding: CGFloat = 7
 
-  private func stat(_ title: String, _ value: String) -> some View {
-    VStack(alignment: .leading, spacing: 3) {
-      Text(title).font(.system(size: 11)).foregroundStyle(Theme.ink3)
-      Text(value).font(Theme.mono(13, weight: .semibold)).foregroundStyle(Theme.ink)
+  var body: some View {
+    HStack(spacing: 0) {
+      ForEach(Array(items.enumerated()), id: \.offset) { index, item in
+        if index > 0 { Rectangle().fill(Theme.line).frame(width: 1).frame(maxHeight: .infinity) }
+        VStack(alignment: .leading, spacing: 3) {
+          Text(item.0).font(.system(size: 11)).foregroundStyle(Theme.ink3)
+          Text(item.1).font(Theme.mono(valueSize, weight: .semibold)).foregroundStyle(Theme.ink)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, padding)
+      }
     }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(.horizontal, 7)
+    .fixedSize(horizontal: false, vertical: true)
   }
 }

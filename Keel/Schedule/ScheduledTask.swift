@@ -9,7 +9,7 @@ struct ScheduledTask: Codable, Equatable, Identifiable, Sendable {
     // Sets the limit and runs on battery down to it (macOS holds nothing below 80%).
     case dischargeTo(Int)
     case startCalibration
-    case powerMode(Int) // PowerMode raw value
+    case powerMode(PowerMode)
 
     var title: String {
       switch self {
@@ -18,7 +18,7 @@ struct ScheduledTask: Codable, Equatable, Identifiable, Sendable {
       case .pauseCharging: return "Pause charging"
       case .dischargeTo(let percent): return "Discharge to \(percent)%"
       case .startCalibration: return "Start calibration"
-      case .powerMode(let raw): return "Switch to \(PowerMode(rawValue: raw)?.title ?? "Automatic") mode"
+      case .powerMode(let mode): return "Switch to \(mode.title) mode"
       }
     }
   }
@@ -58,7 +58,6 @@ struct TaskRun: Codable, Equatable, Identifiable, Sendable {
   }
 
   var id = UUID()
-  var taskID: UUID
   var title: String
   var dueAt: Date
   var ranAt: Date

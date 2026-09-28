@@ -7,6 +7,9 @@ enum HelperIdentity {
   static let teamIdentifier = "R87873B42W"
   // Bumped whenever the helper's behaviour changes, so the app can re-register a stale copy.
   static let version = 2
+  // The lowest charge Keel ever runs the battery down to with the charger cut. Calibration
+  // aims for it and the helper enforces it on its own.
+  static let batteryFloor = 10
 
   // Only a Keel build signed by this team may talk to the helper, and the app only talks to
   // a helper signed by the same team.
@@ -45,7 +48,7 @@ enum HelperIdentity {
 }
 
 // macOS energy modes (pmset powermode). High Power only exists on some MacBook Pro models.
-@objc enum PowerMode: Int, CaseIterable {
+@objc enum PowerMode: Int, CaseIterable, Codable {
   case automatic = 0
   case low = 1
   case high = 2

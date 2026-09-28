@@ -14,7 +14,7 @@ enum CalibrationStep: Codable, Equatable, Sendable {
     case .chargeFull: return "Charge to 100%"
     case .dischargeLow: return "Discharge to \(Calibration.floor)%"
     case .rechargeFull: return "Charge to 100%"
-    case .hold: return "Hold 1 hour"
+    case .hold: return "Hold \(Int(Calibration.holdDuration / 3600)) hour"
     case .returnToLimit: return "Back to limit"
     }
   }
@@ -32,7 +32,7 @@ enum CalibrationStep: Codable, Equatable, Sendable {
 }
 
 enum Calibration {
-  static let floor = 10
+  static let floor = HelperIdentity.batteryFloor
   static let holdDuration: TimeInterval = 60 * 60
 
   enum Outcome: Equatable {

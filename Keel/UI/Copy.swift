@@ -36,6 +36,10 @@ enum Format {
     String(format: "%.1f W", abs(value))
   }
 
+  static func percent(_ value: Double) -> String {
+    String(format: "%.1f%%", value)
+  }
+
   static func temperature(_ value: Double) -> String {
     String(format: "%.1f°C", value)
   }

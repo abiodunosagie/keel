@@ -12,6 +12,7 @@
 		0AB7FA25C9BBBA11A43424D0 /* BatteryReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7501AC349D1DD14998B1D9 /* BatteryReader.swift */; };
 		0AC8151D12845A348CD608D0 /* ScheduleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C22048137C6F1B6919676D4 /* ScheduleEngine.swift */; };
 		0ADF605417FDFB2BE84FC45C /* DashboardPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 643FE5FB0C7798207A84AAA0 /* DashboardPane.swift */; };
+		0F4E9F0F3F1EB3AA97D86FEB /* Shell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF3990C50B60EC322A85575 /* Shell.swift */; };
 		139649778F04537BCAAEE589 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696836B885E7DDF0889B69A5 /* main.swift */; };
 		1921DF960731B7622B18B0EE /* AppearancePane.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA00D3C5BB7EA609449B9B42 /* AppearancePane.swift */; };
 		289FB22B61F91B3CFCD3566B /* MenuBarLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12B3218E01B3794914E42BD9 /* MenuBarLabel.swift */; };
@@ -33,6 +34,7 @@
 		61C08609AE8CCDFD7675FD0E /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36DB50EEBDD82D2AE7613592 /* AppModel.swift */; };
 		63998775ED65C94E1027D2E3 /* HelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F930A300E6C542717E69FE1C /* HelperProtocol.swift */; };
 		640B9C3053D7731E0EC7953D /* KeelSMC.m in Sources */ = {isa = PBXBuildFile; fileRef = ED8187622FA69DB43B72FEF5 /* KeelSMC.m */; };
+		64B73A1FFB22D836AB3FA782 /* Shell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF3990C50B60EC322A85575 /* Shell.swift */; };
 		698E9203C86827EB1B17CDDD /* ChargeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57FB20055413157BC64179E /* ChargeController.swift */; };
 		712713A9070D106C92F07E29 /* CalibrationPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB9421479E2969232575B96 /* CalibrationPane.swift */; };
 		7155BE7EA584AB573FF67E01 /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523A85AA0D01D638A24D02D4 /* TestSupport.swift */; };
@@ -146,6 +148,7 @@
 		D595DB2CC1077D79CBB5B3EF /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		D64F5E29940C28C3AA8B39DA /* ActionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRow.swift; sourceTree = "<group>"; };
 		DA17C4666B9B9F72AE3941A9 /* KeelPowerUI.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeelPowerUI.m; sourceTree = "<group>"; };
+		DAF3990C50B60EC322A85575 /* Shell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shell.swift; sourceTree = "<group>"; };
 		DFFC4DBF7D60E11E05E9A292 /* Keel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E01348882754A1139D8010C4 /* Calibration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calibration.swift; sourceTree = "<group>"; };
 		E7EA4F42D0A4038997173010 /* Scheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scheduler.swift; sourceTree = "<group>"; };
@@ -261,6 +264,7 @@
 				F930A300E6C542717E69FE1C /* HelperProtocol.swift */,
 				373F49AE56FD0A47B31C0A93 /* KeelSMC.h */,
 				ED8187622FA69DB43B72FEF5 /* KeelSMC.m */,
+				DAF3990C50B60EC322A85575 /* Shell.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -468,6 +472,7 @@
 				46C8DE1075D5D7CB80391DFD /* ScheduledTask.swift in Sources */,
 				FDD767036784B30F05DA07E8 /* Scheduler.swift in Sources */,
 				B67943EFC0F65787C004147D /* SettingsStore.swift in Sources */,
+				0F4E9F0F3F1EB3AA97D86FEB /* Shell.swift in Sources */,
 				2D39660CCB81BCD447B0160D /* ShortcutsIntents.swift in Sources */,
 				7971970A52E233248061E9A0 /* SleepGuard.swift in Sources */,
 				5F212196F8005AA361BC7F3C /* StatsViews.swift in Sources */,
@@ -494,6 +499,7 @@
 			files = (
 				63998775ED65C94E1027D2E3 /* HelperProtocol.swift in Sources */,
 				640B9C3053D7731E0EC7953D /* KeelSMC.m in Sources */,
+				64B73A1FFB22D836AB3FA782 /* Shell.swift in Sources */,
 				139649778F04537BCAAEE589 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

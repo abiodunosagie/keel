@@ -29,6 +29,7 @@ final class Notifier {
     }
   }
 
+  // Asked once per launch; a refusal is remembered so the owner is never asked again.
   private func isAuthorized() async -> Bool {
     if let authorized { return authorized }
     let granted = (try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])) ?? false

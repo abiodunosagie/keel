@@ -2,7 +2,6 @@ import SwiftUI
 
 struct CalibrationPane: View {
   @Environment(ChargeController.self) private var controller
-  @Environment(\.self) private var environment
 
   private static let steps: [CalibrationStep] = [
     .chargeFull, .dischargeLow, .rechargeFull, .hold(until: .distantFuture), .returnToLimit,

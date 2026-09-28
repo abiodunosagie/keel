@@ -41,23 +41,14 @@ enum PowerSettings {
   }
 
   private static func pmset(_ arguments: [String]) -> Bool {
-    let process = Process()
-    process.executableURL = URL(fileURLWithPath: "/usr/bin/pmset")
-    process.arguments = arguments
-    do {
-      try process.run()
-      process.waitUntilExit()
-      return process.terminationStatus == 0
-    } catch {
-      return false
-    }
+    Shell.run("/usr/bin/pmset", arguments)?.status == 0
   }
 }
 
 // Never let the battery run below this while the helper holds the charger off, whatever the
 // app asked for.
 enum SafetyFloor {
-  static let percent = 10
+  static let percent = HelperIdentity.batteryFloor
 
   // Fails closed: a battery that can't be read counts as empty.
   static var isAtOrBelow: Bool {

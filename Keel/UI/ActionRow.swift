@@ -34,7 +34,8 @@ struct ActionRow: View {
         symbol: "arrow.clockwise",
         isActive: controller.calibrationStep != nil,
         isEnabled: true,
-        help: controller.calibrationBlocker ?? "Charge to 100%, down to 10%, back to 100%, hold an hour, then your limit."
+        help: controller.calibrationBlocker
+          ?? "Charge to 100%, down to \(Calibration.floor)%, back to 100%, hold an hour, then your limit."
       ) {
         if controller.calibrationStep == nil, controller.calibrationBlocker == nil {
           controller.startCalibration()

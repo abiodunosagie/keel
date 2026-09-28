@@ -32,16 +32,9 @@ struct EnergyApp: Equatable, Sendable {
 
   // The first `top` sample has no rate yet, so two are taken and the second is used.
   nonisolated static func sample(limit: Int = 5) -> [EnergyApp] {
-    let process = Process()
-    let pipe = Pipe()
-    process.executableURL = URL(fileURLWithPath: "/usr/bin/top")
-    process.arguments = ["-l", "2", "-o", "power", "-n", "\(limit)", "-stats", "power,command"]
-    process.standardOutput = pipe
-    process.standardError = FileHandle.nullDevice
-    guard (try? process.run()) != nil else { return [] }
-    let data = pipe.fileHandleForReading.readDataToEndOfFile()
-    process.waitUntilExit()
-    return parse(String(decoding: data, as: UTF8.self), limit: limit)
+    let arguments = ["-l", "2", "-o", "power", "-n", "\(limit)", "-stats", "power,command"]
+    guard let result = Shell.run("/usr/bin/top", arguments) else { return [] }
+    return parse(result.output, limit: limit)
   }
 
   static func parse(_ output: String, limit: Int) -> [EnergyApp] {

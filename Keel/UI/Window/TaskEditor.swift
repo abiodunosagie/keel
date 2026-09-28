@@ -11,6 +11,9 @@ struct TaskEditor: View {
   @State private var powerMode: PowerMode
   let isNew: Bool
 
+  // What a new percent-based action starts at.
+  private static let defaultPercent = 80
+
   enum Kind: String, CaseIterable, Identifiable {
     case setLimit, topUp, pauseCharging, dischargeTo, startCalibration, powerMode
 
@@ -40,13 +43,21 @@ struct TaskEditor: View {
       _kind = State(initialValue: .dischargeTo)
       _percent = State(initialValue: value)
       _powerMode = State(initialValue: .automatic)
-    case .powerMode(let raw):
+    case .powerMode(let mode):
       _kind = State(initialValue: .powerMode)
-      _percent = State(initialValue: 80)
-      _powerMode = State(initialValue: PowerMode(rawValue: raw) ?? .automatic)
-    case .topUp, .pauseCharging, .startCalibration:
-      _kind = State(initialValue: task.action == .topUp ? .topUp : task.action == .pauseCharging ? .pauseCharging : .startCalibration)
-      _percent = State(initialValue: 80)
+      _percent = State(initialValue: Self.defaultPercent)
+      _powerMode = State(initialValue: mode)
+    case .topUp:
+      _kind = State(initialValue: .topUp)
+      _percent = State(initialValue: Self.defaultPercent)
+      _powerMode = State(initialValue: .automatic)
+    case .pauseCharging:
+      _kind = State(initialValue: .pauseCharging)
+      _percent = State(initialValue: Self.defaultPercent)
+      _powerMode = State(initialValue: .automatic)
+    case .startCalibration:
+      _kind = State(initialValue: .startCalibration)
+      _percent = State(initialValue: Self.defaultPercent)
       _powerMode = State(initialValue: .automatic)
     }
   }
@@ -104,7 +115,7 @@ struct TaskEditor: View {
     case .pauseCharging: return .pauseCharging
     case .dischargeTo: return .dischargeTo(percent)
     case .startCalibration: return .startCalibration
-    case .powerMode: return .powerMode(powerMode.rawValue)
+    case .powerMode: return .powerMode(powerMode)
     }
   }
 }

@@ -5,87 +5,89 @@ struct SchedulePane: View {
   @State private var editing: ScheduledTask?
 
   var body: some View {
-    HStack(alignment: .top) {
-      PaneHeader(title: "Schedule", lede: "Run actions at set times. A task missed while the Mac sleeps can run when it wakes.")
-      Spacer()
-      Menu("Add Task") {
-        Button("New Task…") { editing = ScheduledTask(action: .topUp, repeats: .weekdays, start: Self.nextMorning) }
-        Divider()
-        Button("Calibrate every two weeks") {
-          editing = ScheduledTask(action: .startCalibration, repeats: .biweekly, start: Self.nextMorning,
-                                  runAtNextOpportunity: true)
+    VStack(alignment: .leading, spacing: 16) {
+      HStack(alignment: .top) {
+        PaneHeader(title: "Schedule", lede: "Run actions at set times. A task missed while the Mac sleeps can run when it wakes.")
+        Spacer()
+        Menu("Add Task") {
+          Button("New Task…") { editing = ScheduledTask(action: .topUp, repeats: .weekdays, start: Self.nextMorning) }
+          Divider()
+          Button("Calibrate every two weeks") {
+            editing = ScheduledTask(action: .startCalibration, repeats: .biweekly, start: Self.nextMorning,
+                                    runAtNextOpportunity: true)
+          }
+          Button("Top Up on weekday mornings") {
+            editing = ScheduledTask(action: .topUp, repeats: .weekdays, start: Self.nextMorning,
+                                    runAtNextOpportunity: true)
+          }
+          Button("Limit to 80% every night") {
+            editing = ScheduledTask(action: .setLimit(80), repeats: .daily, start: Self.tonight)
+          }
         }
-        Button("Top Up on weekday mornings") {
-          editing = ScheduledTask(action: .topUp, repeats: .weekdays, start: Self.nextMorning,
-                                  runAtNextOpportunity: true)
-        }
-        Button("Limit to 80% every night") {
-          editing = ScheduledTask(action: .setLimit(80), repeats: .daily, start: Self.tonight)
-        }
+        .fixedSize()
       }
-      .fixedSize()
-    }
-    if scheduler.tasks.isEmpty {
-      Text("No tasks yet. Add one, or start from a template in Add Task.")
-        .font(.system(size: 12))
-        .foregroundStyle(Theme.ink3)
-    } else {
-      RowGroup {
-        ForEach(scheduler.tasks) { task in
-          SettingRow(title: task.action.title, detail: detail(task)) {
-            HStack(spacing: 10) {
-              Button("Edit") { editing = task }
-              Toggle(task.action.title, isOn: Binding(
-                get: { task.isActive },
-                set: { active in
-                  var changed = task
-                  changed.isActive = active
-                  scheduler.save(changed)
-                }
-              ))
-              .labelsHidden()
-              .toggleStyle(.switch)
+      if scheduler.tasks.isEmpty {
+        Text("No tasks yet. Add one, or start from a template in Add Task.")
+          .font(.system(size: 12))
+          .foregroundStyle(Theme.ink3)
+      } else {
+        RowGroup {
+          ForEach(scheduler.tasks) { task in
+            SettingRow(title: task.action.title, detail: detail(task)) {
+              HStack(spacing: 10) {
+                Button("Edit") { editing = task }
+                Toggle(task.action.title, isOn: Binding(
+                  get: { task.isActive },
+                  set: { active in
+                    var changed = task
+                    changed.isActive = active
+                    scheduler.save(changed)
+                  }
+                ))
+                .labelsHidden()
+                .toggleStyle(.switch)
+              }
             }
           }
         }
       }
-    }
-    HStack {
-      Text("Task history").font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.ink)
-      Spacer()
-      if !scheduler.history.isEmpty {
-        Button("Clear History") { scheduler.clearHistory() }
-      }
-    }
-    .padding(.top, 6)
-    if scheduler.history.isEmpty {
-      Text("Tasks that ran, ran late after a wake, or were missed appear here.")
-        .font(.system(size: 12))
-        .foregroundStyle(Theme.ink3)
-    } else {
-      RowGroup {
-        ForEach(scheduler.history.prefix(20)) { run in
-          HStack {
-            Text(run.title).foregroundStyle(Theme.ink)
-            outcomeTag(run.outcome)
-            Spacer()
-            Text(run.ranAt.formatted(date: .abbreviated, time: .shortened))
-              .font(Theme.mono(12))
-              .foregroundStyle(Theme.ink2)
-          }
-          .font(.system(size: 12))
-          .padding(.horizontal, 14)
-          .padding(.vertical, 8)
+      HStack {
+        Text("Task history").font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.ink)
+        Spacer()
+        if !scheduler.history.isEmpty {
+          Button("Clear History") { scheduler.clearHistory() }
         }
       }
-    }
-    Text("Keel checks the schedule once a minute. A sleeping Mac only runs tasks when it wakes, so for night tasks turn on \"Run when the Mac wakes\".")
-      .font(.system(size: 11.5))
-      .foregroundStyle(Theme.ink3)
-      .fixedSize(horizontal: false, vertical: true)
-      .sheet(item: $editing) { task in
-        TaskEditor(task: task, isNew: !scheduler.tasks.contains { $0.id == task.id })
+      .padding(.top, 6)
+      if scheduler.history.isEmpty {
+        Text("Tasks that ran, ran late after a wake, or were missed appear here.")
+          .font(.system(size: 12))
+          .foregroundStyle(Theme.ink3)
+      } else {
+        RowGroup {
+          ForEach(scheduler.history.prefix(20)) { run in
+            HStack {
+              Text(run.title).foregroundStyle(Theme.ink)
+              outcomeTag(run.outcome)
+              Spacer()
+              Text(run.ranAt.formatted(date: .abbreviated, time: .shortened))
+                .font(Theme.mono(12))
+                .foregroundStyle(Theme.ink2)
+            }
+            .font(.system(size: 12))
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+          }
+        }
       }
+      Text("Keel checks the schedule once a minute. A sleeping Mac only runs tasks when it wakes, so for night tasks turn on \"Run when the Mac wakes\".")
+        .font(.system(size: 11.5))
+        .foregroundStyle(Theme.ink3)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+    .sheet(item: $editing) { task in
+      TaskEditor(task: task, isNew: !scheduler.tasks.contains { $0.id == task.id })
+    }
   }
 
   private func detail(_ task: ScheduledTask) -> String {
@@ -102,11 +104,10 @@ struct SchedulePane: View {
     let (text, color): (String, Color) = switch outcome {
     case .onTime: ("done", Theme.held)
     case .late: ("ran at wake", Theme.moving)
-    case .skipped: ("missed", Theme.ink3)
+    case .skipped: ("missed", Theme.ink2)
     }
-    return Text(text.uppercased())
-      .font(.system(size: 9.5, weight: .semibold))
-      .kerning(0.5)
+    return Text(text)
+      .font(.system(size: 11, weight: .semibold))
       .foregroundStyle(color)
       .padding(.horizontal, 6)
       .padding(.vertical, 2)

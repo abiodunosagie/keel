@@ -26,7 +26,7 @@ struct MainWindow: View {
       .background(Theme.surface)
       .navigationTitle(model.section.title)
     }
-    .frame(width: 780, height: 600)
+    .frame(minWidth: 780, idealWidth: 780, minHeight: 560, idealHeight: 600)
   }
 
   @ViewBuilder

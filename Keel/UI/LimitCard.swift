@@ -108,7 +108,8 @@ private struct LimitSlider: View {
     }
     .accessibilityElement()
     .accessibilityLabel("Charge limit")
-    .accessibilityValue("\(value) percent")
+    .accessibilityValue(current.map { String(format: "%d percent, battery now %.0f percent", value, $0) }
+                        ?? "\(value) percent")
     .accessibilityAdjustableAction { direction in
       switch direction {
       case .increment: onCommit(min(value + 1, range.upperBound))

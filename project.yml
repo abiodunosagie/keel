@@ -1,0 +1,52 @@
+name: Keel
+options:
+  bundleIdPrefix: com.abiodunosagie
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    DEVELOPMENT_TEAM: R87873B42W
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    ENABLE_HARDENED_RUNTIME: YES
+targets:
+  Keel:
+    type: application
+    platform: macOS
+    sources:
+      - path: Keel
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.abiodunosagie.Keel
+        PRODUCT_NAME: Keel
+        INFOPLIST_FILE: Keel/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Keel/Resources/Keel.entitlements
+        SWIFT_OBJC_BRIDGING_HEADER: Keel/ObjC/Keel-Bridging-Header.h
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: NO
+        SWIFT_STRICT_CONCURRENCY: complete
+  KeelTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: KeelTests
+    dependencies:
+      - target: Keel
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.abiodunosagie.KeelTests
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Keel.app/Contents/MacOS/Keel"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  Keel:
+    build:
+      targets:
+        Keel: all
+        KeelTests: [test]
+    test:
+      targets:
+        - KeelTests

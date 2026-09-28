@@ -1,0 +1,525 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		099B4EB931684B9D747DB52D /* ChargePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37AA5E1A4275E4550040540A /* ChargePolicy.swift */; };
+		0AB7FA25C9BBBA11A43424D0 /* BatteryReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7501AC349D1DD14998B1D9 /* BatteryReader.swift */; };
+		289FB22B61F91B3CFCD3566B /* MenuBarLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12B3218E01B3794914E42BD9 /* MenuBarLabel.swift */; };
+		41F960747B1CD2B66EB9DFA5 /* ChargePolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC373764E3A036BDB045CE3 /* ChargePolicyTests.swift */; };
+		4D305CCEC66744E4697BBF64 /* KeelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E45C1FD390432029BC9DFF4 /* KeelApp.swift */; };
+		52F167F93CB8F4DCAEBFF469 /* ChargeControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B854656744C3B0F55D0668B4 /* ChargeControllerTests.swift */; };
+		5DAC87707F4FA7C52A3F632B /* KeelSMC.m in Sources */ = {isa = PBXBuildFile; fileRef = FDFF7AA43700D8B487528784 /* KeelSMC.m */; };
+		5F212196F8005AA361BC7F3C /* StatsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27012C059DBCC83274E2393C /* StatsViews.swift */; };
+		5FD2B48F65470629EFB9A41D /* ChargeBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = B578F60797029FA85611AE21 /* ChargeBackend.swift */; };
+		698E9203C86827EB1B17CDDD /* ChargeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57FB20055413157BC64179E /* ChargeController.swift */; };
+		769411AEEC8F1B4F39E1416F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D844944E0E13C66940A015 /* SettingsView.swift */; };
+		8585053069969463CB3FD218 /* BatterySnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD3224187B8FB59752C36F7 /* BatterySnapshot.swift */; };
+		A52EB909AC78709E25F54417 /* LimitCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0089B8C074B8AB2FD70AB8A /* LimitCard.swift */; };
+		B67943EFC0F65787C004147D /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958B6C32DC0A5E9A12F37B2F /* SettingsStore.swift */; };
+		D9050BF8D7B99F3A1CA43177 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D595DB2CC1077D79CBB5B3EF /* Theme.swift */; };
+		EB845546928C1E457939547E /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B866D28BA36F08B145F920E8 /* PopoverView.swift */; };
+		F47A6096C1BC412EE6651BCF /* KeelPowerUI.m in Sources */ = {isa = PBXBuildFile; fileRef = DA17C4666B9B9F72AE3941A9 /* KeelPowerUI.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7B35239A073AADEFFB80BF7D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 21CE5A12478C27C89D8E099F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BB6C7D59AEC98AEBABAFB251;
+			remoteInfo = Keel;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		12B3218E01B3794914E42BD9 /* MenuBarLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarLabel.swift; sourceTree = "<group>"; };
+		231712F90B573F079836F9FF /* KeelSMC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeelSMC.h; sourceTree = "<group>"; };
+		27012C059DBCC83274E2393C /* StatsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsViews.swift; sourceTree = "<group>"; };
+		2DCF5848EBE3F5312489745F /* KeelPowerUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeelPowerUI.h; sourceTree = "<group>"; };
+		2E45C1FD390432029BC9DFF4 /* KeelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeelApp.swift; sourceTree = "<group>"; };
+		37AA5E1A4275E4550040540A /* ChargePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargePolicy.swift; sourceTree = "<group>"; };
+		39D844944E0E13C66940A015 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		7CD3224187B8FB59752C36F7 /* BatterySnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatterySnapshot.swift; sourceTree = "<group>"; };
+		7FBE1FFA6CBD46785796FF18 /* Keel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keel.entitlements; sourceTree = "<group>"; };
+		8AC373764E3A036BDB045CE3 /* ChargePolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargePolicyTests.swift; sourceTree = "<group>"; };
+		8D7501AC349D1DD14998B1D9 /* BatteryReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryReader.swift; sourceTree = "<group>"; };
+		958B6C32DC0A5E9A12F37B2F /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		A57FB20055413157BC64179E /* ChargeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargeController.swift; sourceTree = "<group>"; };
+		B0089B8C074B8AB2FD70AB8A /* LimitCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LimitCard.swift; sourceTree = "<group>"; };
+		B578F60797029FA85611AE21 /* ChargeBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargeBackend.swift; sourceTree = "<group>"; };
+		B854656744C3B0F55D0668B4 /* ChargeControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargeControllerTests.swift; sourceTree = "<group>"; };
+		B866D28BA36F08B145F920E8 /* PopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverView.swift; sourceTree = "<group>"; };
+		C475D39E0A8B43BC5DEE7CDF /* Keel-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Keel-Bridging-Header.h"; sourceTree = "<group>"; };
+		C7C40966CADA76D63EBB00B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D595DB2CC1077D79CBB5B3EF /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		DA17C4666B9B9F72AE3941A9 /* KeelPowerUI.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeelPowerUI.m; sourceTree = "<group>"; };
+		DFFC4DBF7D60E11E05E9A292 /* Keel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FBB08F7C577200675EDE09B3 /* KeelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KeelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDFF7AA43700D8B487528784 /* KeelSMC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeelSMC.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		014F620FDAE77BCE1CDCC1D0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DFFC4DBF7D60E11E05E9A292 /* Keel.app */,
+				FBB08F7C577200675EDE09B3 /* KeelTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		42D5A7981CBA6AD24E4D2149 /* KeelTests */ = {
+			isa = PBXGroup;
+			children = (
+				B854656744C3B0F55D0668B4 /* ChargeControllerTests.swift */,
+				8AC373764E3A036BDB045CE3 /* ChargePolicyTests.swift */,
+			);
+			path = KeelTests;
+			sourceTree = "<group>";
+		};
+		43D2AE6854489662B22808ED /* Battery */ = {
+			isa = PBXGroup;
+			children = (
+				8D7501AC349D1DD14998B1D9 /* BatteryReader.swift */,
+				7CD3224187B8FB59752C36F7 /* BatterySnapshot.swift */,
+			);
+			path = Battery;
+			sourceTree = "<group>";
+		};
+		8349C982898CAA3B713F34E2 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C7C40966CADA76D63EBB00B5 /* Info.plist */,
+				7FBE1FFA6CBD46785796FF18 /* Keel.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		91C4E59D086954880BDCE9F9 /* Charge */ = {
+			isa = PBXGroup;
+			children = (
+				B578F60797029FA85611AE21 /* ChargeBackend.swift */,
+				A57FB20055413157BC64179E /* ChargeController.swift */,
+				37AA5E1A4275E4550040540A /* ChargePolicy.swift */,
+				958B6C32DC0A5E9A12F37B2F /* SettingsStore.swift */,
+			);
+			path = Charge;
+			sourceTree = "<group>";
+		};
+		94987094E81DECF7A9528674 /* ObjC */ = {
+			isa = PBXGroup;
+			children = (
+				C475D39E0A8B43BC5DEE7CDF /* Keel-Bridging-Header.h */,
+				2DCF5848EBE3F5312489745F /* KeelPowerUI.h */,
+				DA17C4666B9B9F72AE3941A9 /* KeelPowerUI.m */,
+				231712F90B573F079836F9FF /* KeelSMC.h */,
+				FDFF7AA43700D8B487528784 /* KeelSMC.m */,
+			);
+			path = ObjC;
+			sourceTree = "<group>";
+		};
+		D6FAE18246B74B4514B7F3B8 = {
+			isa = PBXGroup;
+			children = (
+				F42D77EC062728740A115C6A /* Keel */,
+				42D5A7981CBA6AD24E4D2149 /* KeelTests */,
+				014F620FDAE77BCE1CDCC1D0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F2F15B215007E8D8A381B147 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				2E45C1FD390432029BC9DFF4 /* KeelApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		F42D77EC062728740A115C6A /* Keel */ = {
+			isa = PBXGroup;
+			children = (
+				F2F15B215007E8D8A381B147 /* App */,
+				43D2AE6854489662B22808ED /* Battery */,
+				91C4E59D086954880BDCE9F9 /* Charge */,
+				94987094E81DECF7A9528674 /* ObjC */,
+				8349C982898CAA3B713F34E2 /* Resources */,
+				F68E8D90AAA0A78059B35DAC /* UI */,
+			);
+			path = Keel;
+			sourceTree = "<group>";
+		};
+		F68E8D90AAA0A78059B35DAC /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				B0089B8C074B8AB2FD70AB8A /* LimitCard.swift */,
+				12B3218E01B3794914E42BD9 /* MenuBarLabel.swift */,
+				B866D28BA36F08B145F920E8 /* PopoverView.swift */,
+				39D844944E0E13C66940A015 /* SettingsView.swift */,
+				27012C059DBCC83274E2393C /* StatsViews.swift */,
+				D595DB2CC1077D79CBB5B3EF /* Theme.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6FE3E0A5E15DDD5DE3413827 /* KeelTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C7E07F888827B74ABD5A4553 /* Build configuration list for PBXNativeTarget "KeelTests" */;
+			buildPhases = (
+				4EECB3D434DA34CE07069F67 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				52D26AB5EE7F39520559DF9B /* PBXTargetDependency */,
+			);
+			name = KeelTests;
+			packageProductDependencies = (
+			);
+			productName = KeelTests;
+			productReference = FBB08F7C577200675EDE09B3 /* KeelTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		BB6C7D59AEC98AEBABAFB251 /* Keel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6D85E3542563FBFE7F9C6A6B /* Build configuration list for PBXNativeTarget "Keel" */;
+			buildPhases = (
+				0571E1556398B86AB9A5EB44 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Keel;
+			packageProductDependencies = (
+			);
+			productName = Keel;
+			productReference = DFFC4DBF7D60E11E05E9A292 /* Keel.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		21CE5A12478C27C89D8E099F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					6FE3E0A5E15DDD5DE3413827 = {
+						DevelopmentTeam = R87873B42W;
+						ProvisioningStyle = Automatic;
+					};
+					BB6C7D59AEC98AEBABAFB251 = {
+						DevelopmentTeam = R87873B42W;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 45D0E41A41A0B25538C213B6 /* Build configuration list for PBXProject "Keel" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = D6FAE18246B74B4514B7F3B8;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 014F620FDAE77BCE1CDCC1D0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BB6C7D59AEC98AEBABAFB251 /* Keel */,
+				6FE3E0A5E15DDD5DE3413827 /* KeelTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0571E1556398B86AB9A5EB44 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0AB7FA25C9BBBA11A43424D0 /* BatteryReader.swift in Sources */,
+				8585053069969463CB3FD218 /* BatterySnapshot.swift in Sources */,
+				5FD2B48F65470629EFB9A41D /* ChargeBackend.swift in Sources */,
+				698E9203C86827EB1B17CDDD /* ChargeController.swift in Sources */,
+				099B4EB931684B9D747DB52D /* ChargePolicy.swift in Sources */,
+				4D305CCEC66744E4697BBF64 /* KeelApp.swift in Sources */,
+				F47A6096C1BC412EE6651BCF /* KeelPowerUI.m in Sources */,
+				5DAC87707F4FA7C52A3F632B /* KeelSMC.m in Sources */,
+				A52EB909AC78709E25F54417 /* LimitCard.swift in Sources */,
+				289FB22B61F91B3CFCD3566B /* MenuBarLabel.swift in Sources */,
+				EB845546928C1E457939547E /* PopoverView.swift in Sources */,
+				B67943EFC0F65787C004147D /* SettingsStore.swift in Sources */,
+				769411AEEC8F1B4F39E1416F /* SettingsView.swift in Sources */,
+				5F212196F8005AA361BC7F3C /* StatsViews.swift in Sources */,
+				D9050BF8D7B99F3A1CA43177 /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4EECB3D434DA34CE07069F67 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52F167F93CB8F4DCAEBFF469 /* ChargeControllerTests.swift in Sources */,
+				41F960747B1CD2B66EB9DFA5 /* ChargePolicyTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		52D26AB5EE7F39520559DF9B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BB6C7D59AEC98AEBABAFB251 /* Keel */;
+			targetProxy = 7B35239A073AADEFFB80BF7D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2AB3542EAB3D9B571209A976 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = R87873B42W;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		3BD010658370695CD8ACA588 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Keel/Resources/Keel.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Keel/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.abiodunosagie.Keel;
+				PRODUCT_NAME = Keel;
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "Keel/ObjC/Keel-Bridging-Header.h";
+				SWIFT_STRICT_CONCURRENCY = complete;
+			};
+			name = Release;
+		};
+		68DFE817D555140150A10467 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Keel/Resources/Keel.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Keel/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.abiodunosagie.Keel;
+				PRODUCT_NAME = Keel;
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "Keel/ObjC/Keel-Bridging-Header.h";
+				SWIFT_STRICT_CONCURRENCY = complete;
+			};
+			name = Debug;
+		};
+		82FD8EBF29644D7C98DC7791 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = R87873B42W;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		9DE3D84851523C968C704759 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.abiodunosagie.KeelTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Keel.app/Contents/MacOS/Keel";
+			};
+			name = Release;
+		};
+		F8C1EE980E7F0951F403462F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.abiodunosagie.KeelTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Keel.app/Contents/MacOS/Keel";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		45D0E41A41A0B25538C213B6 /* Build configuration list for PBXProject "Keel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2AB3542EAB3D9B571209A976 /* Debug */,
+				82FD8EBF29644D7C98DC7791 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6D85E3542563FBFE7F9C6A6B /* Build configuration list for PBXNativeTarget "Keel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68DFE817D555140150A10467 /* Debug */,
+				3BD010658370695CD8ACA588 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C7E07F888827B74ABD5A4553 /* Build configuration list for PBXNativeTarget "KeelTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8C1EE980E7F0951F403462F /* Debug */,
+				9DE3D84851523C968C704759 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 21CE5A12478C27C89D8E099F /* Project object */;
+}

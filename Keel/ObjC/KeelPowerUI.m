@@ -43,13 +43,20 @@ static NSString *const KeelPowerUIErrorDomain = @"com.abiodunosagie.Keel.PowerUI
   return shared;
 }
 
+// Calls are serialized: the client is shared between the main thread and background writes,
+// and nothing documents PowerUISmartChargeClient as thread-safe.
 - (BOOL)isSupported {
-  return [_client isMCLSupported];
+  @synchronized (self) {
+    return [_client isMCLSupported];
+  }
 }
 
 - (nullable NSNumber *)limitEnabled:(NSError **)error {
   NSError *failure = nil;
-  unsigned long long enabled = [_client isMCLCurrentlyEnabled:&failure];
+  unsigned long long enabled;
+  @synchronized (self) {
+    enabled = [_client isMCLCurrentlyEnabled:&failure];
+  }
   if (failure) {
     if (error) { *error = failure; }
     return nil;
@@ -59,7 +66,10 @@ static NSString *const KeelPowerUIErrorDomain = @"com.abiodunosagie.Keel.PowerUI
 
 - (nullable NSNumber *)limitPercent:(NSError **)error {
   NSError *failure = nil;
-  unsigned char limit = [_client getMCLLimitWithError:&failure];
+  unsigned char limit;
+  @synchronized (self) {
+    limit = [_client getMCLLimitWithError:&failure];
+  }
   if (failure) {
     if (error) { *error = failure; }
     return nil;
@@ -80,14 +90,19 @@ static NSString *const KeelPowerUIErrorDomain = @"com.abiodunosagie.Keel.PowerUI
   if (percent == KeelPowerUI.maximumLimit) {
     return [self disableLimit:error];
   }
-  if (![_client isMCLCurrentlyEnabled:nil] && ![_client enableMCL:error]) {
-    return NO;
+  @synchronized (self) {
+    // A failed read counts as "off", which only costs a harmless extra enableMCL.
+    if ([_client isMCLCurrentlyEnabled:nil] != 1 && ![_client enableMCL:error]) {
+      return NO;
+    }
+    return [_client setMCLLimit:(unsigned char)percent error:error];
   }
-  return [_client setMCLLimit:(unsigned char)percent error:error];
 }
 
 - (BOOL)disableLimit:(NSError **)error {
-  return [_client disableMCL:error];
+  @synchronized (self) {
+    return [_client disableMCL:error];
+  }
 }
 
 @end

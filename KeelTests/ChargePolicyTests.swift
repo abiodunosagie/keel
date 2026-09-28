@@ -11,24 +11,20 @@ final class ChargePolicyTests: XCTestCase {
     charging: Bool = false,
     amperage: Double = 0
   ) -> BatterySnapshot {
-    let full = 5000
-    let remaining = Int(((hardware ?? Double(percent)) / 100 * Double(full)).rounded())
-    return BatterySnapshot(
-      macOSPercent: percent, remainingCapacity: remaining, fullChargeCapacity: full, designCapacity: 6000,
-      cycleCount: 10, isPluggedIn: pluggedIn, isCharging: charging, isFullyCharged: false, voltage: 12,
-      amperage: amperage, temperature: 30, systemLoad: 10, adapterWatts: 96, minutesToEmpty: nil,
-      minutesToFull: nil
-    )
+    makeBattery(percent: percent, hardware: hardware, pluggedIn: pluggedIn, charging: charging, amperage: amperage)
   }
 
   private func decide(
     _ snapshot: BatterySnapshot,
     _ settings: ChargeSettings = ChargeSettings(limit: 80),
     topUp: Bool = false,
+    mode: ChargeMode? = nil,
     heatPaused: Bool = false
   ) -> ChargePolicy.Decision {
-    ChargePolicy.decide(snapshot: snapshot, settings: settings, topUp: topUp, heatPaused: heatPaused,
-                        limitRange: range)
+    var offset = HardwareOffset()
+    offset.update(macOS: snapshot.macOSPercent, hardware: snapshot.hardwarePercent)
+    return ChargePolicy.decide(snapshot: snapshot, settings: settings, mode: mode ?? (topUp ? .topUp : .normal),
+                               heatPaused: heatPaused, hardwareOffset: offset.value, limitRange: range)
   }
 
   func testChargesTowardTheLimit() {
@@ -105,6 +101,43 @@ final class ChargePolicyTests: XCTestCase {
     XCTAssertEqual(decide(battery(percent: 90, hardware: 87, charging: true), settings).limit, 93)
   }
 
+  func testDischargeRunsDownEvenWithoutAutomaticDischarge() {
+    let settings = ChargeSettings(limit: 80, automaticDischarge: false)
+    XCTAssertEqual(decide(battery(percent: 92, amperage: -1.5), settings, mode: .discharge),
+                   .init(limit: 80, state: .discharging))
+  }
+
+  func testTopUpUnpluggedIsOnBattery() {
+    XCTAssertEqual(decide(battery(percent: 60, pluggedIn: false), topUp: true).state, .onBattery)
+  }
+
+  func testCalibrationDischargeCutsTheChargerWithNoLimit() {
+    let decision = decide(battery(percent: 60), mode: .calibration(.dischargeLow))
+    XCTAssertEqual(decision, .init(limit: nil, chargerConnected: false, state: .calibration))
+  }
+
+  func testCalibrationChargingStepsHaveNoLimitAndTheCharger() {
+    for step in [CalibrationStep.chargeFull, .rechargeFull, .hold(until: .distantFuture)] {
+      XCTAssertEqual(decide(battery(percent: 60), mode: .calibration(step)),
+                     .init(limit: nil, chargerConnected: true, state: .calibration))
+    }
+  }
+
+  func testCalibrationReturnsToTheLimit() {
+    XCTAssertEqual(decide(battery(percent: 100), mode: .calibration(.returnToLimit)).limit, 80)
+  }
+
+  func testPauseHereWithHardwarePercentHoldsTheCurrentLevel() {
+    // The reviewer's case: macOS 88, hardware 85.6. The paused limit must map back to 88.
+    let snapshot = battery(percent: 88, hardware: 85.6)
+    var settings = ChargeSettings(limit: 80, useHardwarePercent: true)
+    var offset = HardwareOffset()
+    offset.update(macOS: 88, hardware: snapshot.hardwarePercent)
+    settings.limit = ChargePolicy.limitHoldingCurrentLevel(snapshot: snapshot, settings: settings,
+                                                           hardwareOffset: offset.value, limitRange: range)
+    XCTAssertEqual(decide(snapshot, settings).limit, 88)
+  }
+
   func testHardwareShiftStaysInRange() {
     let settings = ChargeSettings(limit: 98, useHardwarePercent: true)
     XCTAssertNil(decide(battery(percent: 90, hardware: 85), settings).limit)
@@ -150,5 +183,48 @@ final class HeatGuardTests: XCTestCase {
     var guardian = HeatGuard()
     guardian.update(temperature: nil, limit: 35, now: start)
     XCTAssertFalse(guardian.isPaused)
+  }
+}
+
+final class HardwareOffsetTests: XCTestCase {
+  func testIgnoresJitterAroundTheHalfPoint() {
+    var offset = HardwareOffset()
+    offset.update(macOS: 90, hardware: 87.6) // raw 2.4
+    XCTAssertEqual(offset.value, 2)
+    offset.update(macOS: 90, hardware: 87.45) // raw 2.55, would round to 3
+    XCTAssertEqual(offset.value, 2)
+    offset.update(macOS: 90, hardware: 87.1) // raw 2.9, clearly 3
+    XCTAssertEqual(offset.value, 3)
+  }
+}
+
+final class CalibrationTests: XCTestCase {
+  private let now = Date(timeIntervalSince1970: 1_000_000)
+
+  func testFullSequence() {
+    XCTAssertEqual(Calibration.advance(.chargeFull, snapshot: makeBattery(percent: 100), target: 80, now: now),
+                   .next(.dischargeLow))
+    XCTAssertEqual(Calibration.advance(.dischargeLow, snapshot: makeBattery(percent: 11), target: 80, now: now), .stay)
+    XCTAssertEqual(Calibration.advance(.dischargeLow, snapshot: makeBattery(percent: 10), target: 80, now: now),
+                   .next(.rechargeFull))
+    XCTAssertEqual(Calibration.advance(.rechargeFull, snapshot: makeBattery(percent: 100), target: 80, now: now),
+                   .next(.hold(until: now.addingTimeInterval(Calibration.holdDuration))))
+    let hold = CalibrationStep.hold(until: now.addingTimeInterval(60))
+    XCTAssertEqual(Calibration.advance(hold, snapshot: makeBattery(percent: 100), target: 80, now: now), .stay)
+    XCTAssertEqual(Calibration.advance(hold, snapshot: makeBattery(percent: 100), target: 80,
+                                       now: now.addingTimeInterval(60)), .next(.returnToLimit))
+    XCTAssertEqual(Calibration.advance(.returnToLimit, snapshot: makeBattery(percent: 90), target: 80, now: now), .stay)
+    XCTAssertEqual(Calibration.advance(.returnToLimit, snapshot: makeBattery(percent: 80), target: 80, now: now),
+                   .finished)
+  }
+
+  func testUnpluggingWhileChargingAborts() {
+    XCTAssertEqual(Calibration.advance(.chargeFull, snapshot: makeBattery(percent: 50, pluggedIn: false),
+                                       target: 80, now: now), .aborted)
+  }
+
+  func testUnpluggingDuringDischargeContinues() {
+    XCTAssertEqual(Calibration.advance(.dischargeLow, snapshot: makeBattery(percent: 50, pluggedIn: false),
+                                       target: 80, now: now), .stay)
   }
 }

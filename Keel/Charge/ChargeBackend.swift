@@ -15,13 +15,11 @@ protocol ChargeBackend: Sendable {
 // working while the Mac sleeps, after a restart and when Keel is closed. When the battery is
 // above the limit on the charger, macOS runs the Mac from the battery until it is back down.
 struct NativeChargeBackend: ChargeBackend {
+  // KeelPowerUI serializes every call internally, so sharing it across threads is safe.
   private nonisolated(unsafe) let powerUI = KeelPowerUI.shared()
-  // Asked once: the answer can't change while Keel runs, and each call is a round trip to powerd.
-  let isAvailable: Bool
 
-  init() {
-    isAvailable = powerUI?.isSupported() ?? false
-  }
+  // A round trip to powerd: ChargeController asks once, off the main thread, and caches it.
+  var isAvailable: Bool { powerUI?.isSupported() ?? false }
 
   var limitRange: ClosedRange<Int> { KeelPowerUI.minimumLimit...KeelPowerUI.maximumLimit }
 

@@ -1,17 +1,28 @@
 import Foundation
 
-// What Keel is doing right now. The raw values match the states AlDente reports, plus
-// onBattery (unplugged) and macOSOverride (macOS charging past the limit on its own, for
+// What Keel is doing right now. The raw values match the states AlDente reports to Shortcuts,
+// plus onBattery (unplugged) and macOSOverride (macOS charging past the limit on its own, for
 // example to recalibrate its battery gauge).
-enum ChargeState: String, Sendable, CaseIterable {
+enum ChargeState: String, Sendable {
   case charging = "Charging"
   case paused = "Pause"
   case discharging = "Discharging"
   case topUp = "Topup"
   case heatProtect = "HeatProtect"
+  case calibration = "Calibration"
   case onBattery = "OnBattery"
   case macOSOverride = "MacOSOverride"
   case unavailable = "Exit"
+}
+
+// A temporary mode layered over the normal limit.
+enum ChargeMode: Equatable, Sendable {
+  case normal
+  // Charge to 100% until the charger is unplugged once.
+  case topUp
+  // Run on battery down to the limit once, even with Automatic Discharge off.
+  case discharge
+  case calibration(CalibrationStep)
 }
 
 struct ChargeSettings: Equatable, Sendable {
@@ -61,65 +72,104 @@ struct HeatGuard: Equatable, Sendable {
   }
 }
 
-// Decides which limit to hand to macOS and what to call the current state. Pure, so the whole
-// behaviour is covered by tests without touching powerd.
+extension ClosedRange where Bound == Int {
+  func clamped(_ value: Int) -> Int {
+    Swift.min(Swift.max(value, lowerBound), upperBound)
+  }
+}
+
+// Decides which limit to hand to macOS, whether the charger stays connected, and what to call
+// the current state. Pure, so the whole behaviour is covered by tests without touching powerd.
 enum ChargePolicy {
   struct Decision: Equatable, Sendable {
     // nil removes the limit (charge to 100%).
     var limit: Int?
+    // false cuts the charger inside the Mac so it runs from the battery (needs the helper).
+    var chargerConnected = true
     var state: ChargeState
+  }
+
+  // The limit on the macOS scale. macOS enforces its limit on the percentage it shows; with the
+  // hardware percentage on, `hardwareOffset` (macOS minus hardware, in points) shifts it so the
+  // battery really stops at the chosen hardware level.
+  static func target(settings: ChargeSettings, hardwareOffset: Int, limitRange: ClosedRange<Int>) -> Int {
+    limitRange.clamped(settings.limit + (settings.useHardwarePercent ? hardwareOffset : 0))
+  }
+
+  // The user-facing limit that holds the battery exactly where it is now.
+  static func limitHoldingCurrentLevel(
+    snapshot: BatterySnapshot,
+    settings: ChargeSettings,
+    hardwareOffset: Int,
+    limitRange: ClosedRange<Int>
+  ) -> Int {
+    let offset = settings.useHardwarePercent ? hardwareOffset : 0
+    return limitRange.clamped(snapshot.macOSPercent - offset)
   }
 
   static func decide(
     snapshot: BatterySnapshot,
     settings: ChargeSettings,
-    topUp: Bool,
+    mode: ChargeMode,
     heatPaused: Bool,
+    hardwareOffset: Int,
     limitRange: ClosedRange<Int>
   ) -> Decision {
-    // macOS enforces its limit on the percentage it shows. With the hardware percentage on,
-    // the limit is shifted by the gap between the two scales so the battery really stops at
-    // the chosen hardware level.
-    let offset = settings.useHardwarePercent
-      ? Int((Double(snapshot.macOSPercent) - snapshot.hardwarePercent).rounded())
-      : 0
-    let clamp = { (value: Int) in min(max(value, limitRange.lowerBound), limitRange.upperBound) }
-    let target = clamp(settings.limit + offset)
-    // Holding "where it is now" means the macOS percentage the battery has reached.
-    let here = clamp(snapshot.macOSPercent)
+    let target = target(settings: settings, hardwareOffset: hardwareOffset, limitRange: limitRange)
+    let here = limitRange.clamped(snapshot.macOSPercent)
 
-    let limit: Int?
-    if topUp {
-      limit = nil
-    } else if heatPaused, snapshot.isPluggedIn, snapshot.macOSPercent >= limitRange.lowerBound {
-      limit = min(target, here)
-    } else if !settings.automaticDischarge, snapshot.macOSPercent > target {
-      // Without automatic discharge a battery above the limit stays where it is instead of
-      // being run down to the limit.
-      limit = here
-    } else {
-      limit = target
+    switch mode {
+    case .topUp:
+      return Decision(limit: nil, state: snapshot.isPluggedIn ? .topUp : .onBattery)
+    case .calibration(let step):
+      return calibrationDecision(step: step, target: target, snapshot: snapshot)
+    case .discharge:
+      let limit = normalize(target, limitRange)
+      return Decision(limit: limit, state: state(snapshot: snapshot, limit: limit, heatPaused: false))
+    case .normal:
+      let limit: Int
+      if heatPaused, snapshot.isPluggedIn, snapshot.macOSPercent >= limitRange.lowerBound {
+        limit = min(target, here)
+      } else if !settings.automaticDischarge, snapshot.macOSPercent > target {
+        // Without automatic discharge a battery above the limit stays where it is instead of
+        // being run down to the limit.
+        limit = here
+      } else {
+        limit = target
+      }
+      let normalized = normalize(limit, limitRange)
+      return Decision(limit: normalized, state: state(snapshot: snapshot, limit: normalized, heatPaused: heatPaused))
     }
-    let normalized = limit.flatMap { $0 >= limitRange.upperBound ? nil : $0 }
-    return Decision(limit: normalized, state: state(snapshot: snapshot, limit: normalized,
-                                                     topUp: topUp, heatPaused: heatPaused))
   }
 
-  private static func state(
-    snapshot: BatterySnapshot,
-    limit: Int?,
-    topUp: Bool,
-    heatPaused: Bool
-  ) -> ChargeState {
+  // Calibration charges with no limit, cuts the charger to run down to the floor, charges to
+  // full again, holds, then hands back to the normal limit (macOS drains down to it).
+  private static func calibrationDecision(step: CalibrationStep, target: Int, snapshot: BatterySnapshot) -> Decision {
+    switch step {
+    case .chargeFull, .rechargeFull, .hold:
+      return Decision(limit: nil, state: .calibration)
+    case .dischargeLow:
+      return Decision(limit: nil, chargerConnected: false, state: .calibration)
+    case .returnToLimit:
+      return Decision(limit: target >= 100 ? nil : target, state: .calibration)
+    }
+  }
+
+  private static func normalize(_ limit: Int, _ range: ClosedRange<Int>) -> Int? {
+    limit >= range.upperBound ? nil : limit
+  }
+
+  private static func state(snapshot: BatterySnapshot, limit: Int?, heatPaused: Bool) -> ChargeState {
     guard snapshot.isPluggedIn else { return .onBattery }
-    if topUp { return .topUp }
     if heatPaused, !snapshot.isCharging { return .heatProtect }
-    let percent = Double(snapshot.macOSPercent)
-    let ceiling = Double(limit ?? 100)
+    let percent = snapshot.macOSPercent
+    let ceiling = limit ?? 100
     if snapshot.isCharging {
       // Charging one point past the limit is normal rounding; more than that is macOS itself.
       return percent >= ceiling + 1 ? .macOSOverride : .charging
     }
+    // A small negative current while plugged in is the battery covering a load spike; only a
+    // steady drain above the limit counts as discharging.
     if snapshot.amperage < -0.05, percent > ceiling { return .discharging }
     return .paused
   }

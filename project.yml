@@ -2,14 +2,14 @@ name: Keel
 options:
   bundleIdPrefix: com.abiodunosagie
   deploymentTarget:
-    macOS: "14.0"
+    macOS: "15.0"
   createIntermediateGroups: true
 settings:
   base:
     DEVELOPMENT_TEAM: R87873B42W
     CODE_SIGN_STYLE: Automatic
     SWIFT_VERSION: "5.0"
-    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    MACOSX_DEPLOYMENT_TARGET: "15.0"
     ENABLE_HARDENED_RUNTIME: YES
 targets:
   Keel:
@@ -17,6 +17,18 @@ targets:
     platform: macOS
     sources:
       - path: Keel
+      - path: Shared
+      - path: KeelHelper/com.abiodunosagie.Keel.Helper.plist
+        buildPhase:
+          copyFiles:
+            destination: wrapper
+            subpath: Contents/Library/LaunchDaemons
+    dependencies:
+      - target: KeelHelper
+        embed: true
+        codeSign: false
+        copy:
+          destination: executables
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.abiodunosagie.Keel
@@ -28,6 +40,23 @@ targets:
         CURRENT_PROJECT_VERSION: "1"
         GENERATE_INFOPLIST_FILE: NO
         SWIFT_STRICT_CONCURRENCY: complete
+        USER_HEADER_SEARCH_PATHS: $(SRCROOT)/Shared
+  KeelHelper:
+    type: tool
+    platform: macOS
+    sources:
+      - path: KeelHelper
+        excludes:
+          - "*.plist"
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.abiodunosagie.Keel.Helper
+        PRODUCT_NAME: KeelHelper
+        SWIFT_OBJC_BRIDGING_HEADER: KeelHelper/KeelHelper-Bridging-Header.h
+        USER_HEADER_SEARCH_PATHS: $(SRCROOT)/Shared
+        SKIP_INSTALL: YES
+        OTHER_CODE_SIGN_FLAGS: "--identifier com.abiodunosagie.Keel.Helper"
   KeelTests:
     type: bundle.unit-test
     platform: macOS

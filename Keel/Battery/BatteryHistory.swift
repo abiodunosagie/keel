@@ -1,0 +1,84 @@
+import Foundation
+import Observation
+
+// A reading kept for the dashboard charts.
+struct BatterySample: Codable, Equatable, Identifiable, Sendable {
+  var date: Date
+  var percent: Int
+  var watts: Double // whole-Mac power draw
+  var temperature: Double?
+  var pluggedIn: Bool
+
+  var id: Date { date }
+}
+
+// Records one sample a minute and keeps the last seven days on disk, so the charts have data
+// right after a relaunch.
+@MainActor
+@Observable
+final class BatteryHistory {
+  static let interval: TimeInterval = 60
+  static let keep: TimeInterval = 7 * 24 * 60 * 60
+
+  private(set) var samples: [BatterySample] = []
+  private var timer: Timer?
+  private var unsaved = 0
+  private let fileURL: URL?
+
+  init(fileURL: URL? = BatteryHistory.defaultFileURL()) {
+    self.fileURL = fileURL
+    if let fileURL, let data = try? Data(contentsOf: fileURL),
+       let saved = try? JSONDecoder().decode([BatterySample].self, from: data) {
+      samples = saved
+    }
+  }
+
+  func start(reading: @escaping @MainActor () -> BatterySnapshot?) {
+    timer = Timer.scheduledTimer(withTimeInterval: Self.interval, repeats: true) { [weak self] _ in
+      MainActor.assumeIsolated {
+        guard let snapshot = reading() else { return }
+        self?.record(snapshot, at: .now)
+      }
+    }
+  }
+
+  func record(_ snapshot: BatterySnapshot, at date: Date) {
+    samples.append(BatterySample(
+      date: date,
+      percent: snapshot.macOSPercent,
+      watts: snapshot.systemLoad ?? abs(snapshot.batteryWatts),
+      temperature: snapshot.temperature,
+      pluggedIn: snapshot.isPluggedIn
+    ))
+    samples.removeAll { date.timeIntervalSince($0.date) > Self.keep }
+    // Seven days is about a megabyte of JSON, so it is written every ten samples and on quit.
+    unsaved += 1
+    if unsaved >= 10 { flush() }
+  }
+
+  func flush() {
+    guard unsaved > 0, let fileURL, let data = try? JSONEncoder().encode(samples) else { return }
+    try? data.write(to: fileURL, options: .atomic)
+    unsaved = 0
+  }
+
+  func samples(since date: Date) -> [BatterySample] {
+    samples.filter { $0.date >= date }
+  }
+
+  // Average power draw over the last `minutes`, for the time-remaining estimate.
+  func averageWatts(lastMinutes minutes: Int, now: Date = .now) -> Double? {
+    let recent = samples(since: now.addingTimeInterval(-Double(minutes) * 60))
+    guard !recent.isEmpty else { return nil }
+    return recent.map(\.watts).reduce(0, +) / Double(recent.count)
+  }
+
+  nonisolated private static func defaultFileURL() -> URL? {
+    guard let folder = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
+      .appendingPathComponent("Keel", isDirectory: true) else {
+      return nil
+    }
+    try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+    return folder.appendingPathComponent("history.json")
+  }
+}

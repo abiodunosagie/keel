@@ -2,11 +2,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-// Read-only access to the System Management Controller. Reading needs no special rights;
-// writing needs root and lives in the helper, not in the app.
+// Access to the System Management Controller. Reading needs no special rights. Writing
+// needs root, so only the helper calls writeBytes; the app only reads.
 @interface KeelSMC : NSObject
 
 + (nullable instancetype)shared;
+
+// Writes a key whose size matches `data` exactly. NO on any failure.
+- (BOOL)writeBytes:(NSData *)data forKey:(NSString *)key;
 
 // The raw bytes of a four-character key, or nil when the key has no data or can't be read.
 - (nullable NSData *)bytesForKey:(NSString *)key type:(NSString *_Nullable *_Nullable)type;

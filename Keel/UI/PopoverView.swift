@@ -1,7 +1,10 @@
 import SwiftUI
 
+// The menu bar popover, laid out as in the approved mockup.
 struct PopoverView: View {
+  @Environment(AppModel.self) private var model
   @Environment(ChargeController.self) private var controller
+  @Environment(\.openWindow) private var openWindow
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
@@ -10,17 +13,16 @@ struct PopoverView: View {
         summary(snapshot)
         if controller.isAvailable {
           LimitCard()
-          actions
+          ActionRow(open: open)
         } else {
           Text(ChargeBackendError.unavailable.errorDescription ?? "")
             .font(.callout)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(Theme.ink2)
         }
         PowerFlowRow(snapshot: snapshot)
         StatsRow(snapshot: snapshot)
       } else {
-        Text("No battery found.")
-          .foregroundStyle(.secondary)
+        Text("No battery found.").foregroundStyle(Theme.ink2)
       }
       if let error = controller.lastError {
         Label(error, systemImage: "exclamationmark.triangle")
@@ -29,39 +31,40 @@ struct PopoverView: View {
       }
     }
     .padding(14)
-    .frame(width: 320)
+    .frame(width: 340)
+    .background(Theme.surface)
   }
 
   private var header: some View {
     HStack {
       StatePill(state: controller.state)
       Spacer()
-      SettingsLink {
-        Image(systemName: "gearshape")
+      Button { open(.dashboard) } label: {
+        Label("Open Dashboard", systemImage: "square.grid.2x2").labelStyle(.iconOnly)
       }
-      .buttonStyle(.borderless)
+      .help("Open Dashboard")
+      Button { open(.charge) } label: {
+        Label("Settings", systemImage: "gearshape").labelStyle(.iconOnly)
+      }
       .help("Settings")
-      Button {
-        NSApp.terminate(nil)
-      } label: {
-        Image(systemName: "power")
-      }
-      .buttonStyle(.borderless)
-      .help("Quit Keel. The charge limit stays on.")
     }
+    .buttonStyle(IconButtonStyle())
   }
 
   private func summary(_ snapshot: BatterySnapshot) -> some View {
-    HStack(alignment: .lastTextBaseline, spacing: 12) {
-      Text(verbatim: "\(Int((controller.displayPercent ?? 0).rounded()))")
-        .font(.system(size: 44, weight: .semibold, design: .rounded))
-        .monospacedDigit()
-      + Text(verbatim: "%")
-        .font(.system(size: 20, weight: .medium, design: .rounded))
-        .foregroundStyle(.secondary)
+    HStack(alignment: .center, spacing: 12) {
+      HStack(alignment: .lastTextBaseline, spacing: 1) {
+        Text(verbatim: "\(Int((controller.displayPercent ?? 0).rounded()))")
+          .font(.system(size: 46, weight: .semibold))
+          .monospacedDigit()
+        Text(verbatim: "%")
+          .font(Theme.mono(20, weight: .medium))
+          .foregroundStyle(Theme.ink3)
+      }
+      .foregroundStyle(Theme.ink)
       Text(detail(snapshot))
-        .font(.caption)
-        .foregroundStyle(.secondary)
+        .font(.system(size: 12))
+        .foregroundStyle(Theme.ink2)
         .fixedSize(horizontal: false, vertical: true)
     }
   }
@@ -72,36 +75,28 @@ struct PopoverView: View {
       : String(format: "Hardware reads %.1f%%.", snapshot.hardwarePercent)
     switch controller.state {
     case .onBattery:
-      if let minutes = snapshot.minutesToEmpty { return "\(Format.duration(minutes)) left. \(other)" }
-      return other
+      if let minutes = snapshot.minutesToEmpty { return "On battery, \(Format.duration(minutes)) left. \(other)" }
+      return "On battery. \(other)"
     case .charging, .topUp, .macOSOverride:
-      if let minutes = snapshot.minutesToFull { return "Full in \(Format.duration(minutes)). \(other)" }
+      if let minutes = snapshot.minutesToFull { return "Charging, full in \(Format.duration(minutes)). \(other)" }
       return "Plugged in and charging. \(other)"
     case .discharging:
-      return "Running on battery down to the limit. \(other)"
+      return "Plugged in, running on battery down to the limit. \(other)"
     case .heatProtect:
-      return "Charging resumes when the battery cools. \(other)"
+      return "Charging paused until the battery cools. \(other)"
+    case .calibration:
+      return "\(controller.calibrationStep?.title ?? "Calibrating"). \(other)"
     case .paused:
-      return "Running on the charger. \(other)"
+      return "Plugged in, running on the charger. \(other) Battery idle."
     case .unavailable:
       return other
     }
   }
 
-  private var actions: some View {
-    HStack(spacing: 8) {
-      ActionButton(
-        title: controller.isTopUpActive ? "Stop Top Up" : "Top Up",
-        symbol: "bolt.fill",
-        help: "Charge to 100% until you unplug, then go back to your limit."
-      ) {
-        controller.isTopUpActive ? controller.stopTopUp() : controller.startTopUp()
-      }
-      ActionButton(title: "Pause Here", symbol: "pause.fill",
-                   help: "Set the limit to the current level so the battery stays where it is.") {
-        controller.pauseCharging()
-      }
-    }
+  private func open(_ section: AppSection) {
+    model.section = section
+    openWindow(id: MainWindow.id)
+    NSApp.activate()
   }
 }
 
@@ -110,40 +105,32 @@ private struct StatePill: View {
 
   var body: some View {
     let color = Theme.color(for: state)
-    HStack(spacing: 6) {
-      Circle().fill(color).frame(width: 7, height: 7)
+    HStack(spacing: 7) {
+      Circle()
+        .fill(color)
+        .frame(width: 8, height: 8)
+        .overlay(Circle().stroke(color.opacity(0.3), lineWidth: 3))
       Text(state.title)
     }
-    .font(.caption.weight(.semibold))
+    .font(.system(size: 12, weight: .semibold))
     .foregroundStyle(color)
     .padding(.vertical, 4)
-    .padding(.horizontal, 9)
-    .background(color.opacity(0.14), in: Capsule())
+    .padding(.leading, 8)
+    .padding(.trailing, 10)
+    .background(color.opacity(0.15), in: Capsule())
     .help(state == .macOSOverride
           ? "macOS sometimes charges to 100% to recalibrate its battery gauge. It goes back to the limit afterwards."
           : "")
   }
 }
 
-private struct ActionButton: View {
-  let title: String
-  let symbol: String
-  let help: String
-  let action: () -> Void
-
-  var body: some View {
-    Button(action: action) {
-      VStack(spacing: 4) {
-        Image(systemName: symbol).foregroundStyle(Theme.accent)
-        Text(title).font(.caption)
-      }
-      .frame(maxWidth: .infinity)
-      .padding(.vertical, 8)
+struct IconButtonStyle: ButtonStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label
+      .font(.system(size: 14))
+      .foregroundStyle(Theme.ink2)
+      .frame(width: 26, height: 26)
+      .background(configuration.isPressed ? Theme.line : .clear, in: RoundedRectangle(cornerRadius: 7))
       .contentShape(Rectangle())
-    }
-    .buttonStyle(.plain)
-    .background(.background.opacity(0.6), in: RoundedRectangle(cornerRadius: 9))
-    .overlay(RoundedRectangle(cornerRadius: 9).strokeBorder(.separator))
-    .help(help)
   }
 }

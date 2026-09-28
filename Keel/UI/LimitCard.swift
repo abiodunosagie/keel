@@ -7,43 +7,58 @@ struct LimitCard: View {
   @State private var dragValue: Int?
 
   var body: some View {
-    let range = controller.backend.limitRange
+    let range = controller.limitRange
     let limit = dragValue ?? controller.settings.limit
-    VStack(alignment: .leading, spacing: 8) {
+    VStack(alignment: .leading, spacing: 10) {
       HStack(alignment: .firstTextBaseline) {
         Text("Charge limit")
+          .font(.system(size: 14))
         Spacer()
         Text(verbatim: "\(limit)%")
-          .font(.title3.weight(.semibold))
+          .font(.system(size: 18, weight: .semibold))
           .monospacedDigit()
       }
-      LimitSlider(range: range, value: limit, current: controller.displayPercent) { value, done in
-        dragValue = done ? nil : value
-        if done { controller.settings.limit = value }
-      }
+      .foregroundStyle(Theme.ink)
+      LimitSlider(
+        range: range,
+        value: limit,
+        current: controller.displayPercent,
+        onDrag: { dragValue = $0 },
+        onCommit: { value in
+          dragValue = nil
+          controller.setLimit(value)
+        }
+      )
       HStack {
         ForEach(Array(stride(from: range.lowerBound, through: range.upperBound, by: 5)), id: \.self) { tick in
           Text(verbatim: "\(tick)")
           if tick != range.upperBound { Spacer() }
         }
       }
-      .font(.caption2)
-      .monospacedDigit()
-      .foregroundStyle(.tertiary)
+      .font(Theme.mono(11))
+      .foregroundStyle(Theme.ink3)
       Text(footnote)
-        .font(.caption2)
-        .foregroundStyle(.secondary)
+        .font(.system(size: 11.5))
+        .foregroundStyle(Theme.ink3)
         .fixedSize(horizontal: false, vertical: true)
     }
     .padding(12)
-    .background(.background.opacity(0.6), in: RoundedRectangle(cornerRadius: 11))
-    .overlay(RoundedRectangle(cornerRadius: 11).strokeBorder(.separator))
+    .panel()
   }
 
   private var footnote: String {
-    if controller.isTopUpActive { return "Top Up is on: charging to 100% until you unplug." }
-    if let applied = controller.appliedLimit { return "macOS is holding the battery at \(applied)%, even while asleep." }
-    return "No limit set. The battery charges to 100%."
+    switch controller.mode {
+    case .topUp: return "Top Up is on: charging to 100% until you unplug."
+    case .discharge: return "Running on battery down to your limit."
+    case .calibration(let step): return "Calibrating: \(step.title.lowercased())."
+    case .normal: break
+    }
+    if let applied = controller.appliedLimit {
+      let scale = controller.settings.useHardwarePercent && applied != controller.settings.limit
+        ? " (\(applied)% as macOS counts it)" : ""
+      return "Held by macOS\(scale), keeps working while asleep and when Keel is closed."
+    }
+    return "No limit. The battery charges to 100%."
   }
 }
 
@@ -51,50 +66,62 @@ private struct LimitSlider: View {
   let range: ClosedRange<Int>
   let value: Int
   let current: Double?
-  let onChange: (Int, _ done: Bool) -> Void
+  let onDrag: (Int) -> Void
+  let onCommit: (Int) -> Void
 
   var body: some View {
     GeometryReader { geometry in
       let width = geometry.size.width
-      let span = Double(range.upperBound - range.lowerBound)
-      let position = { (percent: Double) in
-        CGFloat((min(max(percent, Double(range.lowerBound)), Double(range.upperBound)) - Double(range.lowerBound)) / span) * width
-      }
       ZStack(alignment: .leading) {
-        Capsule().fill(.quaternary).frame(height: 4)
-        Capsule().fill(Theme.held).frame(width: position(Double(value)), height: 4)
+        Capsule().fill(Theme.track).frame(height: 5)
+        Capsule().fill(Theme.held).frame(width: position(Double(value), width), height: 5)
         if let current, current >= Double(range.lowerBound) {
           RoundedRectangle(cornerRadius: 1)
-            .fill(.secondary)
-            .frame(width: 2, height: 16)
-            .offset(x: position(current) - 1)
+            .fill(Theme.ink3)
+            .frame(width: 2, height: 18)
+            .offset(x: position(current, width) - 1)
             .help(String(format: "Battery now: %.0f%%", current))
         }
         Circle()
           .fill(.white)
-          .shadow(color: .black.opacity(0.3), radius: 1.5, y: 1)
-          .frame(width: 20, height: 20)
-          .offset(x: position(Double(value)) - 10)
+          .shadow(color: .black.opacity(0.35), radius: 1.5, y: 1)
+          .frame(width: 22, height: 22)
+          .offset(x: position(Double(value), width) - 11)
       }
-      .frame(height: 24)
+      .frame(height: 26)
       .contentShape(Rectangle())
       .gesture(
         DragGesture(minimumDistance: 0)
-          .onChanged { onChange(percent(at: $0.location.x, width: width), false) }
-          .onEnded { onChange(percent(at: $0.location.x, width: width), true) }
+          .onChanged { onDrag(percent(at: $0.location.x, width: width)) }
+          .onEnded { onCommit(percent(at: $0.location.x, width: width)) }
       )
     }
-    .frame(height: 24)
+    .frame(height: 26)
+    .focusable()
+    .onKeyPress(.leftArrow) {
+      onCommit(max(value - 1, range.lowerBound))
+      return .handled
+    }
+    .onKeyPress(.rightArrow) {
+      onCommit(min(value + 1, range.upperBound))
+      return .handled
+    }
     .accessibilityElement()
     .accessibilityLabel("Charge limit")
     .accessibilityValue("\(value) percent")
     .accessibilityAdjustableAction { direction in
       switch direction {
-      case .increment: onChange(min(value + 1, range.upperBound), true)
-      case .decrement: onChange(max(value - 1, range.lowerBound), true)
+      case .increment: onCommit(min(value + 1, range.upperBound))
+      case .decrement: onCommit(max(value - 1, range.lowerBound))
       @unknown default: break
       }
     }
+  }
+
+  private func position(_ percent: Double, _ width: CGFloat) -> CGFloat {
+    let span = Double(range.upperBound - range.lowerBound)
+    let clamped = min(max(percent, Double(range.lowerBound)), Double(range.upperBound))
+    return CGFloat((clamped - Double(range.lowerBound)) / span) * width
   }
 
   private func percent(at x: CGFloat, width: CGFloat) -> Int {

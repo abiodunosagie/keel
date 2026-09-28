@@ -1,47 +1,85 @@
 import SwiftUI
 
-enum Format {
-  static func duration(_ minutes: Int) -> String {
-    minutes >= 60 ? "\(minutes / 60) h \(minutes % 60) min" : "\(minutes) min"
-  }
-
-  static func watts(_ value: Double) -> String {
-    String(format: "%.1f W", abs(value))
-  }
-}
-
-// Where the power is going: charger to Mac and battery, or battery to Mac.
+// Where the power goes, drawn as a ribbon: charger to Mac (and battery), or battery to Mac.
 struct PowerFlowRow: View {
   let snapshot: BatterySnapshot
 
   var body: some View {
-    HStack(spacing: 8) {
-      Label(source, systemImage: snapshot.isPluggedIn ? "bolt.fill" : "battery.75percent")
-      Image(systemName: "arrow.right").foregroundStyle(.tertiary)
-      Text(destination)
-      Spacer()
+    let flow = PowerFlow(snapshot: snapshot)
+    HStack(spacing: 10) {
+      endpoint(flow.sourceTitle, flow.sourceWatts)
+      Ribbon(split: flow.batteryShare)
+        .fill(flow.fromBattery ? Theme.moving.opacity(0.15) : Theme.held.opacity(0.15))
+        .overlay(Ribbon(split: flow.batteryShare).stroke(flow.fromBattery ? Theme.moving : Theme.held, lineWidth: 0.8))
+        .frame(height: 34)
+      endpoint(flow.destinationTitle, flow.destinationWatts)
     }
-    .font(.caption)
-    .monospacedDigit()
-    .foregroundStyle(.secondary)
   }
 
-  private var batteryWatts: Double { snapshot.batteryWatts }
-
-  private var source: String {
-    if snapshot.isPluggedIn, batteryWatts < -0.3 {
-      return "Charger + battery \(Format.watts(batteryWatts))"
+  private func endpoint(_ title: String, _ watts: Double?) -> some View {
+    HStack(spacing: 4) {
+      Text(title).foregroundStyle(Theme.ink2)
+      if let watts {
+        Text(Format.watts(watts)).font(Theme.mono(12, weight: .semibold)).foregroundStyle(Theme.ink)
+      }
     }
-    if snapshot.isPluggedIn { return "Charger" }
-    return "Battery \(Format.watts(batteryWatts))"
+    .font(.system(size: 12))
+    .fixedSize()
+  }
+}
+
+// The numbers behind the ribbon. Battery watts are positive while charging.
+struct PowerFlow {
+  let snapshot: BatterySnapshot
+
+  // The battery covers a load spike or is being run down while plugged in.
+  var fromBattery: Bool { snapshot.batteryWatts < -0.3 }
+
+  var sourceTitle: String {
+    if snapshot.isPluggedIn { return fromBattery ? "Charger + battery" : "Charger" }
+    return "Battery"
   }
 
-  private var destination: String {
-    let load = snapshot.systemLoad.map { "Mac \(Format.watts($0))" } ?? "Mac"
-    if snapshot.isPluggedIn, batteryWatts > 0.3 {
-      return "\(load), battery \(Format.watts(batteryWatts))"
+  var sourceWatts: Double? {
+    guard let load = snapshot.systemLoad else { return nil }
+    return load + max(0, snapshot.batteryWatts)
+  }
+
+  var destinationTitle: String {
+    snapshot.batteryWatts > 0.3 ? "Mac + battery" : "Mac"
+  }
+
+  var destinationWatts: Double? { sourceWatts }
+
+  // How much of the ribbon's far end goes into the battery, 0 when nothing does.
+  var batteryShare: Double {
+    guard let total = sourceWatts, total > 0, snapshot.batteryWatts > 0.3 else { return 0 }
+    return min(1, snapshot.batteryWatts / total)
+  }
+}
+
+// A band that narrows slightly toward the Mac, splitting off the battery's share at the end.
+private struct Ribbon: Shape {
+  var split: Double
+
+  func path(in rect: CGRect) -> Path {
+    var path = Path()
+    let inset = rect.height * 0.12
+    path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+    path.addCurve(to: CGPoint(x: rect.maxX, y: rect.minY + inset),
+                  control1: CGPoint(x: rect.midX, y: rect.minY),
+                  control2: CGPoint(x: rect.midX, y: rect.minY + inset))
+    path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - inset))
+    path.addCurve(to: CGPoint(x: rect.minX, y: rect.maxY),
+                  control1: CGPoint(x: rect.midX, y: rect.maxY - inset),
+                  control2: CGPoint(x: rect.midX, y: rect.maxY))
+    path.closeSubpath()
+    if split > 0 {
+      let y = rect.minY + inset + (rect.height - 2 * inset) * (1 - split)
+      path.move(to: CGPoint(x: rect.maxX - rect.width * 0.25, y: y))
+      path.addLine(to: CGPoint(x: rect.maxX, y: y))
     }
-    return load
+    return path
   }
 }
 
@@ -51,24 +89,27 @@ struct StatsRow: View {
   var body: some View {
     HStack(spacing: 0) {
       stat("Health", String(format: "%.1f%%", snapshot.health))
-      Divider()
+      divider
       stat("Cycles", "\(snapshot.cycleCount)")
-      Divider()
-      stat("Temp", snapshot.temperature.map { String(format: "%.1f°C", $0) } ?? "n/a")
-      Divider()
+      divider
+      stat("Temp", snapshot.temperature.map { String(format: "%.1f°", $0) } ?? "n/a")
+      divider
       stat("Adapter", snapshot.adapterWatts.map { "\($0) W" } ?? "none")
     }
-    .frame(height: 34)
-    .padding(.top, 8)
-    .overlay(alignment: .top) { Divider() }
+    .padding(.top, 10)
+    .overlay(alignment: .top) { Rectangle().fill(Theme.line).frame(height: 1) }
+  }
+
+  private var divider: some View {
+    Rectangle().fill(Theme.line).frame(width: 1, height: 36)
   }
 
   private func stat(_ title: String, _ value: String) -> some View {
-    VStack(alignment: .leading, spacing: 2) {
-      Text(title).font(.caption2).foregroundStyle(.secondary)
-      Text(value).font(.caption.weight(.semibold)).monospacedDigit()
+    VStack(alignment: .leading, spacing: 3) {
+      Text(title).font(.system(size: 11)).foregroundStyle(Theme.ink3)
+      Text(value).font(Theme.mono(13, weight: .semibold)).foregroundStyle(Theme.ink)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(.horizontal, 6)
+    .padding(.horizontal, 7)
   }
 }

@@ -1,5 +1,6 @@
 #!/bin/zsh
-# Run the unit tests. They use a fake charge backend and never touch powerd or the SMC.
+# Run the unit tests. They use a fake charge backend; the host app skips its own startup
+# under XCTest (AppModel.isRunningTests), so nothing touches powerd, the helper or the SMC.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."

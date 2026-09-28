@@ -34,6 +34,7 @@ _Static_assert(sizeof(KeelSMCParam) == 80, "AppleSMC expects an 80-byte paramete
 
 static const uint32_t KeelSMCSelector = 2;
 static const UInt8 KeelSMCReadBytes = 5;
+static const UInt8 KeelSMCWriteBytes = 6;
 static const UInt8 KeelSMCReadKeyInfo = 9;
 
 static UInt32 KeelFourCC(NSString *string) {
@@ -99,6 +100,29 @@ static NSString *KeelFourCCString(UInt32 value) {
   if (!ok) { return nil; }
   if (type) { *type = KeelFourCCString(info.dataType); }
   return [NSData dataWithBytes:output.bytes length:info.dataSize];
+}
+
+- (BOOL)writeBytes:(NSData *)data forKey:(NSString *)key {
+  UInt32 code = KeelFourCC(key);
+  if (code == 0 || data.length == 0 || data.length > 32) { return NO; }
+  [_lock lock];
+  KeelSMCParam input = {0}, output = {0};
+  input.key = code;
+  input.data8 = KeelSMCReadKeyInfo;
+  if (![self call:&input output:&output] || output.keyInfo.dataSize != data.length) {
+    [_lock unlock];
+    return NO;
+  }
+  KeelSMCKeyInfo info = output.keyInfo;
+  memset(&input, 0, sizeof(input));
+  memset(&output, 0, sizeof(output));
+  input.key = code;
+  input.keyInfo = info;
+  input.data8 = KeelSMCWriteBytes;
+  memcpy(input.bytes, data.bytes, data.length);
+  BOOL ok = [self call:&input output:&output];
+  [_lock unlock];
+  return ok;
 }
 
 - (double)floatForKey:(NSString *)key {

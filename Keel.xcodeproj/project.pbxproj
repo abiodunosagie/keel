@@ -11,6 +11,7 @@
 		07763B73D5A155E1974DFF17 /* ActionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64F5E29940C28C3AA8B39DA /* ActionRow.swift */; };
 		099B4EB931684B9D747DB52D /* ChargePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37AA5E1A4275E4550040540A /* ChargePolicy.swift */; };
 		0AB7FA25C9BBBA11A43424D0 /* BatteryReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7501AC349D1DD14998B1D9 /* BatteryReader.swift */; };
+		0AC396D83F0550FF79183878 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 1165D7BD9057809DE61451F3 /* KeyboardShortcuts */; };
 		0AC8151D12845A348CD608D0 /* ScheduleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C22048137C6F1B6919676D4 /* ScheduleEngine.swift */; };
 		0ADF605417FDFB2BE84FC45C /* DashboardPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 643FE5FB0C7798207A84AAA0 /* DashboardPane.swift */; };
 		0F4E9F0F3F1EB3AA97D86FEB /* Shell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF3990C50B60EC322A85575 /* Shell.swift */; };
@@ -23,6 +24,7 @@
 		407CFBF23CA086F8043B5B40 /* TaskEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9DD01A2255FB2426452315 /* TaskEditor.swift */; };
 		411D885A51BE36B963B3ABC1 /* BatteryReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE0680E50220ECBF52E24698 /* BatteryReaderTests.swift */; };
 		41F960747B1CD2B66EB9DFA5 /* ChargePolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC373764E3A036BDB045CE3 /* ChargePolicyTests.swift */; };
+		448CBBE88BF83DA1E431C350 /* Automation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A900C93D111FDC3CC1F53F /* Automation.swift */; };
 		46C8DE1075D5D7CB80391DFD /* ScheduledTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EE9F7B89C2DF360362A53 /* ScheduledTask.swift */; };
 		498976218EB1BD075DB917D7 /* ScheduleEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4654DE21638015D5AD88DB65 /* ScheduleEngineTests.swift */; };
 		4BBE65BDFD802FD491602792 /* SchedulePane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663FBC0F33A39950CD14A0C8 /* SchedulePane.swift */; };
@@ -44,12 +46,14 @@
 		8585053069969463CB3FD218 /* BatterySnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD3224187B8FB59752C36F7 /* BatterySnapshot.swift */; };
 		892A2E3FF648F3C4397365DB /* KeelHelper in Embed Dependencies */ = {isa = PBXBuildFile; fileRef = 936D20C2E2EA96F7469F6287 /* KeelHelper */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8D51F49E95EB9AD85CA78B3E /* com.abiodunosagie.Keel.Helper.plist in CopyFiles */ = {isa = PBXBuildFile; fileRef = 13D4D382C1471431E235673E /* com.abiodunosagie.Keel.Helper.plist */; };
+		8EBD4E08E5F5A4B0CB05070B /* AutomationPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F60A17E0E1BA813ADD051A7 /* AutomationPane.swift */; };
 		8F0E6E096886AF0B3A9337C9 /* EnergyAppsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6537E4C2B71E24DA778CE61 /* EnergyAppsPanel.swift */; };
 		91098F7F2C2C435F26FF6F90 /* HelperClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2299EB0083A66780CF330ECE /* HelperClient.swift */; };
 		928C731220B6A72896FBC102 /* BatteryHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7643A7EF80E295E274C6D3CF /* BatteryHistory.swift */; };
 		A018656263BFFFDC30A5F95C /* ChipPowerParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453380DC2E9B30943421A86B /* ChipPowerParsing.swift */; };
 		A52EB909AC78709E25F54417 /* LimitCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0089B8C074B8AB2FD70AB8A /* LimitCard.swift */; };
 		A9CD130170E1954C22435F42 /* HelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F930A300E6C542717E69FE1C /* HelperProtocol.swift */; };
+		B067F0F354B86953DA50E9ED /* Hotkeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73235924655E97A2D1350FF9 /* Hotkeys.swift */; };
 		B67943EFC0F65787C004147D /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958B6C32DC0A5E9A12F37B2F /* SettingsStore.swift */; };
 		BAC3CE41D8A1134204163017 /* PowerInsights.swift in Sources */ = {isa = PBXBuildFile; fileRef = 910B5C1A5230347977A44C42 /* PowerInsights.swift */; };
 		BD57BAE3B3B9E8BC2A4562E6 /* HistoryPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2194F86B21B33E0C9605E2 /* HistoryPane.swift */; };
@@ -62,6 +66,7 @@
 		DF8CEE9C2EB184B802F5931D /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68803130F5D4EB29BDDA4AA /* StatusItemController.swift */; };
 		E16A74422B3A6D926D90367D /* Notifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E2276B38A20FCF6B9E0BB7 /* Notifier.swift */; };
 		E32E431D18E225A9C535C511 /* ChargePane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E93799D4C35406E5E751CF /* ChargePane.swift */; };
+		E80B8A51DFA53676B8F43D3E /* AutomationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E23AEBA1755C2C6BF962965 /* AutomationTests.swift */; };
 		EB845546928C1E457939547E /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B866D28BA36F08B145F920E8 /* PopoverView.swift */; };
 		F42716C0C20033ADA63F91EF /* MenuBarRendering.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0FA522EDC09535F626160FF /* MenuBarRendering.swift */; };
 		F47A6096C1BC412EE6651BCF /* KeelPowerUI.m in Sources */ = {isa = PBXBuildFile; fileRef = DA17C4666B9B9F72AE3941A9 /* KeelPowerUI.m */; };
@@ -117,8 +122,10 @@
 /* Begin PBXFileReference section */
 		13D4D382C1471431E235673E /* com.abiodunosagie.Keel.Helper.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = com.abiodunosagie.Keel.Helper.plist; sourceTree = "<group>"; };
 		1C22048137C6F1B6919676D4 /* ScheduleEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleEngine.swift; sourceTree = "<group>"; };
+		1E23AEBA1755C2C6BF962965 /* AutomationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationTests.swift; sourceTree = "<group>"; };
 		2299EB0083A66780CF330ECE /* HelperClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperClient.swift; sourceTree = "<group>"; };
 		2397A83FECB7CEDB3FA0DDF9 /* HelperSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperSection.swift; sourceTree = "<group>"; };
+		25A900C93D111FDC3CC1F53F /* Automation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Automation.swift; sourceTree = "<group>"; };
 		265445C63FF1032A8D405E02 /* WhatsNewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewView.swift; sourceTree = "<group>"; };
 		27012C059DBCC83274E2393C /* StatsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsViews.swift; sourceTree = "<group>"; };
 		2DCF5848EBE3F5312489745F /* KeelPowerUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeelPowerUI.h; sourceTree = "<group>"; };
@@ -137,6 +144,8 @@
 		643FE5FB0C7798207A84AAA0 /* DashboardPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardPane.swift; sourceTree = "<group>"; };
 		663FBC0F33A39950CD14A0C8 /* SchedulePane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulePane.swift; sourceTree = "<group>"; };
 		696836B885E7DDF0889B69A5 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		6F60A17E0E1BA813ADD051A7 /* AutomationPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationPane.swift; sourceTree = "<group>"; };
+		73235924655E97A2D1350FF9 /* Hotkeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hotkeys.swift; sourceTree = "<group>"; };
 		7643A7EF80E295E274C6D3CF /* BatteryHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryHistory.swift; sourceTree = "<group>"; };
 		768380E958B1A61CABAFC175 /* WindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManager.swift; sourceTree = "<group>"; };
 		7CD3224187B8FB59752C36F7 /* BatterySnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatterySnapshot.swift; sourceTree = "<group>"; };
@@ -185,6 +194,17 @@
 		FE77D21DA50BE23F31D667DE /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		B8FFE7325ACE2E45F7D23E17 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0AC396D83F0550FF79183878 /* KeyboardShortcuts in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
 		014F620FDAE77BCE1CDCC1D0 /* Products */ = {
 			isa = PBXGroup;
@@ -208,6 +228,7 @@
 			isa = PBXGroup;
 			children = (
 				EA00D3C5BB7EA609449B9B42 /* AppearancePane.swift */,
+				6F60A17E0E1BA813ADD051A7 /* AutomationPane.swift */,
 				4BB9421479E2969232575B96 /* CalibrationPane.swift */,
 				43E93799D4C35406E5E751CF /* ChargePane.swift */,
 				643FE5FB0C7798207A84AAA0 /* DashboardPane.swift */,
@@ -227,6 +248,7 @@
 		42D5A7981CBA6AD24E4D2149 /* KeelTests */ = {
 			isa = PBXGroup;
 			children = (
+				1E23AEBA1755C2C6BF962965 /* AutomationTests.swift */,
 				AE0680E50220ECBF52E24698 /* BatteryReaderTests.swift */,
 				B854656744C3B0F55D0668B4 /* ChargeControllerTests.swift */,
 				8AC373764E3A036BDB045CE3 /* ChargePolicyTests.swift */,
@@ -247,6 +269,15 @@
 				892B0E7ED26D347F86A4B566 /* PowerLog.swift */,
 			);
 			path = Battery;
+			sourceTree = "<group>";
+		};
+		6B57F74893251CA49F3C962A /* Automation */ = {
+			isa = PBXGroup;
+			children = (
+				25A900C93D111FDC3CC1F53F /* Automation.swift */,
+				73235924655E97A2D1350FF9 /* Hotkeys.swift */,
+			);
+			path = Automation;
 			sourceTree = "<group>";
 		};
 		8349C982898CAA3B713F34E2 /* Resources */ = {
@@ -351,6 +382,7 @@
 			isa = PBXGroup;
 			children = (
 				F2F15B215007E8D8A381B147 /* App */,
+				6B57F74893251CA49F3C962A /* Automation */,
 				43D2AE6854489662B22808ED /* Battery */,
 				91C4E59D086954880BDCE9F9 /* Charge */,
 				030AECDBB910D24165B1AA66 /* Helper */,
@@ -407,6 +439,7 @@
 			buildPhases = (
 				0571E1556398B86AB9A5EB44 /* Sources */,
 				4081D75B967F33A2BD30856F /* CopyFiles */,
+				B8FFE7325ACE2E45F7D23E17 /* Frameworks */,
 				7BF341BC3E197A896FBDD491 /* Embed Dependencies */,
 			);
 			buildRules = (
@@ -416,6 +449,7 @@
 			);
 			name = Keel;
 			packageProductDependencies = (
+				1165D7BD9057809DE61451F3 /* KeyboardShortcuts */,
 			);
 			productName = Keel;
 			productReference = DFFC4DBF7D60E11E05E9A292 /* Keel.app */;
@@ -470,6 +504,9 @@
 			);
 			mainGroup = D6FAE18246B74B4514B7F3B8;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2A20D9975A9FE41A3A05751C /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 014F620FDAE77BCE1CDCC1D0 /* Products */;
 			projectDirPath = "";
@@ -490,6 +527,8 @@
 				07763B73D5A155E1974DFF17 /* ActionRow.swift in Sources */,
 				61C08609AE8CCDFD7675FD0E /* AppModel.swift in Sources */,
 				1921DF960731B7622B18B0EE /* AppearancePane.swift in Sources */,
+				448CBBE88BF83DA1E431C350 /* Automation.swift in Sources */,
+				8EBD4E08E5F5A4B0CB05070B /* AutomationPane.swift in Sources */,
 				928C731220B6A72896FBC102 /* BatteryHistory.swift in Sources */,
 				0AB7FA25C9BBBA11A43424D0 /* BatteryReader.swift in Sources */,
 				8585053069969463CB3FD218 /* BatterySnapshot.swift in Sources */,
@@ -510,6 +549,7 @@
 				A9CD130170E1954C22435F42 /* HelperProtocol.swift in Sources */,
 				5A4F288A341789AEB1FD6042 /* HelperSection.swift in Sources */,
 				BD57BAE3B3B9E8BC2A4562E6 /* HistoryPane.swift in Sources */,
+				B067F0F354B86953DA50E9ED /* Hotkeys.swift in Sources */,
 				4D305CCEC66744E4697BBF64 /* KeelApp.swift in Sources */,
 				F47A6096C1BC412EE6651BCF /* KeelPowerUI.m in Sources */,
 				604B3E1CA5475378FDC6BC09 /* KeelSMC.m in Sources */,
@@ -544,6 +584,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E80B8A51DFA53676B8F43D3E /* AutomationTests.swift in Sources */,
 				411D885A51BE36B963B3ABC1 /* BatteryReaderTests.swift in Sources */,
 				52F167F93CB8F4DCAEBFF469 /* ChargeControllerTests.swift in Sources */,
 				41F960747B1CD2B66EB9DFA5 /* ChargePolicyTests.swift in Sources */,
@@ -864,6 +905,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2A20D9975A9FE41A3A05751C /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1165D7BD9057809DE61451F3 /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2A20D9975A9FE41A3A05751C /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 21CE5A12478C27C89D8E099F /* Project object */;
 }

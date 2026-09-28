@@ -31,6 +31,10 @@ final class StatusItemController: NSObject {
     popover.contentViewController?.view.window?.makeKey()
   }
 
+  func togglePopover() {
+    popover.isShown ? closePopover() : showPopover()
+  }
+
   func closePopover() {
     popover.performClose(nil)
   }

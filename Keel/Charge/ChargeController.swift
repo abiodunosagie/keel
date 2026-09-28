@@ -27,6 +27,11 @@ protocol ChargerControl: AnyObject {
   func isChargerConnected() async -> Bool?
 }
 
+struct NetworkLimit: Equatable, Sendable {
+  var network: String
+  var limit: Int
+}
+
 // Reads the battery on a timer and on every power change, runs ChargePolicy and hands the result
 // to macOS (the limit) and to the helper (the charger switch and the light).
 @MainActor
@@ -60,6 +65,23 @@ final class ChargeController {
       store.save(options)
       refresh()
     }
+  }
+
+  // A limit picked by the Wi-Fi network (Automation). A manual limit change clears it until the
+  // network changes again.
+  var networkLimit: NetworkLimit? {
+    didSet {
+      guard networkLimit != oldValue else { return }
+      refresh()
+    }
+  }
+
+  // The settings the rules actually use: the network's limit when one applies.
+  var effectiveSettings: ChargeSettings {
+    guard let networkLimit else { return settings }
+    var copy = settings
+    copy.limit = networkLimit.limit
+    return copy
   }
 
   var onEvent: ((ChargeEvent) -> Void)?
@@ -178,7 +200,7 @@ final class ChargeController {
     }
 
     let decision = ChargePolicy.decide(
-      snapshot: snapshot, settings: settings, mode: mode, heatPaused: heatGuard.isPaused,
+      snapshot: snapshot, settings: effectiveSettings, mode: mode, heatPaused: heatGuard.isPaused,
       hardwareOffset: hardwareOffset.value, limitRange: limitRange
     )
     if state == .charging, decision.state == .paused, mode == .normal, let limit = decision.limit {
@@ -198,7 +220,7 @@ final class ChargeController {
   // starts, for example after the Mac charged to 100% while switched off.
   private func announceIfOverLimit() {
     guard options.overLimitAlert, let snapshot, isAvailable else { return }
-    let target = ChargePolicy.target(settings: settings, hardwareOffset: hardwareOffset.value, limitRange: limitRange)
+    let target = ChargePolicy.target(settings: effectiveSettings, hardwareOffset: hardwareOffset.value, limitRange: limitRange)
     guard target < limitRange.upperBound, snapshot.macOSPercent > target + 2 else { return }
     onEvent?(.overLimitOnLaunch(percent: snapshot.macOSPercent, limit: target))
   }
@@ -243,7 +265,7 @@ final class ChargeController {
 
   var canDischarge: Bool {
     guard let snapshot, snapshot.isPluggedIn, mode == .normal else { return false }
-    return snapshot.macOSPercent > ChargePolicy.target(settings: settings, hardwareOffset: hardwareOffset.value,
+    return snapshot.macOSPercent > ChargePolicy.target(settings: effectiveSettings, hardwareOffset: hardwareOffset.value,
                                                        limitRange: limitRange)
   }
 
@@ -252,8 +274,9 @@ final class ChargeController {
   func pauseCharging() {
     guard let snapshot else { return }
     mode = .normal
+    networkLimit = nil
     let limit = ChargePolicy.limitHoldingCurrentLevel(
-      snapshot: snapshot, settings: settings, hardwareOffset: hardwareOffset.value, limitRange: limitRange
+      snapshot: snapshot, settings: effectiveSettings, hardwareOffset: hardwareOffset.value, limitRange: limitRange
     )
     // Setting a new limit refreshes through didSet; an unchanged one still needs the mode change applied.
     if limit == settings.limit { refresh() } else { settings.limit = limit }
@@ -265,6 +288,7 @@ final class ChargeController {
   }
 
   func setLimit(_ limit: Int) {
+    networkLimit = nil
     settings.limit = limitRange.clamped(limit)
   }
 
@@ -299,7 +323,7 @@ final class ChargeController {
     let limit: Int?
     if options.keepLimitWhenClosed, let snapshot {
       limit = ChargePolicy.decide(
-        snapshot: snapshot, settings: settings, mode: .normal, heatPaused: false,
+        snapshot: snapshot, settings: effectiveSettings, mode: .normal, heatPaused: false,
         hardwareOffset: hardwareOffset.value, limitRange: limitRange
       ).limit
     } else {
@@ -362,10 +386,10 @@ final class ChargeController {
     case .topUp where unplugged:
       mode = .normal
     case .discharge:
-      let target = ChargePolicy.target(settings: settings, hardwareOffset: hardwareOffset.value, limitRange: limitRange)
+      let target = ChargePolicy.target(settings: effectiveSettings, hardwareOffset: hardwareOffset.value, limitRange: limitRange)
       if unplugged || current.macOSPercent <= target { mode = .normal }
     case .calibration(let step):
-      let target = ChargePolicy.target(settings: settings, hardwareOffset: hardwareOffset.value, limitRange: limitRange)
+      let target = ChargePolicy.target(settings: effectiveSettings, hardwareOffset: hardwareOffset.value, limitRange: limitRange)
       switch Calibration.advance(step, snapshot: current, target: target, now: clock()) {
       case .stay: break
       case .next(let next): mode = .calibration(next)

@@ -16,6 +16,10 @@ settings:
   configs:
     Release:
       CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
+packages:
+  KeyboardShortcuts:
+    url: https://github.com/sindresorhus/KeyboardShortcuts
+    from: 2.0.0
 targets:
   Keel:
     type: application
@@ -29,6 +33,7 @@ targets:
             destination: wrapper
             subpath: Contents/Library/LaunchDaemons
     dependencies:
+      - package: KeyboardShortcuts
       - target: KeelHelper
         embed: true
         codeSign: false

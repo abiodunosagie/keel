@@ -11,6 +11,7 @@ extension View {
       .environment(model.scheduler)
       .environment(model.history)
       .environment(model.insights)
+      .environment(model.automation)
   }
 }
 

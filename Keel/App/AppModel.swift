@@ -3,7 +3,7 @@ import Observation
 
 // Sections of the main window, in sidebar order.
 enum AppSection: String, CaseIterable, Identifiable, Hashable {
-  case dashboard, history, charge, schedule, calibration, appearance, general
+  case dashboard, history, charge, schedule, automation, calibration, appearance, general
 
   var id: String { rawValue }
 
@@ -13,6 +13,7 @@ enum AppSection: String, CaseIterable, Identifiable, Hashable {
     case .history: return "History"
     case .charge: return "Charge"
     case .schedule: return "Schedule"
+    case .automation: return "Automation"
     case .calibration: return "Calibration"
     case .appearance: return "Appearance"
     case .general: return "General"
@@ -25,6 +26,7 @@ enum AppSection: String, CaseIterable, Identifiable, Hashable {
     case .history: return "heart.text.square"
     case .charge: return "battery.75percent"
     case .schedule: return "calendar"
+    case .automation: return "wand.and.stars"
     case .calibration: return "arrow.triangle.2.circlepath"
     case .appearance: return "circle.lefthalf.filled"
     case .general: return "gearshape"
@@ -44,6 +46,7 @@ final class AppModel {
   let scheduler: Scheduler
   let notifier = Notifier()
   let insights = PowerInsights()
+  let automation: Automation
   var section: AppSection = .dashboard
   @ObservationIgnored private(set) lazy var windows = WindowManager(model: self)
   @ObservationIgnored private var statusItem: StatusItemController?
@@ -56,6 +59,7 @@ final class AppModel {
   private init() {
     popoverLayout = SettingsStore().popoverLayout
     scheduler = Scheduler(controller: controller, helper: helper)
+    automation = Automation(controller: controller)
     controller.charger = helper
     controller.onEvent = { [notifier, controller] event in
       guard controller.options.notifications else { return }
@@ -86,10 +90,16 @@ final class AppModel {
     history.start(reading: { [controller] in controller.snapshot })
     await history.importPowerLog()
     scheduler.start()
+    automation.start()
+    Hotkeys.install(model: self)
   }
 
   func showPopover() {
     statusItem?.showPopover()
+  }
+
+  func togglePopover() {
+    statusItem?.togglePopover()
   }
 
   func open(_ section: AppSection) {

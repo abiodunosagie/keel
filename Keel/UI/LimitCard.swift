@@ -8,7 +8,7 @@ struct LimitCard: View {
 
   var body: some View {
     let range = controller.limitRange
-    let limit = dragValue ?? controller.settings.limit
+    let limit = dragValue ?? controller.effectiveSettings.limit
     VStack(alignment: .leading, spacing: 10) {
       HStack(alignment: .firstTextBaseline) {
         Text("Charge limit")
@@ -52,6 +52,9 @@ struct LimitCard: View {
     case .discharge: return "Running on battery down to your limit."
     case .calibration(let step): return "Calibrating: \(step.title.lowercased())."
     case .normal: break
+    }
+    if let network = controller.networkLimit {
+      return "\(network.limit)% on \(network.network). Changing it here applies until you switch networks."
     }
     if let applied = controller.appliedLimit {
       let scale = controller.settings.useHardwarePercent && applied != controller.settings.limit

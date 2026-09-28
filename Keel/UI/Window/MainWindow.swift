@@ -36,6 +36,7 @@ struct MainWindow: View {
     case .history: HistoryPane()
     case .charge: ChargePane()
     case .schedule: SchedulePane()
+    case .automation: AutomationPane()
     case .calibration: CalibrationPane()
     case .appearance: AppearancePane()
     case .general: GeneralPane()

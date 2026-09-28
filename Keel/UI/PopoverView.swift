@@ -1,26 +1,23 @@
+import Charts
 import SwiftUI
 
-// The menu bar popover, laid out as in the approved mockup.
+// The menu bar popover, laid out as in the approved mockup. Hold any card to rearrange or hide
+// cards; the layout is saved.
 struct PopoverView: View {
   @Environment(AppModel.self) private var model
   @Environment(ChargeController.self) private var controller
-  @Environment(\.openWindow) private var openWindow
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       header
-      if let snapshot = controller.snapshot {
-        summary(snapshot)
-        if controller.isAvailable {
-          LimitCard()
-          ActionRow(open: open)
-        } else {
-          Text(controller.unavailableReason)
-            .font(.callout)
-            .foregroundStyle(Theme.ink2)
+      if model.isEditingPopover {
+        PopoverEditor()
+      } else if let snapshot = controller.snapshot {
+        ForEach(model.popoverLayout.visible) { card in
+          view(for: card, snapshot: snapshot)
+            // Simultaneous, so holding a card never steals the slider's drag or a button tap.
+            .simultaneousGesture(LongPressGesture(minimumDuration: 0.6).onEnded { _ in model.isEditingPopover = true })
         }
-        PowerFlowRow(snapshot: snapshot)
-        StatsRow(snapshot: snapshot)
       } else {
         Text("No battery found.").foregroundStyle(Theme.ink2)
       }
@@ -32,26 +29,62 @@ struct PopoverView: View {
     }
     .padding(14)
     .frame(width: 340)
-    .background(Theme.surface)
+    .background(controller.options.reduceTransparency ? Theme.surface : .clear)
+  }
+
+  @ViewBuilder
+  private func view(for card: PopoverLayout.Card, snapshot: BatterySnapshot) -> some View {
+    switch card {
+    case .summary:
+      SummaryCard(snapshot: snapshot)
+    case .limit:
+      if controller.isAvailable {
+        LimitCard()
+      } else {
+        Text(controller.unavailableReason).font(.callout).foregroundStyle(Theme.ink2)
+      }
+    case .actions:
+      if controller.isAvailable { ActionRow(open: model.open) }
+    case .powerFlow:
+      PowerFlowRow(snapshot: snapshot)
+    case .stats:
+      StatsRow(snapshot: snapshot)
+    case .charger:
+      ChargerLine(snapshot: snapshot)
+    case .chart:
+      MiniChart()
+    }
   }
 
   private var header: some View {
     HStack {
-      StatePill(state: controller.state)
-      Spacer()
-      Button { open(.dashboard) } label: {
-        Label("Open Dashboard", systemImage: "square.grid.2x2").labelStyle(.iconOnly)
+      if model.isEditingPopover {
+        Text("Hold, hide and reorder cards").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.ink2)
+        Spacer()
+        Button("Done") { model.isEditingPopover = false }
+      } else {
+        StatePill(state: controller.state)
+        Spacer()
+        Button { model.open(.dashboard) } label: {
+          Label("Open Dashboard", systemImage: "square.grid.2x2").labelStyle(.iconOnly)
+        }
+        .buttonStyle(IconButtonStyle())
+        .help("Open Dashboard")
+        Button { model.open(.charge) } label: {
+          Label("Settings", systemImage: "gearshape").labelStyle(.iconOnly)
+        }
+        .buttonStyle(IconButtonStyle())
+        .help("Settings")
       }
-      .help("Open Dashboard")
-      Button { open(.charge) } label: {
-        Label("Settings", systemImage: "gearshape").labelStyle(.iconOnly)
-      }
-      .help("Settings")
     }
-    .buttonStyle(IconButtonStyle())
   }
+}
 
-  private func summary(_ snapshot: BatterySnapshot) -> some View {
+private struct SummaryCard: View {
+  @Environment(ChargeController.self) private var controller
+  let snapshot: BatterySnapshot
+
+  var body: some View {
     HStack(alignment: .center, spacing: 12) {
       HStack(alignment: .lastTextBaseline, spacing: 1) {
         Text(verbatim: "\(Int((controller.displayPercent ?? 0).rounded()))")
@@ -62,14 +95,14 @@ struct PopoverView: View {
           .foregroundStyle(Theme.ink3)
       }
       .foregroundStyle(Theme.ink)
-      Text(detail(snapshot))
+      Text(detail)
         .font(.system(size: 12))
         .foregroundStyle(Theme.ink2)
         .fixedSize(horizontal: false, vertical: true)
     }
   }
 
-  private func detail(_ snapshot: BatterySnapshot) -> String {
+  private var detail: String {
     let other = controller.settings.useHardwarePercent
       ? "macOS shows \(snapshot.macOSPercent)%."
       : String(format: "Hardware reads %.1f%%.", snapshot.hardwarePercent)
@@ -92,15 +125,87 @@ struct PopoverView: View {
       return other
     }
   }
+}
 
-  private func open(_ section: AppSection) {
-    model.section = section
-    openWindow(id: MainWindow.id)
-    NSApp.activate()
+private struct ChargerLine: View {
+  let snapshot: BatterySnapshot
+
+  var body: some View {
+    HStack(spacing: 8) {
+      Image(systemName: "powerplug").foregroundStyle(Theme.accent)
+      if let charger = snapshot.charger {
+        Text(charger.name).foregroundStyle(Theme.ink)
+        Spacer()
+        Text(snapshot.powerIn.map { "\(Format.watts($0)) in" } ?? "\(charger.watts) W")
+          .font(Theme.mono(12, weight: .semibold))
+          .foregroundStyle(Theme.ink)
+      } else {
+        Text("No charger").foregroundStyle(Theme.ink2)
+        Spacer()
+      }
+    }
+    .font(.system(size: 12))
   }
 }
 
-private struct StatePill: View {
+// The last 24 hours of charge, small.
+private struct MiniChart: View {
+  @Environment(AppModel.self) private var model
+
+  var body: some View {
+    let samples = model.history.samples(since: .now.addingTimeInterval(-86_400))
+    Chart(samples) { sample in
+      LineMark(x: .value("Time", sample.date), y: .value("Percent", sample.percent))
+        .foregroundStyle(Theme.held)
+    }
+    .chartYScale(domain: 0...100)
+    .chartXAxis(.hidden)
+    .chartYAxis { AxisMarks(values: [0, 50, 100]) { AxisValueLabel() } }
+    .frame(height: 60)
+  }
+}
+
+// Edit mode: every card with show or hide and move up or down.
+private struct PopoverEditor: View {
+  @Environment(AppModel.self) private var model
+
+  var body: some View {
+    VStack(spacing: 0) {
+      ForEach(Array(model.popoverLayout.order.enumerated()), id: \.element) { index, card in
+        let hidden = model.popoverLayout.hidden.contains(card)
+        HStack(spacing: 10) {
+          Button {
+            model.popoverLayout.toggle(card)
+          } label: {
+            Label(hidden ? "Show" : "Hide", systemImage: hidden ? "eye.slash" : "eye").labelStyle(.iconOnly)
+          }
+          .buttonStyle(IconButtonStyle())
+          Text(card.title)
+            .foregroundStyle(hidden ? Theme.ink3 : Theme.ink)
+          Spacer()
+          Button { model.popoverLayout.move(card, by: -1) } label: {
+            Label("Move up", systemImage: "chevron.up").labelStyle(.iconOnly)
+          }
+          .buttonStyle(IconButtonStyle())
+          .disabled(index == 0)
+          Button { model.popoverLayout.move(card, by: 1) } label: {
+            Label("Move down", systemImage: "chevron.down").labelStyle(.iconOnly)
+          }
+          .buttonStyle(IconButtonStyle())
+          .disabled(index == model.popoverLayout.order.count - 1)
+        }
+        .font(.system(size: 12.5))
+        .padding(.vertical, 5)
+      }
+      Button("Reset Layout") { model.popoverLayout = PopoverLayout() }
+        .padding(.top, 8)
+    }
+    .padding(12)
+    .panel()
+  }
+}
+
+struct StatePill: View {
   let state: ChargeState
 
   var body: some View {

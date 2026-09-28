@@ -41,7 +41,7 @@ targets:
         INFOPLIST_FILE: Keel/Resources/Info.plist
         CODE_SIGN_ENTITLEMENTS: Keel/Resources/Keel.entitlements
         SWIFT_OBJC_BRIDGING_HEADER: Keel/ObjC/Keel-Bridging-Header.h
-        MARKETING_VERSION: "0.1.0"
+        MARKETING_VERSION: "0.2.0"
         CURRENT_PROJECT_VERSION: "1"
         GENERATE_INFOPLIST_FILE: NO
         SWIFT_STRICT_CONCURRENCY: complete

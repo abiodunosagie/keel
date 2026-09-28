@@ -45,8 +45,16 @@ final class AppModel {
   let notifier = Notifier()
   let insights = PowerInsights()
   var section: AppSection = .dashboard
+  @ObservationIgnored private(set) lazy var windows = WindowManager(model: self)
+  @ObservationIgnored private var statusItem: StatusItemController?
+  var popoverLayout: PopoverLayout {
+    didSet { store.popoverLayout = popoverLayout }
+  }
+  var isEditingPopover = false
+  let store = SettingsStore()
 
   private init() {
+    popoverLayout = SettingsStore().popoverLayout
     scheduler = Scheduler(controller: controller, helper: helper)
     controller.charger = helper
     controller.onEvent = { [notifier, controller] event in
@@ -68,12 +76,60 @@ final class AppModel {
 
   func start() async {
     guard !Self.isRunningTests else { return }
+    statusItem = StatusItemController(model: self)
+    applyAppearance()
+    observeAppearance()
+    showFirstRunWindows()
     helper.refreshStatus()
     await helper.replaceIfOutdated()
     await controller.start()
     history.start(reading: { [controller] in controller.snapshot })
     await history.importPowerLog()
     scheduler.start()
+  }
+
+  func showPopover() {
+    statusItem?.showPopover()
+  }
+
+  func open(_ section: AppSection) {
+    statusItem?.closePopover()
+    windows.showMain(section: section)
+  }
+
+  // Light, dark or following macOS, and a Dock icon when asked for or when the menu bar icon
+  // is hidden (otherwise Keel would be unreachable).
+  private func applyAppearance() {
+    let options = controller.options
+    switch options.appearance {
+    case .system: NSApp.appearance = nil
+    case .light: NSApp.appearance = NSAppearance(named: .aqua)
+    case .dark: NSApp.appearance = NSAppearance(named: .darkAqua)
+    }
+    let wantsDock = options.showDockIcon || options.hideMenuBarIcon
+    NSApp.setActivationPolicy(wantsDock ? .regular : .accessory)
+  }
+
+  private func observeAppearance() {
+    withObservationTracking {
+      _ = controller.options
+    } onChange: { [weak self] in
+      Task { @MainActor in
+        self?.applyAppearance()
+        self?.observeAppearance()
+      }
+    }
+  }
+
+  // The setup guide on a first install, What's New after an update.
+  private func showFirstRunWindows() {
+    let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
+    if !store.hasOnboarded {
+      windows.showOnboarding()
+    } else if store.lastSeenVersion != version, ReleaseNotes.notes(for: version) != nil {
+      windows.showWhatsNew()
+    }
+    store.lastSeenVersion = version
   }
 
   func prepareForQuit() async {

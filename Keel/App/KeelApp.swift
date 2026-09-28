@@ -6,6 +6,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     Task { await AppModel.shared.start() }
   }
 
+  // Opening Keel again (Finder, Spotlight, the Dock) shows the window, the only way in when the
+  // menu bar icon is hidden.
+  func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
+    AppModel.shared.windows.showMain()
+    return false
+  }
+
   private var hasReplied = false
 
   // Quitting waits for the final limit write, so macOS is never left on a temporary limit, but
@@ -31,29 +38,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 @main
 struct KeelApp: App {
   @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-  private let model = AppModel.shared
 
+  // The menu bar item and windows are AppKit-managed (StatusItemController, WindowManager);
+  // SwiftUI only needs a scene to exist.
   var body: some Scene {
-    MenuBarExtra {
-      PopoverView()
-        .environment(model)
-        .environment(model.controller)
-        .environment(model.helper)
-    } label: {
-      MenuBarLabel(controller: model.controller)
+    Settings {
+      EmptyView()
     }
-    .menuBarExtraStyle(.window)
-
-    Window("Keel", id: MainWindow.id) {
-      MainWindow()
-        .environment(model)
-        .environment(model.controller)
-        .environment(model.helper)
-        .environment(model.scheduler)
-        .environment(model.history)
-        .environment(model.insights)
-    }
-    .windowResizability(.contentMinSize)
-    .defaultPosition(.center)
   }
 }

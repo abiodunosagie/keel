@@ -63,7 +63,7 @@ final class StatusItemController: NSObject {
     button.image = rendering.image()
     button.imagePosition = .imageLeading
     button.title = rendering.text
-    button.toolTip = "Keel: \(controller.state.title)"
+    button.toolTip = String(localized: "Keel: \(controller.state.title)")
   }
 
   @objc private func clicked(_ sender: NSStatusBarButton) {
@@ -84,26 +84,26 @@ final class StatusItemController: NSObject {
   private func showMenu() {
     let controller = model.controller
     let menu = NSMenu()
-    menu.addItem(menuItem(controller.isTopUpActive ? "Stop Top Up" : "Top Up", enabled: controller.isTopUpActive
+    menu.addItem(menuItem(controller.isTopUpActive ? String(localized: "Stop Top Up") : String(localized: "Top Up"), enabled: controller.isTopUpActive
       || controller.snapshot?.isPluggedIn == true) {
       controller.isTopUpActive ? controller.stopTopUp() : controller.startTopUp()
     })
-    menu.addItem(menuItem(controller.mode == .discharge ? "Stop Discharge" : "Discharge",
+    menu.addItem(menuItem(controller.mode == .discharge ? String(localized: "Stop Discharge") : String(localized: "Discharge"),
                           enabled: controller.canDischarge || controller.mode == .discharge) {
       controller.mode == .discharge ? controller.stopDischarge() : controller.startDischarge()
     })
-    menu.addItem(menuItem("Pause Here", enabled: controller.canPauseHere) { controller.pauseCharging() })
+    menu.addItem(menuItem(String(localized: "Pause Here"), enabled: controller.canPauseHere) { controller.pauseCharging() })
     menu.addItem(.separator())
     for limit in [80, 85, 90, 95, 100] {
-      let item = menuItem("Limit \(limit)%", enabled: true) { controller.setLimit(limit) }
+      let item = menuItem(String(localized: "Limit \(limit)%"), enabled: true) { controller.setLimit(limit) }
       item.state = controller.settings.limit == limit ? .on : .off
       menu.addItem(item)
     }
     menu.addItem(.separator())
-    menu.addItem(menuItem("Open Dashboard", enabled: true) { [model] in model.windows.showMain(section: .dashboard) })
-    menu.addItem(menuItem("Settings…", enabled: true) { [model] in model.windows.showMain(section: .charge) })
+    menu.addItem(menuItem(String(localized: "Open Dashboard"), enabled: true) { [model] in model.windows.showMain(section: .dashboard) })
+    menu.addItem(menuItem(String(localized: "Settings…"), enabled: true) { [model] in model.windows.showMain(section: .charge) })
     menu.addItem(.separator())
-    menu.addItem(menuItem("Quit Keel", enabled: true) { NSApp.terminate(nil) })
+    menu.addItem(menuItem(String(localized: "Quit Keel"), enabled: true) { NSApp.terminate(nil) })
     item.menu = menu
     item.button?.performClick(nil)
     item.menu = nil

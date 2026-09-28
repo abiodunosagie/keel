@@ -9,14 +9,14 @@ enum AppSection: String, CaseIterable, Identifiable, Hashable {
 
   var title: String {
     switch self {
-    case .dashboard: return "Dashboard"
-    case .history: return "History"
-    case .charge: return "Charge"
-    case .schedule: return "Schedule"
-    case .automation: return "Automation"
-    case .calibration: return "Calibration"
-    case .appearance: return "Appearance"
-    case .general: return "General"
+    case .dashboard: return String(localized: "Dashboard")
+    case .history: return String(localized: "History")
+    case .charge: return String(localized: "Charge")
+    case .schedule: return String(localized: "Schedule")
+    case .automation: return String(localized: "Automation")
+    case .calibration: return String(localized: "Calibration")
+    case .appearance: return String(localized: "Appearance")
+    case .general: return String(localized: "General")
     }
   }
 

@@ -12,10 +12,10 @@ struct GeneralPane: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
-      PaneHeader(title: "General", lede: "Keel Helper, power mode, login and removal.")
+      PaneHeader(title: String(localized: "General"), lede: String(localized: "Keel Helper, power mode, login and removal."))
       RowGroup {
         HelperSection()
-        SettingRow(title: "Power mode", detail: "The macOS energy mode. High Power only exists on some MacBook Pro models.") {
+        SettingRow(title: String(localized: "Power mode"), detail: String(localized: "The macOS energy mode. High Power only exists on some MacBook Pro models.")) {
           Picker("Power mode", selection: Binding(get: { powerMode ?? .automatic }, set: setPowerMode)) {
             ForEach(PowerMode.allCases, id: \.self) { Text($0.title).tag($0) }
           }
@@ -25,15 +25,15 @@ struct GeneralPane: View {
         }
       }
       RowGroup {
-        SettingRow(title: "Open Keel at login", detail: loginError) {
+        SettingRow(title: String(localized: "Open Keel at login"), detail: loginError) {
           Toggle("Open Keel at login", isOn: Binding(get: { launchAtLogin }, set: setLaunchAtLogin))
             .labelsHidden()
             .toggleStyle(.switch)
         }
-        SettingRow(title: "Remove Keel", detail: removeError ?? "Puts back the charge limit macOS had before Keel, removes the helper and the login item, and moves Keel to the Trash.") {
+        SettingRow(title: String(localized: "Remove Keel"), detail: removeError ?? String(localized: "Puts back the charge limit macOS had before Keel, removes the helper and the login item, and moves Keel to the Trash.")) {
           Button("Remove…", role: .destructive) { confirmRemove = true }
         }
-        SettingRow(title: "Quit Keel", detail: "The charge limit stays on unless you turned that off under Charge.") {
+        SettingRow(title: String(localized: "Quit Keel"), detail: String(localized: "The charge limit stays on unless you turned that off under Charge.")) {
           Button("Quit") { NSApp.terminate(nil) }
         }
       }
@@ -66,7 +66,7 @@ struct GeneralPane: View {
       loginError = nil
       launchAtLogin = enabled
     } catch {
-      loginError = "macOS didn't allow changing the login item. Try again from System Settings > General > Login Items."
+      loginError = String(localized: "macOS didn't allow changing the login item. Try again from System Settings > General > Login Items.")
     }
   }
 
@@ -75,7 +75,7 @@ struct GeneralPane: View {
     do {
       try await helper.uninstall()
     } catch {
-      removeError = "macOS didn't remove Keel Helper, so Keel stays installed. Try again, or switch it off in System Settings > General > Login Items."
+      removeError = String(localized: "macOS didn't remove Keel Helper, so Keel stays installed. Try again, or switch it off in System Settings > General > Login Items.")
       return
     }
     try? await SMAppService.mainApp.unregister()

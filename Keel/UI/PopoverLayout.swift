@@ -9,13 +9,13 @@ struct PopoverLayout: Codable, Equatable, Sendable {
 
     var title: String {
       switch self {
-      case .summary: return "Battery level"
-      case .limit: return "Charge limit"
-      case .actions: return "Top Up, Discharge, Calibrate"
-      case .powerFlow: return "Power flow"
-      case .stats: return "Health, cycles, temperature"
-      case .charger: return "Charger"
-      case .chart: return "Last 24 hours"
+      case .summary: return String(localized: "Battery level")
+      case .limit: return String(localized: "Charge limit")
+      case .actions: return String(localized: "Top Up, Discharge, Calibrate")
+      case .powerFlow: return String(localized: "Power flow")
+      case .stats: return String(localized: "Health, cycles, temperature")
+      case .charger: return String(localized: "Charger")
+      case .chart: return String(localized: "Last 24 hours")
       }
     }
   }

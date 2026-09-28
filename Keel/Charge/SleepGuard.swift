@@ -12,7 +12,7 @@ final class SleepGuard {
   func set(awake: Bool) {
     if awake, assertion == 0 {
       var id: IOPMAssertionID = 0
-      let reason = "Keel is charging or discharging to your limit" as CFString
+      let reason = String(localized: "Keel is charging or discharging to your limit") as CFString
       if IOPMAssertionCreateWithName(kIOPMAssertionTypePreventSystemSleep as CFString,
                                      IOPMAssertionLevel(kIOPMAssertionLevelOn), reason, &id) == kIOReturnSuccess {
         assertion = id

@@ -21,12 +21,12 @@ struct TaskEditor: View {
 
     var title: String {
       switch self {
-      case .setLimit: return "Set charge limit"
-      case .topUp: return "Top Up"
-      case .pauseCharging: return "Pause charging"
-      case .dischargeTo: return "Discharge to"
-      case .startCalibration: return "Start calibration"
-      case .powerMode: return "Switch power mode"
+      case .setLimit: return String(localized: "Set charge limit")
+      case .topUp: return String(localized: "Top Up")
+      case .pauseCharging: return String(localized: "Pause charging")
+      case .dischargeTo: return String(localized: "Discharge to")
+      case .startCalibration: return String(localized: "Start calibration")
+      case .powerMode: return String(localized: "Switch power mode")
       }
     }
   }

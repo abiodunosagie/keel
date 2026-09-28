@@ -77,7 +77,7 @@ struct PauseChargingIntent: AppIntent {
   func perform() async throws -> some IntentResult {
     let controller = AppModel.shared.controller
     guard controller.canPauseHere else {
-      throw IntentError.notPossible("macOS can't hold the battery below \(controller.limitRange.lowerBound)%.")
+      throw IntentError.notPossible(String(localized: "macOS can't hold the battery below \(controller.limitRange.lowerBound)%."))
     }
     controller.pauseCharging()
     return .result()
@@ -91,7 +91,7 @@ struct TopUpIntent: AppIntent {
   @MainActor
   func perform() async throws -> some IntentResult {
     let controller = AppModel.shared.controller
-    guard controller.snapshot?.isPluggedIn == true else { throw IntentError.notPossible("Plug in the charger to top up.") }
+    guard controller.snapshot?.isPluggedIn == true else { throw IntentError.notPossible(String(localized: "Plug in the charger to top up.")) }
     controller.startTopUp()
     return .result()
   }
@@ -105,7 +105,7 @@ struct StartDischargeIntent: AppIntent {
   func perform() async throws -> some IntentResult {
     let controller = AppModel.shared.controller
     guard controller.canDischarge else {
-      throw IntentError.notPossible("Discharge needs the charger plugged in and the battery above the limit.")
+      throw IntentError.notPossible(String(localized: "Discharge needs the charger plugged in and the battery above the limit."))
     }
     controller.startDischarge()
     return .result()
@@ -142,7 +142,7 @@ struct SetMagSafeLightIntent: AppIntent {
 
   @MainActor
   func perform() async throws -> some IntentResult {
-    guard AppModel.shared.helper.isReady else { throw IntentError.notPossible("Install Keel Helper first.") }
+    guard AppModel.shared.helper.isReady else { throw IntentError.notPossible(String(localized: "Install Keel Helper first.")) }
     AppModel.shared.controller.options.magSafeLight = light == .keel ? .auto : .system
     return .result()
   }
@@ -175,8 +175,8 @@ struct SetPowerModeIntent: AppIntent {
   @MainActor
   func perform() async throws -> some IntentResult {
     let helper = AppModel.shared.helper
-    guard helper.isReady else { throw IntentError.notPossible("Install Keel Helper first.") }
-    guard await helper.setPowerMode(mode.mode) else { throw IntentError.notPossible("macOS didn't switch the power mode.") }
+    guard helper.isReady else { throw IntentError.notPossible(String(localized: "Install Keel Helper first.")) }
+    guard await helper.setPowerMode(mode.mode) else { throw IntentError.notPossible(String(localized: "macOS didn't switch the power mode.")) }
     return .result()
   }
 }

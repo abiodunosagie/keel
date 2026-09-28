@@ -51,12 +51,12 @@ enum ChargerProblem: Equatable, Sendable {
   var message: String {
     switch self {
     case .noPower:
-      return "A charger is plugged in but isn't powering the Mac. Try another cable, port or charger."
+      return String(localized: "A charger is plugged in but isn't powering the Mac. Try another cable, port or charger.")
     case .tooWeak(let watts, let load):
-      let rating = watts.map { "The \($0) W charger" } ?? "The charger"
-      return "\(rating) can't keep up with the Mac's \(Format.watts(load)), so the battery is draining."
+      let rating = watts.map { String(localized: "The \($0) W charger") } ?? String(localized: "The charger")
+      return String(localized: "\(rating) can't keep up with the Mac's \(Format.watts(load)), so the battery is draining.")
     case .slowCharging:
-      return "macOS is charging slowly, usually because of heat or a low-power charger."
+      return String(localized: "macOS is charging slowly, usually because of heat or a low-power charger.")
     }
   }
 }

@@ -96,8 +96,8 @@ final class HelperClient: ChargerControl {
     let result: (Bool, String?)? = await call { proxy, done in
       proxy.setChargerConnected(connected) { ok, message in done((ok, message)) }
     }
-    guard let result else { return "Keel's helper isn't running." }
-    return result.0 ? nil : (result.1 ?? "The charger switch didn't respond.")
+    guard let result else { return String(localized: "Keel's helper isn't running.") }
+    return result.0 ? nil : (result.1 ?? String(localized: "The charger switch didn't respond."))
   }
 
   func isChargerConnected() async -> Bool? {

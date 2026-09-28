@@ -6,7 +6,7 @@ struct HelperSection: View {
   @State private var running: Bool?
 
   var body: some View {
-    SettingRow(title: "Keel Helper", detail: detail) {
+    SettingRow(title: String(localized: "Keel Helper"), detail: detail) {
       switch helper.status {
       case .ready:
         if running == false {
@@ -29,13 +29,13 @@ struct HelperSection: View {
   private var detail: String {
     switch helper.status {
     case .ready:
-      return "Calibration, the MagSafe light and power modes are available."
+      return String(localized: "Calibration, the MagSafe light and power modes are available.")
     case .needsApproval:
-      return "In System Settings > General > Login Items, switch on Keel under \"Allow in the Background\"."
+      return String(localized: "In System Settings > General > Login Items, switch on Keel under \"Allow in the Background\".")
     case .notInstalled:
-      return "Needed for Calibration, the MagSafe light and power modes. It only switches the charger, the light, sleep and the power mode, and undoes the first three when Keel quits."
+      return String(localized: "Needed for Calibration, the MagSafe light and power modes. It only switches the charger, the light, sleep and the power mode, and undoes the first three when Keel quits.")
     case .failed:
-      return "macOS didn't install the helper. Try again, or check System Settings > General > Login Items."
+      return String(localized: "macOS didn't install the helper. Try again, or check System Settings > General > Login Items.")
     }
   }
 }

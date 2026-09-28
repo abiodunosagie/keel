@@ -16,7 +16,7 @@ struct NetworkRule: Codable, Equatable, Identifiable, Sendable {
 struct AutomationSettings: Codable, Equatable, Sendable {
   var calendarTopUp = false
   // Words that mark an event as a long day away; matched in the title, case-insensitive.
-  var calendarKeywords = "flight, trip, travel, conference, offsite"
+  var calendarKeywords = String(localized: "flight, trip, travel, conference, offsite")
   var calendarLeadHours = 3
   var networkRules: [NetworkRule] = []
   var displayOffWhenIdle = true
@@ -141,7 +141,7 @@ final class Automation: NSObject, CLLocationManagerDelegate {
     let trips = events.events(matching: predicate)
       .filter { Self.matches($0.title ?? "", keywords: keywords) }
       .sorted { $0.startDate < $1.startDate }
-    nextTrip = trips.first.map { ($0.title ?? "Event", $0.startDate) }
+    nextTrip = trips.first.map { ($0.title ?? String(localized: "Event"), $0.startDate) }
     guard let trip = trips.first, let id = trip.eventIdentifier, !handledEvents.contains(id) else { return }
     let lead = TimeInterval(settings.calendarLeadHours) * 3600
     guard trip.startDate.timeIntervalSince(now) <= lead, controller.snapshot?.isPluggedIn == true else { return }

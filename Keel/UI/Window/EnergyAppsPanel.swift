@@ -7,17 +7,17 @@ struct EnergyAppsPanel: View {
 
   var body: some View {
     RowGroup {
-      SettingRow(title: "Apps using significant energy", detail: summary) {
+      SettingRow(title: String(localized: "Apps using significant energy"), detail: summary) {
         EmptyView()
       }
     }
   }
 
   private var summary: String {
-    guard let apps else { return "Measuring…" }
-    guard !apps.isEmpty else { return "No app is using much energy right now." }
+    guard let apps else { return String(localized: "Measuring…") }
+    guard !apps.isEmpty else { return String(localized: "No app is using much energy right now.") }
     return apps.map { "\($0.name) \(String(format: "%.1f", $0.impact))" }.joined(separator: ", ")
-      + ". Energy impact, as in Activity Monitor."
+      + String(localized: ". Energy impact, as in Activity Monitor.")
   }
 }
 

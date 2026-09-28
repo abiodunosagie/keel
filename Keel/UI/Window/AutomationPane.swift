@@ -10,37 +10,37 @@ struct AutomationPane: View {
   var body: some View {
     @Bindable var automation = automation
     VStack(alignment: .leading, spacing: 16) {
-      PaneHeader(title: "Automation", lede: "Let Keel react to your calendar, your Wi-Fi and your keyboard.")
+      PaneHeader(title: String(localized: "Automation"), lede: String(localized: "Let Keel react to your calendar, your Wi-Fi and your keyboard."))
       RowGroup {
-        SettingRow(title: "Top Up before trips", detail: calendarDetail) {
+        SettingRow(title: String(localized: "Top Up before trips"), detail: calendarDetail) {
           Toggle("Top Up before trips", isOn: $automation.settings.calendarTopUp).labelsHidden().toggleStyle(.switch)
         }
-        SettingRow(title: "Event words", detail: "Events whose title contains one of these, separated by commas.") {
+        SettingRow(title: String(localized: "Event words"), detail: String(localized: "Events whose title contains one of these, separated by commas.")) {
           TextField("Words", text: $automation.settings.calendarKeywords)
             .textFieldStyle(.roundedBorder)
             .frame(width: 240)
         }
         .disabled(!automation.settings.calendarTopUp)
-        SettingRow(title: "Start charging", detail: "Hours before the event. Needs the charger plugged in then.") {
+        SettingRow(title: String(localized: "Start charging"), detail: String(localized: "Hours before the event. Needs the charger plugged in then.")) {
           Stepper(value: $automation.settings.calendarLeadHours, in: 1...12) {
-            ValueChip(text: "\(automation.settings.calendarLeadHours) h before")
+            ValueChip(text: String(localized: "\(automation.settings.calendarLeadHours) h before"))
           }
         }
         .disabled(!automation.settings.calendarTopUp)
       }
       networkRules
       RowGroup {
-        SettingRow(title: "Turn the display off when idle", detail: "While Keel keeps the Mac awake (calibration, keep awake until the limit).") {
+        SettingRow(title: String(localized: "Turn the display off when idle"), detail: String(localized: "While Keel keeps the Mac awake (calibration, keep awake until the limit).")) {
           HStack(spacing: 10) {
             Stepper(value: $automation.settings.displayIdleMinutes, in: 1...60) {
-              ValueChip(text: "\(automation.settings.displayIdleMinutes) min")
+              ValueChip(text: String(localized: "\(automation.settings.displayIdleMinutes) min"))
             }
             .disabled(!automation.settings.displayOffWhenIdle)
             Toggle("Turn the display off when idle", isOn: $automation.settings.displayOffWhenIdle)
               .labelsHidden().toggleStyle(.switch)
           }
         }
-        SettingRow(title: "Lock the screen when the lid closes", detail: "While Keel keeps the Mac awake, so nobody can open it and use it.") {
+        SettingRow(title: String(localized: "Lock the screen when the lid closes"), detail: String(localized: "While Keel keeps the Mac awake, so nobody can open it and use it.")) {
           Toggle("Lock the screen when the lid closes", isOn: $automation.settings.lockOnLidClose)
             .labelsHidden().toggleStyle(.switch)
         }
@@ -51,12 +51,12 @@ struct AutomationPane: View {
 
   private var calendarDetail: String {
     if automation.calendarAccess == false {
-      return "Keel has no calendar access. Allow it in System Settings > Privacy & Security > Calendars."
+      return String(localized: "Keel has no calendar access. Allow it in System Settings > Privacy & Security > Calendars.")
     }
     if let trip = automation.nextTrip {
-      return "Next: \(trip.title), \(trip.start.formatted(date: .abbreviated, time: .shortened))."
+      return String(localized: "Next: \(trip.title), \(trip.start.formatted(date: .abbreviated, time: .shortened)).")
     }
-    return "Charges to 100% before events like flights or conferences, then back to your limit after you unplug."
+    return String(localized: "Charges to 100% before events like flights or conferences, then back to your limit after you unplug.")
   }
 
   private var networkRules: some View {
@@ -69,14 +69,14 @@ struct AutomationPane: View {
         .fixedSize(horizontal: false, vertical: true)
       RowGroup {
         ForEach(automation.settings.networkRules) { rule in
-          SettingRow(title: rule.network, detail: rule.network == automation.currentNetwork ? "Connected now." : nil) {
+          SettingRow(title: rule.network, detail: rule.network == automation.currentNetwork ? String(localized: "Connected now.") : nil) {
             HStack(spacing: 10) {
               ValueChip(text: "\(rule.limit)%")
               Button("Remove") { automation.settings.networkRules.removeAll { $0.id == rule.id } }
             }
           }
         }
-        SettingRow(title: "Add a network", detail: nil) {
+        SettingRow(title: String(localized: "Add a network"), detail: nil) {
           HStack(spacing: 8) {
             TextField("Network name", text: $newNetwork)
               .textFieldStyle(.roundedBorder)
@@ -101,22 +101,22 @@ struct AutomationPane: View {
 
   private var networkDetail: String {
     if automation.locationAccess == false {
-      return "macOS hides Wi-Fi names without location access. Allow Keel in System Settings > Privacy & Security > Location Services."
+      return String(localized: "macOS hides Wi-Fi names without location access. Allow Keel in System Settings > Privacy & Security > Location Services.")
     }
-    let current = automation.currentNetwork.map { "Connected to \($0). " } ?? ""
-    return current + "Joining a listed network sets its limit; other networks use your normal limit."
+    let current = automation.currentNetwork.map { String(localized: "Connected to \($0). ") } ?? ""
+    return current + String(localized: "Joining a listed network sets its limit; other networks use your normal limit.")
   }
 
   private var shortcuts: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text("Keyboard shortcuts").font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.ink)
       RowGroup {
-        shortcutRow("Top Up on or off", .toggleTopUp)
-        shortcutRow("Raise the limit by \(Hotkeys.limitStep)%", .raiseLimit)
-        shortcutRow("Lower the limit by \(Hotkeys.limitStep)%", .lowerLimit)
-        shortcutRow("Pause here", .pauseHere)
-        shortcutRow("Show the popover", .togglePopover)
-        shortcutRow("Open the dashboard", .openDashboard)
+        shortcutRow(String(localized: "Top Up on or off"), .toggleTopUp)
+        shortcutRow(String(localized: "Raise the limit by \(Hotkeys.limitStep)%"), .raiseLimit)
+        shortcutRow(String(localized: "Lower the limit by \(Hotkeys.limitStep)%"), .lowerLimit)
+        shortcutRow(String(localized: "Pause here"), .pauseHere)
+        shortcutRow(String(localized: "Show the popover"), .togglePopover)
+        shortcutRow(String(localized: "Open the dashboard"), .openDashboard)
       }
     }
   }

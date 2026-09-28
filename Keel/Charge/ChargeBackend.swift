@@ -48,9 +48,9 @@ enum ChargeBackendError: LocalizedError, Equatable {
   var errorDescription: String? {
     switch self {
     case .unavailable:
-      return "This Mac has no built-in charge limit. It needs macOS 26.4 or later on Apple silicon."
+      return String(localized: "This Mac has no built-in charge limit. It needs macOS 26.4 or later on Apple silicon.")
     case .outOfRange(let limit):
-      return "macOS can't hold the battery at \(limit)%. Pick \(KeelPowerUI.minimumLimit)% or higher."
+      return String(localized: "macOS can't hold the battery at \(limit)%. Pick \(KeelPowerUI.minimumLimit)% or higher.")
     }
   }
 }

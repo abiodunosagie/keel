@@ -68,14 +68,14 @@ struct PowerBreakdown: View {
       parts.append(Part(name: "CPU", watts: chip.cpu, color: Theme.accent))
       parts.append(Part(name: "GPU", watts: chip.gpu, color: Theme.moving))
       if chip.neuralEngine > 0.01 {
-        parts.append(Part(name: "Neural Engine", watts: chip.neuralEngine, color: Theme.heat))
+        parts.append(Part(name: String(localized: "Neural Engine"), watts: chip.neuralEngine, color: Theme.heat))
       }
     }
     if let display = snapshot.displayWatts {
-      parts.append(Part(name: "Screen", watts: display, color: Theme.held))
+      parts.append(Part(name: String(localized: "Screen"), watts: display, color: Theme.held))
     }
     let known = parts.map(\.watts).reduce(0, +)
-    parts.append(Part(name: "Other", watts: max(0, load - known), color: Theme.ink3.opacity(0.5)))
+    parts.append(Part(name: String(localized: "Other"), watts: max(0, load - known), color: Theme.ink3.opacity(0.5)))
     return parts
   }
 }
@@ -91,7 +91,7 @@ struct ChargerPanel: View {
           ValueChip(text: "\(charger.watts) W")
         }
       } else {
-        SettingRow(title: "No charger", detail: "Plug in to see the charger's rating and what it delivers.") {
+        SettingRow(title: String(localized: "No charger"), detail: String(localized: "Plug in to see the charger's rating and what it delivers.")) {
           EmptyView()
         }
       }
@@ -102,9 +102,9 @@ struct ChargerPanel: View {
     var parts: [String] = []
     if let manufacturer = charger.manufacturer { parts.append(manufacturer) }
     if let volts = charger.volts, let amps = charger.amps {
-      parts.append(String(format: "negotiated %.0f V at %.2f A", volts, amps))
+      parts.append(String(localized: "negotiated \(String(format: "%.0f V", volts)) at \(String(format: "%.2f A", amps))"))
     }
-    if let powerIn = snapshot.powerIn { parts.append("\(Format.watts(powerIn)) coming in now") }
+    if let powerIn = snapshot.powerIn { parts.append(String(localized: "\(Format.watts(powerIn)) coming in now")) }
     return parts.joined(separator: ", ") + "."
   }
 }

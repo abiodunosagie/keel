@@ -48,20 +48,20 @@ struct LimitCard: View {
 
   private var footnote: String {
     switch controller.mode {
-    case .topUp: return "Top Up is on: charging to 100% until you unplug."
-    case .discharge: return "Running on battery down to your limit."
-    case .calibration(let step): return "Calibrating: \(step.title.lowercased())."
+    case .topUp: return String(localized: "Top Up is on: charging to 100% until you unplug.")
+    case .discharge: return String(localized: "Running on battery down to your limit.")
+    case .calibration(let step): return String(localized: "Calibrating: \(step.title.lowercased()).")
     case .normal: break
     }
     if let network = controller.networkLimit {
-      return "\(network.limit)% on \(network.network). Changing it here applies until you switch networks."
+      return String(localized: "\(network.limit)% on \(network.network). Changing it here applies until you switch networks.")
     }
     if let applied = controller.appliedLimit {
       let scale = controller.settings.useHardwarePercent && applied != controller.settings.limit
-        ? " (\(applied)% as macOS counts it)" : ""
-      return "Held by macOS\(scale), keeps working while asleep and when Keel is closed."
+        ? String(localized: " (\(applied)% as macOS counts it)") : ""
+      return String(localized: "Held by macOS\(scale), keeps working while asleep and when Keel is closed.")
     }
-    return "No limit. The battery charges to 100%."
+    return String(localized: "No limit. The battery charges to 100%.")
   }
 }
 
@@ -83,7 +83,7 @@ private struct LimitSlider: View {
             .fill(Theme.ink3)
             .frame(width: 2, height: 18)
             .offset(x: position(current, width) - 1)
-            .help(String(format: "Battery now: %.0f%%", current))
+            .help(String(localized: "Battery now: \(Int(current.rounded()))%"))
         }
         Circle()
           .fill(.white)
@@ -111,8 +111,8 @@ private struct LimitSlider: View {
     }
     .accessibilityElement()
     .accessibilityLabel("Charge limit")
-    .accessibilityValue(current.map { String(format: "%d percent, battery now %.0f percent", value, $0) }
-                        ?? "\(value) percent")
+    .accessibilityValue(current.map { String(localized: "\(value) percent, battery now \(Int($0.rounded())) percent") }
+                        ?? String(localized: "\(value) percent"))
     .accessibilityAdjustableAction { direction in
       switch direction {
       case .increment: onCommit(min(value + 1, range.upperBound))

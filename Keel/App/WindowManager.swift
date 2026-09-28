@@ -29,21 +29,21 @@ final class WindowManager {
   func showMain(section: AppSection? = nil) {
     guard let model else { return }
     if let section { model.section = section }
-    show("main", title: "Keel", size: NSSize(width: 800, height: 620), resizable: true) {
+    show("main", title: String(localized: "Keel"), size: NSSize(width: 800, height: 620), resizable: true) {
       MainWindow().keelEnvironment(model)
     }
   }
 
   func showOnboarding() {
     guard let model else { return }
-    show("onboarding", title: "Welcome to Keel", size: NSSize(width: 560, height: 520), resizable: false) {
+    show("onboarding", title: String(localized: "Welcome to Keel"), size: NSSize(width: 560, height: 520), resizable: false) {
       OnboardingView { [weak self] in self?.close("onboarding") }.keelEnvironment(model)
     }
   }
 
   func showWhatsNew() {
     guard let model else { return }
-    show("whatsNew", title: "What's New in Keel", size: NSSize(width: 480, height: 460), resizable: false) {
+    show("whatsNew", title: String(localized: "What's New in Keel"), size: NSSize(width: 480, height: 460), resizable: false) {
       WhatsNewView { [weak self] in self?.close("whatsNew") }.keelEnvironment(model)
     }
   }

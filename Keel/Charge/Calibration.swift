@@ -11,11 +11,11 @@ enum CalibrationStep: Codable, Equatable, Sendable {
 
   var title: String {
     switch self {
-    case .chargeFull: return "Charge to 100%"
-    case .dischargeLow: return "Discharge to \(Calibration.floor)%"
-    case .rechargeFull: return "Charge to 100%"
-    case .hold: return "Hold \(Int(Calibration.holdDuration / 3600)) hour"
-    case .returnToLimit: return "Back to limit"
+    case .chargeFull: return String(localized: "Charge to 100%")
+    case .dischargeLow: return String(localized: "Discharge to \(Calibration.floor)%")
+    case .rechargeFull: return String(localized: "Charge to 100%")
+    case .hold: return String(localized: "Hold for an hour")
+    case .returnToLimit: return String(localized: "Back to limit")
     }
   }
 

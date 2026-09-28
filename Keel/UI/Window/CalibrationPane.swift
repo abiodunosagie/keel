@@ -8,11 +8,11 @@ struct CalibrationPane: View {
   ]
 
   var body: some View {
-    PaneHeader(title: "Calibration", lede: lede)
+    PaneHeader(title: String(localized: "Calibration"), lede: lede)
     RowGroup {
       HStack(spacing: 6) {
         ForEach(Array(Self.steps.enumerated()), id: \.offset) { index, step in
-          stepChip(index == 4 ? "Back to \(controller.settings.limit)%" : step.title, index: index)
+          stepChip(index == 4 ? String(localized: "Back to \(controller.settings.limit)%") : step.title, index: index)
         }
       }
       .padding(.horizontal, 14)
@@ -35,14 +35,16 @@ struct CalibrationPane: View {
 
   private var lede: String {
     guard let last = controller.lastCalibration else {
-      return "A full cycle keeps the battery's percentage reading accurate. Not run yet."
+      return String(localized: "A full cycle keeps the battery's percentage reading accurate. Not run yet.")
     }
     let days = Calendar.current.dateComponents([.day], from: last, to: .now).day ?? 0
-    return "A full cycle keeps the battery's percentage reading accurate. Last run \(days == 0 ? "today" : "\(days) days ago")."
+    return days == 0
+      ? String(localized: "A full cycle keeps the battery's percentage reading accurate. Last run today.")
+      : String(localized: "A full cycle keeps the battery's percentage reading accurate. Last run \(days) days ago.")
   }
 
   private var statusTitle: String {
-    guard let step = controller.calibrationStep else { return "Ready" }
+    guard let step = controller.calibrationStep else { return String(localized: "Ready") }
     let percent = controller.snapshot.map { " \($0.macOSPercent)%" } ?? ""
     return "\(step.title),\(percent)"
   }
@@ -50,11 +52,11 @@ struct CalibrationPane: View {
   private var statusDetail: String {
     if let step = controller.calibrationStep {
       if case .hold(let until) = step {
-        return "Holding at 100% until \(until.formatted(date: .omitted, time: .shortened)). The Mac stays awake until the cycle ends."
+        return String(localized: "Holding at 100% until \(until.formatted(date: .omitted, time: .shortened)). The Mac stays awake until the cycle ends.")
       }
-      return "The Mac stays awake until the cycle ends. Unplugging during a charging step stops it."
+      return String(localized: "The Mac stays awake until the cycle ends. Unplugging during a charging step stops it.")
     }
-    return controller.calibrationBlocker ?? "Takes a few hours depending on how busy the Mac is."
+    return controller.calibrationBlocker ?? String(localized: "Takes a few hours depending on how busy the Mac is.")
   }
 
   private func stepChip(_ title: String, index: Int) -> some View {

@@ -104,23 +104,24 @@ private struct SummaryCard: View {
 
   private var detail: String {
     let other = controller.settings.useHardwarePercent
-      ? "macOS shows \(snapshot.macOSPercent)%."
-      : String(format: "Hardware reads %.1f%%.", snapshot.hardwarePercent)
+      ? String(localized: "macOS shows \(snapshot.macOSPercent)%.")
+      : String(localized: "Hardware reads \(Format.percent(snapshot.hardwarePercent)).")
     switch controller.state {
     case .onBattery:
-      if let minutes = snapshot.minutesToEmpty { return "On battery, \(Format.duration(minutes)) left. \(other)" }
-      return "On battery. \(other)"
+      if let minutes = snapshot.minutesToEmpty { return String(localized: "On battery, \(Format.duration(minutes)) left. \(other)") }
+      return String(localized: "On battery. \(other)")
     case .charging, .topUp, .macOSOverride:
-      if let minutes = snapshot.minutesToFull { return "Charging, full in \(Format.duration(minutes)). \(other)" }
-      return "Plugged in and charging. \(other)"
+      if let minutes = snapshot.minutesToFull { return String(localized: "Charging, full in \(Format.duration(minutes)). \(other)") }
+      return String(localized: "Plugged in and charging. \(other)")
     case .discharging:
-      return "Plugged in, running on battery down to the limit. \(other)"
+      return String(localized: "Plugged in, running on battery down to the limit. \(other)")
     case .heatProtect:
-      return "Charging paused until the battery cools. \(other)"
+      return String(localized: "Charging paused until the battery cools. \(other)")
     case .calibration:
-      return "\(controller.calibrationStep?.title ?? "Calibrating"). \(other)"
+      let step = controller.calibrationStep?.title ?? String(localized: "Calibrating")
+      return "\(step). \(other)"
     case .paused:
-      return "Plugged in, running on the charger. \(other) Battery idle."
+      return String(localized: "Plugged in, running on the charger. \(other) Battery idle.")
     case .unavailable:
       return other
     }
@@ -155,7 +156,7 @@ private struct MiniChart: View {
   var body: some View {
     let samples = model.history.samples(since: .now.addingTimeInterval(-86_400))
     Chart(samples) { sample in
-      LineMark(x: .value("Time", sample.date), y: .value("Percent", sample.percent))
+      LineMark(x: .value(String(localized: "Time"), sample.date), y: .value(String(localized: "Percent"), sample.percent))
         .foregroundStyle(Theme.held)
     }
     .chartYScale(domain: 0...100)
@@ -224,7 +225,7 @@ struct StatePill: View {
     .padding(.trailing, 10)
     .background(color.opacity(0.15), in: Capsule())
     .help(state == .macOSOverride
-          ? "macOS sometimes charges to 100% to recalibrate its battery gauge. It goes back to the limit afterwards."
+          ? String(localized: "macOS sometimes charges to 100% to recalibrate its battery gauge. It goes back to the limit afterwards.")
           : "")
   }
 }

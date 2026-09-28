@@ -10,11 +10,11 @@ struct HistoryPane: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
       HStack(alignment: .top) {
-        PaneHeader(title: "Health and history", lede: "How the battery ages, every charging session, and every charger Keel has seen.")
+        PaneHeader(title: String(localized: "Health and history"), lede: String(localized: "How the battery ages, every charging session, and every charger Keel has seen."))
         Spacer()
         Menu("Export") {
-          Button("Readings (every minute)…") { export(history.csv(), name: "Keel readings") }
-          Button("Charging sessions…") { export(insights.sessionsCSV(), name: "Keel charging sessions") }
+          Button("Readings (every minute)…") { export(history.csv(), name: String(localized: "Keel readings")) }
+          Button("Charging sessions…") { export(insights.sessionsCSV(), name: String(localized: "Keel charging sessions")) }
         }
         .fixedSize()
       }
@@ -33,9 +33,9 @@ struct HistoryPane: View {
       Text("Battery health").font(.system(size: 13, weight: .medium)).foregroundStyle(Theme.ink)
       if records.count >= 2 {
         Chart(records) { record in
-          LineMark(x: .value("Day", record.day), y: .value("Health", record.health))
+          LineMark(x: .value(String(localized: "Day"), record.day), y: .value(String(localized: "Health"), record.health))
             .foregroundStyle(Theme.held)
-          PointMark(x: .value("Day", record.day), y: .value("Health", record.health))
+          PointMark(x: .value(String(localized: "Day"), record.day), y: .value(String(localized: "Health"), record.health))
             .foregroundStyle(Theme.held)
         }
         .chartYScale(domain: max(0, (records.map(\.health).min() ?? 80) - 5)...100)
@@ -52,15 +52,15 @@ struct HistoryPane: View {
   }
 
   private func healthText(_ records: [HealthRecord]) -> String {
-    guard let last = records.last else { return "Keel records the battery's capacity once a day." }
-    var text = String(format: "Now %.1f%% of its original capacity after %d cycles.", last.health, last.cycles)
+    guard let last = records.last else { return String(localized: "Keel records the battery's capacity once a day.") }
+    var text = String(localized: "Now \(Format.percent(last.health)) of its original capacity after \(last.cycles) cycles.")
     if let date = PowerInsights.forecast(records) {
-      text += " At this rate it reaches 80%, Apple's service mark, around \(date.formatted(.dateTime.month(.wide).year()))."
+      text += String(localized: " At this rate it reaches 80%, Apple's service mark, around \(date.formatted(.dateTime.month(.wide).year())).")
     } else if records.count >= 3,
               let first = records.first, last.day.timeIntervalSince(first.day) >= 14 * 86_400 {
-      text += " It hasn't dropped over the recorded period."
+      text += String(localized: " It hasn't dropped over the recorded period.")
     } else {
-      text += " A forecast appears after two weeks of daily records."
+      text += String(localized: " A forecast appears after two weeks of daily records.")
     }
     return text
   }
@@ -113,9 +113,10 @@ struct HistoryPane: View {
   }
 
   private func detail(_ record: ChargerRecord) -> String {
-    var text = "Plugged in \(record.connections) time\(record.connections == 1 ? "" : "s"), last \(record.lastSeen.formatted(date: .abbreviated, time: .shortened))."
+    let last = record.lastSeen.formatted(date: .abbreviated, time: .shortened)
+    var text = String(localized: "Connections: \(record.connections). Last seen \(last).")
     if record.shortfalls > 0 {
-      text += " Too weak for the Mac \(record.shortfalls) time\(record.shortfalls == 1 ? "" : "s"): the battery had to help."
+      text += " " + String(localized: "Times it couldn't keep up and the battery had to help: \(record.shortfalls).")
     }
     return text
   }
@@ -123,13 +124,13 @@ struct HistoryPane: View {
   private func export(_ csv: String, name: String) {
     let panel = NSSavePanel()
     panel.allowedContentTypes = [.commaSeparatedText]
-    panel.nameFieldStringValue = "\(name).csv"
+    panel.nameFieldStringValue = String(localized: "\(name).csv")
     guard panel.runModal() == .OK, let url = panel.url else { return }
     do {
       try csv.write(to: url, atomically: true, encoding: .utf8)
       exportError = nil
     } catch {
-      exportError = "Couldn't save the file there. Pick another folder."
+      exportError = String(localized: "Couldn't save the file there. Pick another folder.")
     }
   }
 }

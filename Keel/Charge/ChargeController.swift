@@ -164,7 +164,7 @@ final class ChargeController {
     isAvailable = supported
     if store.calibrationWasRunning {
       store.calibrationWasRunning = false
-      onEvent?(.calibrationStopped("Keel was closed during calibration, so it stopped."))
+      onEvent?(.calibrationStopped(String(localized: "Keel was closed during calibration, so it stopped.")))
     }
     refresh()
     announceIfOverLimit()
@@ -294,9 +294,9 @@ final class ChargeController {
 
   // Nil when calibration can start, otherwise why not.
   var calibrationBlocker: String? {
-    guard isAvailable else { return "This Mac has no built-in charge limit." }
-    guard charger?.isReady == true else { return "Install Keel Helper first (Settings > General)." }
-    guard snapshot?.isPluggedIn == true else { return "Plug in the charger to start calibration." }
+    guard isAvailable else { return String(localized: "This Mac has no built-in charge limit.") }
+    guard charger?.isReady == true else { return String(localized: "Install Keel Helper first (Settings > General).") }
+    guard snapshot?.isPluggedIn == true else { return String(localized: "Plug in the charger to start calibration.") }
     return nil
   }
 
@@ -402,7 +402,7 @@ final class ChargeController {
       case .aborted:
         mode = .normal
         store.calibrationWasRunning = false
-        onEvent?(.calibrationStopped("The charger was unplugged, so calibration stopped."))
+        onEvent?(.calibrationStopped(String(localized: "The charger was unplugged, so calibration stopped.")))
       }
     default:
       break
@@ -429,7 +429,7 @@ final class ChargeController {
       case .failure(let error):
         self.log.error("Applying limit failed: \(error.localizedDescription, privacy: .public)")
         self.lastError = (error as? ChargeBackendError)?.errorDescription
-          ?? "macOS didn't accept the charge limit. Keel will try again."
+          ?? String(localized: "macOS didn't accept the charge limit. Keel will try again.")
       }
       if let pending = self.pendingLimit {
         self.pendingLimit = nil
@@ -482,7 +482,7 @@ final class ChargeController {
   private func stopCalibrationIfHelperGone() {
     guard calibrationStep != nil, charger?.isReady != true else { return }
     chargerConnected = true
-    stopCalibration(reason: "Keel Helper stopped, so calibration stopped.")
+    stopCalibration(reason: String(localized: "Keel Helper stopped, so calibration stopped."))
   }
 
   // Green when held at the limit, orange while moving toward it, as AlDente does. With the

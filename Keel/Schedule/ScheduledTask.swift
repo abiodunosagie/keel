@@ -13,12 +13,12 @@ struct ScheduledTask: Codable, Equatable, Identifiable, Sendable {
 
     var title: String {
       switch self {
-      case .setLimit(let percent): return "Set charge limit to \(percent)%"
-      case .topUp: return "Top Up"
-      case .pauseCharging: return "Pause charging"
-      case .dischargeTo(let percent): return "Discharge to \(percent)%"
-      case .startCalibration: return "Start calibration"
-      case .powerMode(let mode): return "Switch to \(mode.title) mode"
+      case .setLimit(let percent): return String(localized: "Set charge limit to \(percent)%")
+      case .topUp: return String(localized: "Top Up")
+      case .pauseCharging: return String(localized: "Pause charging")
+      case .dischargeTo(let percent): return String(localized: "Discharge to \(percent)%")
+      case .startCalibration: return String(localized: "Start calibration")
+      case .powerMode(let mode): return String(localized: "Switch to \(mode.title) mode")
       }
     }
   }
@@ -28,13 +28,13 @@ struct ScheduledTask: Codable, Equatable, Identifiable, Sendable {
 
     var title: String {
       switch self {
-      case .never: return "Never"
-      case .daily: return "Daily"
-      case .weekdays: return "Weekdays"
-      case .weekly: return "Weekly"
-      case .biweekly: return "Every two weeks"
-      case .monthly: return "Monthly"
-      case .yearly: return "Yearly"
+      case .never: return String(localized: "Never")
+      case .daily: return String(localized: "Daily")
+      case .weekdays: return String(localized: "Weekdays")
+      case .weekly: return String(localized: "Weekly")
+      case .biweekly: return String(localized: "Every two weeks")
+      case .monthly: return String(localized: "Monthly")
+      case .yearly: return String(localized: "Yearly")
       }
     }
   }

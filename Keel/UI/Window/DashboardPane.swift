@@ -13,7 +13,7 @@ struct DashboardPane: View {
   @State private var averageMinutes = 15
 
   var body: some View {
-    PaneHeader(title: "Battery at a glance", lede: "Live readings from the battery controller, refreshed every few seconds.")
+    PaneHeader(title: String(localized: "Battery at a glance"), lede: String(localized: "Live readings from the battery controller, refreshed every few seconds."))
       .background(sampling())
     if let snapshot = controller.snapshot {
       if let problem = insights.problem {
@@ -56,10 +56,10 @@ struct DashboardPane: View {
 
   private func tiles(_ snapshot: BatterySnapshot) -> some View {
     StatStrip(items: [
-      ("Full charge capacity", "\(snapshot.fullChargeCapacity.formatted()) mAh"),
-      ("Design capacity", "\(snapshot.designCapacity.formatted()) mAh"),
-      ("Health", Format.percent(snapshot.health)),
-      ("Cycles", "\(snapshot.cycleCount)"),
+      (String(localized: "Full charge capacity"), String(localized: "\(snapshot.fullChargeCapacity.formatted()) mAh")),
+      (String(localized: "Design capacity"), String(localized: "\(snapshot.designCapacity.formatted()) mAh")),
+      (String(localized: "Health"), Format.percent(snapshot.health)),
+      (String(localized: "Cycles"), "\(snapshot.cycleCount)"),
     ], valueSize: 18, padding: 14)
     .padding(.vertical, 14)
     .panel(radius: 10)
@@ -95,19 +95,19 @@ struct DashboardPane: View {
       } else {
         Chart {
           ForEach(points) { point in
-            AreaMark(x: .value("Time", point.date), yStart: .value("Base", metric.domain.lowerBound),
+            AreaMark(x: .value(String(localized: "Time"), point.date), yStart: .value(String(localized: "Base"), metric.domain.lowerBound),
                      yEnd: .value(metric.title, point.value))
               .foregroundStyle(metric.color.opacity(0.14))
-            LineMark(x: .value("Time", point.date), y: .value(metric.title, point.value))
+            LineMark(x: .value(String(localized: "Time"), point.date), y: .value(metric.title, point.value))
               .foregroundStyle(metric.color)
           }
           if metric == .charge, let limit = controller.appliedLimit {
-            RuleMark(y: .value("Limit", limit))
+            RuleMark(y: .value(String(localized: "Limit"), limit))
               .foregroundStyle(Theme.held.opacity(0.6))
               .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
           }
           if metric == .temperature, controller.settings.heatProtection {
-            RuleMark(y: .value("Max", controller.settings.maxTemperature))
+            RuleMark(y: .value(String(localized: "Max"), controller.settings.maxTemperature))
               .foregroundStyle(Theme.heat.opacity(0.6))
               .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
           }
@@ -128,7 +128,7 @@ struct DashboardPane: View {
   private func consumption(_ snapshot: BatterySnapshot) -> some View {
     let average = history.averageWatts(lastMinutes: averageMinutes)
     return RowGroup {
-      SettingRow(title: "Power consumption", detail: consumptionDetail(snapshot, average: average)) {
+      SettingRow(title: String(localized: "Power consumption"), detail: consumptionDetail(snapshot, average: average)) {
         Picker("Average over", selection: $averageMinutes) {
           Text("5 min").tag(5)
           Text("15 min").tag(15)
@@ -142,13 +142,13 @@ struct DashboardPane: View {
   }
 
   private func consumptionDetail(_ snapshot: BatterySnapshot, average: Double?) -> String {
-    let now = snapshot.systemLoad.map { "Now \(Format.watts($0))" } ?? "Now n/a"
-    guard let average else { return "\(now). No average yet." }
-    var text = "\(now), average \(Format.watts(average))."
+    let now = snapshot.systemLoad.map { String(localized: "Now \(Format.watts($0))") } ?? String(localized: "Now n/a")
+    guard let average else { return String(localized: "\(now). No average yet.") }
+    var text = String(localized: "\(now), average \(Format.watts(average)).")
     // Time remaining from the chosen window: energy left in the battery over average draw.
     if !snapshot.isPluggedIn, average > 0.5 {
       let whLeft = Double(snapshot.remainingCapacity) / 1000 * snapshot.voltage
-      text += " About \(Format.duration(Int(whLeft / average * 60))) left at this rate."
+      text += String(localized: " About \(Format.duration(Int(whLeft / average * 60))) left at this rate.")
     }
     return text
   }
@@ -158,7 +158,7 @@ enum ChartRange: String, CaseIterable, Identifiable {
   case hour, day, week
 
   var id: String { rawValue }
-  var title: String { self == .hour ? "1 h" : self == .day ? "24 h" : "7 days" }
+  var title: String { self == .hour ? "1 h" : self == .day ? "24 h" : String(localized: "7 days") }
   var seconds: TimeInterval { self == .hour ? 3600 : self == .day ? 86_400 : 604_800 }
 }
 
@@ -175,9 +175,9 @@ enum ChartMetric: String, CaseIterable, Identifiable {
 
   var title: String {
     switch self {
-    case .charge: return "Charge"
-    case .power: return "Power"
-    case .temperature: return "Temperature"
+    case .charge: return String(localized: "Charge")
+    case .power: return String(localized: "Power")
+    case .temperature: return String(localized: "Temperature")
     }
   }
 
@@ -213,16 +213,16 @@ enum ChartMetric: String, CaseIterable, Identifiable {
 
   var emptyText: String {
     switch self {
-    case .charge: return "No readings in this range yet."
-    case .power, .temperature: return "Collecting data. Keel records a reading every minute."
+    case .charge: return String(localized: "No readings in this range yet.")
+    case .power, .temperature: return String(localized: "Collecting data. Keel records a reading every minute.")
     }
   }
 
   var footnote: String {
     switch self {
-    case .charge: return "Keel's readings every minute, plus the levels macOS logged at each sleep and wake. Dashed line: your limit."
-    case .power: return "Watts the whole Mac used, recorded every minute."
-    case .temperature: return "Battery temperature, recorded every minute. Dashed line: Heat Protection's limit."
+    case .charge: return String(localized: "Keel's readings every minute, plus the levels macOS logged at each sleep and wake. Dashed line: your limit.")
+    case .power: return String(localized: "Watts the whole Mac used, recorded every minute.")
+    case .temperature: return String(localized: "Battery temperature, recorded every minute. Dashed line: Heat Protection's limit.")
     }
   }
 }

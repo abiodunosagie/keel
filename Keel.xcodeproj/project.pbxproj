@@ -54,6 +54,7 @@
 		A52EB909AC78709E25F54417 /* LimitCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0089B8C074B8AB2FD70AB8A /* LimitCard.swift */; };
 		A9CD130170E1954C22435F42 /* HelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F930A300E6C542717E69FE1C /* HelperProtocol.swift */; };
 		B067F0F354B86953DA50E9ED /* Hotkeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73235924655E97A2D1350FF9 /* Hotkeys.swift */; };
+		B5A45EED870A92F90B9A4198 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = FDFCDDB0802E4A38BF1CB158 /* Localizable.xcstrings */; };
 		B67943EFC0F65787C004147D /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958B6C32DC0A5E9A12F37B2F /* SettingsStore.swift */; };
 		BAC3CE41D8A1134204163017 /* PowerInsights.swift in Sources */ = {isa = PBXBuildFile; fileRef = 910B5C1A5230347977A44C42 /* PowerInsights.swift */; };
 		BD57BAE3B3B9E8BC2A4562E6 /* HistoryPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2194F86B21B33E0C9605E2 /* HistoryPane.swift */; };
@@ -62,6 +63,7 @@
 		CD6E1DA05BBD7AA09EA58E67 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE77D21DA50BE23F31D667DE /* OnboardingView.swift */; };
 		CDA8214C51411DCD62BC6B8C /* ChipPowerParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453380DC2E9B30943421A86B /* ChipPowerParsing.swift */; };
 		CEBAC23783B8C9D4997C661A /* ShellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7385C64403A2BBF073447D8 /* ShellTests.swift */; };
+		D16E3D2F6CCC0364EF4CADD8 /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 903295FFCEC8CA69B44AF9EB /* LocalizationTests.swift */; };
 		D9050BF8D7B99F3A1CA43177 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D595DB2CC1077D79CBB5B3EF /* Theme.swift */; };
 		DF8CEE9C2EB184B802F5931D /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68803130F5D4EB29BDDA4AA /* StatusItemController.swift */; };
 		E16A74422B3A6D926D90367D /* Notifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E2276B38A20FCF6B9E0BB7 /* Notifier.swift */; };
@@ -155,6 +157,7 @@
 		892B0E7ED26D347F86A4B566 /* PowerLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerLog.swift; sourceTree = "<group>"; };
 		8AC373764E3A036BDB045CE3 /* ChargePolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargePolicyTests.swift; sourceTree = "<group>"; };
 		8D7501AC349D1DD14998B1D9 /* BatteryReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryReader.swift; sourceTree = "<group>"; };
+		903295FFCEC8CA69B44AF9EB /* LocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
 		910B5C1A5230347977A44C42 /* PowerInsights.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerInsights.swift; sourceTree = "<group>"; };
 		936D20C2E2EA96F7469F6287 /* KeelHelper */ = {isa = PBXFileReference; includeInIndex = 0; path = KeelHelper; sourceTree = BUILT_PRODUCTS_DIR; };
 		958B6C32DC0A5E9A12F37B2F /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
@@ -190,6 +193,7 @@
 		F7385C64403A2BBF073447D8 /* ShellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellTests.swift; sourceTree = "<group>"; };
 		F930A300E6C542717E69FE1C /* HelperProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperProtocol.swift; sourceTree = "<group>"; };
 		FBB08F7C577200675EDE09B3 /* KeelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KeelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDFCDDB0802E4A38BF1CB158 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		FE2194F86B21B33E0C9605E2 /* HistoryPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryPane.swift; sourceTree = "<group>"; };
 		FE77D21DA50BE23F31D667DE /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -253,6 +257,7 @@
 				B854656744C3B0F55D0668B4 /* ChargeControllerTests.swift */,
 				8AC373764E3A036BDB045CE3 /* ChargePolicyTests.swift */,
 				A62619B73A31518B2A81FD5B /* InsightsTests.swift */,
+				903295FFCEC8CA69B44AF9EB /* LocalizationTests.swift */,
 				4654DE21638015D5AD88DB65 /* ScheduleEngineTests.swift */,
 				F7385C64403A2BBF073447D8 /* ShellTests.swift */,
 				523A85AA0D01D638A24D02D4 /* TestSupport.swift */,
@@ -285,6 +290,7 @@
 			children = (
 				C7C40966CADA76D63EBB00B5 /* Info.plist */,
 				7FBE1FFA6CBD46785796FF18 /* Keel.entitlements */,
+				FDFCDDB0802E4A38BF1CB158 /* Localizable.xcstrings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -438,6 +444,7 @@
 			buildConfigurationList = 6D85E3542563FBFE7F9C6A6B /* Build configuration list for PBXNativeTarget "Keel" */;
 			buildPhases = (
 				0571E1556398B86AB9A5EB44 /* Sources */,
+				C34C7FE6211AFEDAE04EF977 /* Resources */,
 				4081D75B967F33A2BD30856F /* CopyFiles */,
 				B8FFE7325ACE2E45F7D23E17 /* Frameworks */,
 				7BF341BC3E197A896FBDD491 /* Embed Dependencies */,
@@ -500,7 +507,11 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
+				de,
 				en,
+				es,
+				fr,
+				"pt-PT",
 			);
 			mainGroup = D6FAE18246B74B4514B7F3B8;
 			minimizedProjectReferenceProxies = 1;
@@ -518,6 +529,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C34C7FE6211AFEDAE04EF977 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B5A45EED870A92F90B9A4198 /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0571E1556398B86AB9A5EB44 /* Sources */ = {
@@ -589,6 +611,7 @@
 				52F167F93CB8F4DCAEBFF469 /* ChargeControllerTests.swift in Sources */,
 				41F960747B1CD2B66EB9DFA5 /* ChargePolicyTests.swift in Sources */,
 				F5BE8BD9069E122924540291 /* InsightsTests.swift in Sources */,
+				D16E3D2F6CCC0364EF4CADD8 /* LocalizationTests.swift in Sources */,
 				498976218EB1BD075DB917D7 /* ScheduleEngineTests.swift in Sources */,
 				CEBAC23783B8C9D4997C661A /* ShellTests.swift in Sources */,
 				7155BE7EA584AB573FF67E01 /* TestSupport.swift in Sources */,
@@ -702,10 +725,12 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.abiodunosagie.Keel;
 				PRODUCT_NAME = Keel;
 				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Keel/ObjC/Keel-Bridging-Header.h";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/Shared";
@@ -725,10 +750,12 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.abiodunosagie.Keel;
 				PRODUCT_NAME = Keel;
 				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Keel/ObjC/Keel-Bridging-Header.h";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/Shared";

@@ -7,7 +7,7 @@ struct SchedulePane: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
       HStack(alignment: .top) {
-        PaneHeader(title: "Schedule", lede: "Run actions at set times. A task missed while the Mac sleeps can run when it wakes.")
+        PaneHeader(title: String(localized: "Schedule"), lede: String(localized: "Run actions at set times. A task missed while the Mac sleeps can run when it wakes."))
         Spacer()
         Menu("Add Task") {
           Button("New Task…") { editing = ScheduledTask(action: .topUp, repeats: .weekdays, start: Self.nextMorning) }
@@ -94,17 +94,17 @@ struct SchedulePane: View {
     let when = task.start.formatted(date: task.repeats == .never ? .abbreviated : .omitted, time: .shortened)
     var text = "\(task.repeats.title), \(when)"
     if let next = scheduler.nextRun(of: task) {
-      text += ". Next: \(next.formatted(date: .abbreviated, time: .shortened))"
+      text += String(localized: ". Next: \(next.formatted(date: .abbreviated, time: .shortened))")
     }
-    if task.runAtNextOpportunity { text += ". Runs when the Mac wakes if missed" }
+    if task.runAtNextOpportunity { text += String(localized: ". Runs when the Mac wakes if missed") }
     return text + "."
   }
 
   private func outcomeTag(_ outcome: TaskRun.Outcome) -> some View {
     let (text, color): (String, Color) = switch outcome {
-    case .onTime: ("done", Theme.held)
-    case .late: ("ran at wake", Theme.moving)
-    case .skipped: ("missed", Theme.ink2)
+    case .onTime: (String(localized: "done"), Theme.held)
+    case .late: (String(localized: "ran at wake"), Theme.moving)
+    case .skipped: (String(localized: "missed"), Theme.ink2)
     }
     return Text(text)
       .font(.system(size: 11, weight: .semibold))

@@ -8,34 +8,34 @@ struct ActionRow: View {
   var body: some View {
     HStack(spacing: 8) {
       ActionTile(
-        title: controller.isTopUpActive ? "Stop Top Up" : "Top Up",
+        title: controller.isTopUpActive ? String(localized: "Stop Top Up") : String(localized: "Top Up"),
         symbol: "bolt",
         isActive: controller.isTopUpActive,
         isEnabled: controller.isTopUpActive || (controller.snapshot?.isPluggedIn ?? false),
         help: controller.snapshot?.isPluggedIn == true
-          ? "Charge to 100% until you unplug, then go back to your limit."
-          : "Plug in the charger to top up."
+          ? String(localized: "Charge to 100% until you unplug, then go back to your limit.")
+          : String(localized: "Plug in the charger to top up.")
       ) {
         controller.isTopUpActive ? controller.stopTopUp() : controller.startTopUp()
       }
       ActionTile(
-        title: controller.mode == .discharge ? "Stop" : "Discharge",
+        title: controller.mode == .discharge ? String(localized: "Stop") : String(localized: "Discharge"),
         symbol: "arrow.down.to.line",
         isActive: controller.mode == .discharge,
         isEnabled: controller.mode == .discharge || controller.canDischarge,
         help: controller.canDischarge || controller.mode == .discharge
-          ? "Run on battery down to your limit, then go back to the charger."
-          : "Discharge works on the charger when the battery is above the limit."
+          ? String(localized: "Run on battery down to your limit, then go back to the charger.")
+          : String(localized: "Discharge works on the charger when the battery is above the limit.")
       ) {
         controller.mode == .discharge ? controller.stopDischarge() : controller.startDischarge()
       }
       ActionTile(
-        title: controller.calibrationStep == nil ? "Calibrate" : "Calibrating",
+        title: controller.calibrationStep == nil ? String(localized: "Calibrate") : String(localized: "Calibrating"),
         symbol: "arrow.clockwise",
         isActive: controller.calibrationStep != nil,
         isEnabled: true,
         help: controller.calibrationBlocker
-          ?? "Charge to 100%, down to \(Calibration.floor)%, back to 100%, hold an hour, then your limit."
+          ?? String(localized: "Charge to 100%, down to \(Calibration.floor)%, back to 100%, hold an hour, then your limit.")
       ) {
         if controller.calibrationStep == nil, controller.calibrationBlocker == nil {
           controller.startCalibration()

@@ -8,9 +8,9 @@ struct SetupRecommendation: Equatable {
     var id: String { rawValue }
     var title: String {
       switch self {
-      case .desk: return "Plugged in at a desk"
-      case .mixed: return "About half plugged in, half on battery"
-      case .mobile: return "Mostly on battery"
+      case .desk: return String(localized: "Plugged in at a desk")
+      case .mixed: return String(localized: "About half plugged in, half on battery")
+      case .mobile: return String(localized: "Mostly on battery")
       }
     }
   }
@@ -20,9 +20,9 @@ struct SetupRecommendation: Equatable {
     var id: String { rawValue }
     var title: String {
       switch self {
-      case .rarely: return "Rarely"
-      case .weekly: return "Once or twice a week"
-      case .daily: return "Most weekdays"
+      case .rarely: return String(localized: "Rarely")
+      case .weekly: return String(localized: "Once or twice a week")
+      case .daily: return String(localized: "Most weekdays")
       }
     }
   }
@@ -32,9 +32,9 @@ struct SetupRecommendation: Equatable {
     var id: String { rawValue }
     var title: String {
       switch self {
-      case .rarely: return "Rarely"
-      case .sometimes: return "Sometimes"
-      case .often: return "Often (heavy work or a warm room)"
+      case .rarely: return String(localized: "Rarely")
+      case .sometimes: return String(localized: "Sometimes")
+      case .often: return String(localized: "Often (heavy work or a warm room)")
       }
     }
   }
@@ -90,9 +90,9 @@ struct OnboardingView: View {
       Group {
         switch step {
         case 0: welcome
-        case 1: question("How do you use this Mac most days?", selection: $usage)
-        case 2: question("How often do you need a full battery for a long day away from a charger?", selection: $longDays)
-        case 3: question("Does the Mac get hot?", selection: $heat)
+        case 1: question(String(localized: "How do you use this Mac most days?"), selection: $usage)
+        case 2: question(String(localized: "How often do you need a full battery for a long day away from a charger?"), selection: $longDays)
+        case 3: question(String(localized: "Does the Mac get hot?"), selection: $heat)
         default: summary
         }
       }
@@ -159,17 +159,17 @@ struct OnboardingView: View {
         .font(.system(size: 18, weight: .semibold))
         .foregroundStyle(Theme.ink)
       RowGroup {
-        SettingRow(title: "Charge limit \(plan.limit)%", detail: plan.limit >= 95
-          ? "Close to full, for days away from a charger."
-          : "A healthy level while plugged in.") { EmptyView() }
-        SettingRow(title: plan.heatProtection ? "Heat Protection on, 35 °C" : "Heat Protection off",
-                   detail: "Pauses charging while the battery is hot.") { EmptyView() }
-        SettingRow(title: plan.calibration.map { "Calibrate \($0.title.lowercased())" } ?? "No scheduled calibration",
+        SettingRow(title: String(localized: "Charge limit \(plan.limit)%"), detail: plan.limit >= 95
+          ? String(localized: "Close to full, for days away from a charger.")
+          : String(localized: "A healthy level while plugged in.")) { EmptyView() }
+        SettingRow(title: plan.heatProtection ? String(localized: "Heat Protection on, 35 °C") : String(localized: "Heat Protection off"),
+                   detail: String(localized: "Pauses charging while the battery is hot.")) { EmptyView() }
+        SettingRow(title: plan.calibration.map { String(localized: "Calibrate \($0.title.lowercased())") } ?? String(localized: "No scheduled calibration"),
                    detail: plan.calibration == nil
-                     ? "Using the battery keeps its reading accurate on its own."
-                     : "Keeps the battery's percentage accurate. Needs Keel Helper.") { EmptyView() }
+                     ? String(localized: "Using the battery keeps its reading accurate on its own.")
+                     : String(localized: "Keeps the battery's percentage accurate. Needs Keel Helper.")) { EmptyView() }
         if plan.weekdayTopUp {
-          SettingRow(title: "Top Up weekday mornings at 06:30", detail: "A full battery for long days, back to the limit after you unplug.") { EmptyView() }
+          SettingRow(title: String(localized: "Top Up weekday mornings at 06:30"), detail: String(localized: "A full battery for long days, back to the limit after you unplug.")) { EmptyView() }
         }
       }
       Toggle("Open Keel at login", isOn: $openAtLogin)

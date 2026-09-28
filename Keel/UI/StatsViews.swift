@@ -39,8 +39,8 @@ struct PowerFlow {
   var fromBattery: Bool { snapshot.batteryWatts < -Self.noiseWatts }
 
   var sourceTitle: String {
-    if snapshot.isPluggedIn { return fromBattery ? "Charger + battery" : "Charger" }
-    return "Battery"
+    if snapshot.isPluggedIn { return fromBattery ? String(localized: "Charger + battery") : String(localized: "Charger") }
+    return String(localized: "Battery")
   }
 
   var sourceWatts: Double? {
@@ -49,7 +49,7 @@ struct PowerFlow {
   }
 
   var destinationTitle: String {
-    snapshot.batteryWatts > Self.noiseWatts ? "Mac + battery" : "Mac"
+    snapshot.batteryWatts > Self.noiseWatts ? String(localized: "Mac + battery") : String(localized: "Mac")
   }
 
   var destinationWatts: Double? { sourceWatts }
@@ -91,10 +91,10 @@ struct StatsRow: View {
 
   var body: some View {
     StatStrip(items: [
-      ("Health", Format.percent(snapshot.health)),
-      ("Cycles", "\(snapshot.cycleCount)"),
-      ("Temp", snapshot.temperature.map { String(format: "%.1f°", $0) } ?? "n/a"),
-      ("Adapter", snapshot.adapterWatts.map { "\($0) W" } ?? "none"),
+      (String(localized: "Health"), Format.percent(snapshot.health)),
+      (String(localized: "Cycles"), "\(snapshot.cycleCount)"),
+      (String(localized: "Temp"), snapshot.temperature.map { String(format: "%.1f°", $0) } ?? "n/a"),
+      (String(localized: "Adapter"), snapshot.adapterWatts.map { "\($0) W" } ?? "none"),
     ], valueSize: 13, padding: 7)
     .padding(.top, 10)
     .overlay(alignment: .top) { Rectangle().fill(Theme.line).frame(height: 1) }

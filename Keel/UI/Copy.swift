@@ -4,15 +4,15 @@ import Foundation
 extension ChargeState {
   var title: String {
     switch self {
-    case .charging: return "Charging"
-    case .paused: return "Held at limit"
-    case .discharging: return "Discharging"
-    case .topUp: return "Top Up to 100%"
-    case .heatProtect: return "Paused, too warm"
-    case .calibration: return "Calibrating"
-    case .onBattery: return "On battery"
-    case .macOSOverride: return "macOS is charging"
-    case .unavailable: return "Not available"
+    case .charging: return String(localized: "Charging")
+    case .paused: return String(localized: "Held at limit")
+    case .discharging: return String(localized: "Discharging")
+    case .topUp: return String(localized: "Top Up to 100%")
+    case .heatProtect: return String(localized: "Paused, too warm")
+    case .calibration: return String(localized: "Calibrating")
+    case .onBattery: return String(localized: "On battery")
+    case .macOSOverride: return String(localized: "macOS is charging")
+    case .unavailable: return String(localized: "Not available")
     }
   }
 }
@@ -20,16 +20,16 @@ extension ChargeState {
 extension PowerMode {
   var title: String {
     switch self {
-    case .automatic: return "Automatic"
-    case .low: return "Low Power"
-    case .high: return "High Power"
+    case .automatic: return String(localized: "Automatic")
+    case .low: return String(localized: "Low Power")
+    case .high: return String(localized: "High Power")
     }
   }
 }
 
 enum Format {
   static func duration(_ minutes: Int) -> String {
-    minutes >= 60 ? "\(minutes / 60) h \(minutes % 60) min" : "\(minutes) min"
+    minutes >= 60 ? String(localized: "\(minutes / 60) h \(minutes % 60) min") : String(localized: "\(minutes) min")
   }
 
   static func watts(_ value: Double) -> String {

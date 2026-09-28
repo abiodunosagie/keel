@@ -51,6 +51,8 @@ targets:
         GENERATE_INFOPLIST_FILE: NO
         SWIFT_STRICT_CONCURRENCY: complete
         USER_HEADER_SEARCH_PATHS: $(SRCROOT)/Shared
+        SWIFT_EMIT_LOC_STRINGS: YES
+        LOCALIZATION_PREFERS_STRING_CATALOGS: YES
   KeelHelper:
     type: tool
     platform: macOS

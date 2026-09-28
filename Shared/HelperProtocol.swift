@@ -6,7 +6,7 @@ enum HelperIdentity {
   static let appIdentifier = "com.abiodunosagie.Keel"
   static let teamIdentifier = "R87873B42W"
   // Bumped whenever the helper's behaviour changes, so the app can re-register a stale copy.
-  static let version = 2
+  static let version = 3
   // The lowest charge Keel ever runs the battery down to with the charger cut. Calibration
   // aims for it and the helper enforces it on its own.
   static let batteryFloor = 10
@@ -45,6 +45,9 @@ enum HelperIdentity {
   // Restores everything and exits so launchd starts the helper from the updated Keel.app on
   // the next connection. Updates need no new approval this way.
   func exitForUpdate(reply: @escaping () -> Void)
+  // CPU, GPU and Neural Engine power in watts from one short powermetrics sample (needs root).
+  // ok is false when it couldn't be read.
+  func readChipPower(reply: @escaping (_ cpu: Double, _ gpu: Double, _ ane: Double, _ ok: Bool) -> Void)
 }
 
 // macOS energy modes (pmset powermode). High Power only exists on some MacBook Pro models.

@@ -21,6 +21,15 @@ final class Notifier {
     case .calibrationStopped(let reason):
       content.title = "Calibration stopped"
       content.body = reason
+    case .chargerProblem(let message):
+      content.title = "Charger problem"
+      content.body = message
+    case .temperatureHigh(let temperature):
+      content.title = "Battery is hot"
+      content.body = "The battery is at \(Format.temperature(temperature)). Heat ages it faster; give the Mac some air or a lighter load."
+    case .overLimitOnLaunch(let percent, let limit):
+      content.title = "Battery above your limit"
+      content.body = "It's at \(percent)%, above your \(limit)% limit, probably from charging while Keel wasn't running. Automatic Discharge brings it down on the charger."
     }
     let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
     Task {

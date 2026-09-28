@@ -14,6 +14,9 @@ struct AppOptions: Equatable, Sendable {
   var menuBarPercent = true
   var menuBarWatts = false
   var menuBarTemperature = false
+  var temperatureAlert = true
+  var temperatureAlertLimit: Double = 40
+  var overLimitAlert = true
 }
 
 // Keeps the settings, the calibration bookkeeping, and the macOS charge limit that was in
@@ -34,6 +37,9 @@ struct SettingsStore: @unchecked Sendable {
     static let menuBarPercent = "menuBarPercent"
     static let menuBarWatts = "menuBarWatts"
     static let menuBarTemperature = "menuBarTemperature"
+    static let temperatureAlert = "temperatureAlert"
+    static let temperatureAlertLimit = "temperatureAlertLimit"
+    static let overLimitAlert = "overLimitAlert"
     static let lastCalibration = "lastCalibration"
     static let calibrationRunning = "calibrationRunning"
   }
@@ -76,7 +82,10 @@ struct SettingsStore: @unchecked Sendable {
       magSafeLight: (value(Key.magSafeLight) as String?).flatMap(AppOptions.Light.init) ?? base.magSafeLight,
       menuBarPercent: value(Key.menuBarPercent) ?? base.menuBarPercent,
       menuBarWatts: value(Key.menuBarWatts) ?? base.menuBarWatts,
-      menuBarTemperature: value(Key.menuBarTemperature) ?? base.menuBarTemperature
+      menuBarTemperature: value(Key.menuBarTemperature) ?? base.menuBarTemperature,
+      temperatureAlert: value(Key.temperatureAlert) ?? base.temperatureAlert,
+      temperatureAlertLimit: value(Key.temperatureAlertLimit) ?? base.temperatureAlertLimit,
+      overLimitAlert: value(Key.overLimitAlert) ?? base.overLimitAlert
     )
   }
 
@@ -88,6 +97,9 @@ struct SettingsStore: @unchecked Sendable {
     defaults.set(options.menuBarPercent, forKey: Key.menuBarPercent)
     defaults.set(options.menuBarWatts, forKey: Key.menuBarWatts)
     defaults.set(options.menuBarTemperature, forKey: Key.menuBarTemperature)
+    defaults.set(options.temperatureAlert, forKey: Key.temperatureAlert)
+    defaults.set(options.temperatureAlertLimit, forKey: Key.temperatureAlertLimit)
+    defaults.set(options.overLimitAlert, forKey: Key.overLimitAlert)
   }
 
   var lastCalibration: Date? {

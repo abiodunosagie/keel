@@ -45,16 +45,23 @@
 		8F0E6E096886AF0B3A9337C9 /* EnergyAppsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6537E4C2B71E24DA778CE61 /* EnergyAppsPanel.swift */; };
 		91098F7F2C2C435F26FF6F90 /* HelperClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2299EB0083A66780CF330ECE /* HelperClient.swift */; };
 		928C731220B6A72896FBC102 /* BatteryHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7643A7EF80E295E274C6D3CF /* BatteryHistory.swift */; };
+		A018656263BFFFDC30A5F95C /* ChipPowerParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453380DC2E9B30943421A86B /* ChipPowerParsing.swift */; };
 		A52EB909AC78709E25F54417 /* LimitCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0089B8C074B8AB2FD70AB8A /* LimitCard.swift */; };
 		A9CD130170E1954C22435F42 /* HelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F930A300E6C542717E69FE1C /* HelperProtocol.swift */; };
 		B67943EFC0F65787C004147D /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958B6C32DC0A5E9A12F37B2F /* SettingsStore.swift */; };
+		BAC3CE41D8A1134204163017 /* PowerInsights.swift in Sources */ = {isa = PBXBuildFile; fileRef = 910B5C1A5230347977A44C42 /* PowerInsights.swift */; };
+		BD57BAE3B3B9E8BC2A4562E6 /* HistoryPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2194F86B21B33E0C9605E2 /* HistoryPane.swift */; };
 		C3520E854A5DB7288DF08DE6 /* GeneralPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30AA788D992253C22D9CCD1E /* GeneralPane.swift */; };
+		C4B051E4F98D0C5633752B6A /* DrainSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319D5096A6F8059A07324D10 /* DrainSummary.swift */; };
+		CDA8214C51411DCD62BC6B8C /* ChipPowerParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453380DC2E9B30943421A86B /* ChipPowerParsing.swift */; };
 		D9050BF8D7B99F3A1CA43177 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D595DB2CC1077D79CBB5B3EF /* Theme.swift */; };
 		E16A74422B3A6D926D90367D /* Notifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E2276B38A20FCF6B9E0BB7 /* Notifier.swift */; };
 		E32E431D18E225A9C535C511 /* ChargePane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E93799D4C35406E5E751CF /* ChargePane.swift */; };
 		EB845546928C1E457939547E /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B866D28BA36F08B145F920E8 /* PopoverView.swift */; };
 		F47A6096C1BC412EE6651BCF /* KeelPowerUI.m in Sources */ = {isa = PBXBuildFile; fileRef = DA17C4666B9B9F72AE3941A9 /* KeelPowerUI.m */; };
+		F5BE8BD9069E122924540291 /* InsightsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62619B73A31518B2A81FD5B /* InsightsTests.swift */; };
 		F63F18A61BF383DD8C08DD45 /* Calibration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E01348882754A1139D8010C4 /* Calibration.swift */; };
+		F8064BE116827841A337549B /* DashboardPanels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB8A238EA7B959F76EF7D7E /* DashboardPanels.swift */; };
 		FA5D50DB5C711087E6D069A0 /* PowerLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892B0E7ED26D347F86A4B566 /* PowerLog.swift */; };
 		FDD767036784B30F05DA07E8 /* Scheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7EA4F42D0A4038997173010 /* Scheduler.swift */; };
 /* End PBXBuildFile section */
@@ -110,11 +117,13 @@
 		2DCF5848EBE3F5312489745F /* KeelPowerUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeelPowerUI.h; sourceTree = "<group>"; };
 		2E45C1FD390432029BC9DFF4 /* KeelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeelApp.swift; sourceTree = "<group>"; };
 		30AA788D992253C22D9CCD1E /* GeneralPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPane.swift; sourceTree = "<group>"; };
+		319D5096A6F8059A07324D10 /* DrainSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrainSummary.swift; sourceTree = "<group>"; };
 		36DB50EEBDD82D2AE7613592 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		373F49AE56FD0A47B31C0A93 /* KeelSMC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeelSMC.h; sourceTree = "<group>"; };
 		37AA5E1A4275E4550040540A /* ChargePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargePolicy.swift; sourceTree = "<group>"; };
 		40E2276B38A20FCF6B9E0BB7 /* Notifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifier.swift; sourceTree = "<group>"; };
 		43E93799D4C35406E5E751CF /* ChargePane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargePane.swift; sourceTree = "<group>"; };
+		453380DC2E9B30943421A86B /* ChipPowerParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChipPowerParsing.swift; sourceTree = "<group>"; };
 		4654DE21638015D5AD88DB65 /* ScheduleEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleEngineTests.swift; sourceTree = "<group>"; };
 		4BB9421479E2969232575B96 /* CalibrationPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationPane.swift; sourceTree = "<group>"; };
 		523A85AA0D01D638A24D02D4 /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
@@ -129,9 +138,12 @@
 		892B0E7ED26D347F86A4B566 /* PowerLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerLog.swift; sourceTree = "<group>"; };
 		8AC373764E3A036BDB045CE3 /* ChargePolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargePolicyTests.swift; sourceTree = "<group>"; };
 		8D7501AC349D1DD14998B1D9 /* BatteryReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryReader.swift; sourceTree = "<group>"; };
+		910B5C1A5230347977A44C42 /* PowerInsights.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerInsights.swift; sourceTree = "<group>"; };
 		936D20C2E2EA96F7469F6287 /* KeelHelper */ = {isa = PBXFileReference; includeInIndex = 0; path = KeelHelper; sourceTree = BUILT_PRODUCTS_DIR; };
 		958B6C32DC0A5E9A12F37B2F /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		9EB8A238EA7B959F76EF7D7E /* DashboardPanels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardPanels.swift; sourceTree = "<group>"; };
 		A57FB20055413157BC64179E /* ChargeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargeController.swift; sourceTree = "<group>"; };
+		A62619B73A31518B2A81FD5B /* InsightsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsTests.swift; sourceTree = "<group>"; };
 		A88EBDBA197B2C0784CA7DA8 /* SleepGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepGuard.swift; sourceTree = "<group>"; };
 		ABECF18A1AD5FD4800A119DA /* MainWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindow.swift; sourceTree = "<group>"; };
 		AE0680E50220ECBF52E24698 /* BatteryReaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryReaderTests.swift; sourceTree = "<group>"; };
@@ -156,6 +168,7 @@
 		ED8187622FA69DB43B72FEF5 /* KeelSMC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeelSMC.m; sourceTree = "<group>"; };
 		F930A300E6C542717E69FE1C /* HelperProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperProtocol.swift; sourceTree = "<group>"; };
 		FBB08F7C577200675EDE09B3 /* KeelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KeelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FE2194F86B21B33E0C9605E2 /* HistoryPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryPane.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -184,8 +197,10 @@
 				4BB9421479E2969232575B96 /* CalibrationPane.swift */,
 				43E93799D4C35406E5E751CF /* ChargePane.swift */,
 				643FE5FB0C7798207A84AAA0 /* DashboardPane.swift */,
+				9EB8A238EA7B959F76EF7D7E /* DashboardPanels.swift */,
 				B6537E4C2B71E24DA778CE61 /* EnergyAppsPanel.swift */,
 				30AA788D992253C22D9CCD1E /* GeneralPane.swift */,
+				FE2194F86B21B33E0C9605E2 /* HistoryPane.swift */,
 				ABECF18A1AD5FD4800A119DA /* MainWindow.swift */,
 				663FBC0F33A39950CD14A0C8 /* SchedulePane.swift */,
 				7D9DD01A2255FB2426452315 /* TaskEditor.swift */,
@@ -199,6 +214,7 @@
 				AE0680E50220ECBF52E24698 /* BatteryReaderTests.swift */,
 				B854656744C3B0F55D0668B4 /* ChargeControllerTests.swift */,
 				8AC373764E3A036BDB045CE3 /* ChargePolicyTests.swift */,
+				A62619B73A31518B2A81FD5B /* InsightsTests.swift */,
 				4654DE21638015D5AD88DB65 /* ScheduleEngineTests.swift */,
 				523A85AA0D01D638A24D02D4 /* TestSupport.swift */,
 			);
@@ -258,9 +274,19 @@
 			path = ObjC;
 			sourceTree = "<group>";
 		};
+		B76329A5A3C1E88EA8C399A2 /* Insights */ = {
+			isa = PBXGroup;
+			children = (
+				319D5096A6F8059A07324D10 /* DrainSummary.swift */,
+				910B5C1A5230347977A44C42 /* PowerInsights.swift */,
+			);
+			path = Insights;
+			sourceTree = "<group>";
+		};
 		BBC8358CFB400837A134E718 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				453380DC2E9B30943421A86B /* ChipPowerParsing.swift */,
 				F930A300E6C542717E69FE1C /* HelperProtocol.swift */,
 				373F49AE56FD0A47B31C0A93 /* KeelSMC.h */,
 				ED8187622FA69DB43B72FEF5 /* KeelSMC.m */,
@@ -308,6 +334,7 @@
 				43D2AE6854489662B22808ED /* Battery */,
 				91C4E59D086954880BDCE9F9 /* Charge */,
 				030AECDBB910D24165B1AA66 /* Helper */,
+				B76329A5A3C1E88EA8C399A2 /* Insights */,
 				94987094E81DECF7A9528674 /* ObjC */,
 				8349C982898CAA3B713F34E2 /* Resources */,
 				C3B6DEEDAE7BCB64F88A1892 /* Schedule */,
@@ -451,13 +478,17 @@
 				698E9203C86827EB1B17CDDD /* ChargeController.swift in Sources */,
 				E32E431D18E225A9C535C511 /* ChargePane.swift in Sources */,
 				099B4EB931684B9D747DB52D /* ChargePolicy.swift in Sources */,
+				CDA8214C51411DCD62BC6B8C /* ChipPowerParsing.swift in Sources */,
 				2E475E25B5D755A416FAB7B1 /* Copy.swift in Sources */,
 				0ADF605417FDFB2BE84FC45C /* DashboardPane.swift in Sources */,
+				F8064BE116827841A337549B /* DashboardPanels.swift in Sources */,
+				C4B051E4F98D0C5633752B6A /* DrainSummary.swift in Sources */,
 				8F0E6E096886AF0B3A9337C9 /* EnergyAppsPanel.swift in Sources */,
 				C3520E854A5DB7288DF08DE6 /* GeneralPane.swift in Sources */,
 				91098F7F2C2C435F26FF6F90 /* HelperClient.swift in Sources */,
 				A9CD130170E1954C22435F42 /* HelperProtocol.swift in Sources */,
 				5A4F288A341789AEB1FD6042 /* HelperSection.swift in Sources */,
+				BD57BAE3B3B9E8BC2A4562E6 /* HistoryPane.swift in Sources */,
 				4D305CCEC66744E4697BBF64 /* KeelApp.swift in Sources */,
 				F47A6096C1BC412EE6651BCF /* KeelPowerUI.m in Sources */,
 				604B3E1CA5475378FDC6BC09 /* KeelSMC.m in Sources */,
@@ -466,6 +497,7 @@
 				289FB22B61F91B3CFCD3566B /* MenuBarLabel.swift in Sources */,
 				E16A74422B3A6D926D90367D /* Notifier.swift in Sources */,
 				EB845546928C1E457939547E /* PopoverView.swift in Sources */,
+				BAC3CE41D8A1134204163017 /* PowerInsights.swift in Sources */,
 				FA5D50DB5C711087E6D069A0 /* PowerLog.swift in Sources */,
 				0AC8151D12845A348CD608D0 /* ScheduleEngine.swift in Sources */,
 				4BBE65BDFD802FD491602792 /* SchedulePane.swift in Sources */,
@@ -488,6 +520,7 @@
 				411D885A51BE36B963B3ABC1 /* BatteryReaderTests.swift in Sources */,
 				52F167F93CB8F4DCAEBFF469 /* ChargeControllerTests.swift in Sources */,
 				41F960747B1CD2B66EB9DFA5 /* ChargePolicyTests.swift in Sources */,
+				F5BE8BD9069E122924540291 /* InsightsTests.swift in Sources */,
 				498976218EB1BD075DB917D7 /* ScheduleEngineTests.swift in Sources */,
 				7155BE7EA584AB573FF67E01 /* TestSupport.swift in Sources */,
 			);
@@ -497,6 +530,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A018656263BFFFDC30A5F95C /* ChipPowerParsing.swift in Sources */,
 				63998775ED65C94E1027D2E3 /* HelperProtocol.swift in Sources */,
 				640B9C3053D7731E0EC7953D /* KeelSMC.m in Sources */,
 				64B73A1FFB22D836AB3FA782 /* Shell.swift in Sources */,

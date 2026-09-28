@@ -45,6 +45,24 @@ enum PowerSettings {
   }
 }
 
+// One powermetrics sample. Fixed arguments; the output is parsed, never passed on raw.
+enum ChipPowerReader {
+  static let intervalMilliseconds = 500
+
+  static func sample() -> (cpu: Double, gpu: Double, ane: Double)? {
+    let arguments = ["-n", "1", "-i", "\(intervalMilliseconds)", "--samplers", "cpu_power,gpu_power,ane_power",
+                     "-f", "plist"]
+    guard let result = Shell.run("/usr/bin/powermetrics", arguments), result.status == 0 else { return nil }
+    // The plist ends with a NUL; keep what comes before it.
+    let text = result.output.split(separator: "\0", maxSplits: 1).first.map(String.init) ?? result.output
+    guard let data = text.data(using: .utf8),
+          let root = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any] else {
+      return nil
+    }
+    return ChipPowerParsing.parse(root, intervalMilliseconds: intervalMilliseconds)
+  }
+}
+
 // Never let the battery run below this while the helper holds the charger off, whatever the
 // app asked for.
 enum SafetyFloor {
@@ -148,6 +166,18 @@ final class HelperService: NSObject, HelperProtocol, NSXPCListenerDelegate, @unc
     }
   }
 
+  func readChipPower(reply: @escaping (Double, Double, Double, Bool) -> Void) {
+    trustCaller()
+    // Its own queue: a half-second sample must not hold up the charger switch.
+    DispatchQueue.global(qos: .utility).async {
+      guard let power = ChipPowerReader.sample() else {
+        reply(0, 0, 0, false)
+        return
+      }
+      reply(power.cpu, power.gpu, power.ane, true)
+    }
+  }
+
   func setPowerMode(_ mode: PowerMode, reply: @escaping (Bool) -> Void) {
     trustCaller()
     // An out-of-range raw value from a hostile client never reaches pmset.
@@ -197,6 +227,20 @@ termination.setEventHandler {
   exit(0)
 }
 termination.resume()
+
+// An update replaces this file while the old helper still runs, and the app then can't verify
+// the old process's signature. So the helper restores everything and exits as soon as its file
+// is replaced; launchd starts the new one on the next connection.
+let executable = URL(fileURLWithPath: CommandLine.arguments[0]).resolvingSymlinksInPath().path
+let descriptor = open(executable, O_EVTONLY)
+let watcher = DispatchSource.makeFileSystemObjectSource(
+  fileDescriptor: descriptor, eventMask: [.delete, .rename, .write, .attrib], queue: .main
+)
+watcher.setEventHandler {
+  restoreDefaults()
+  exit(0)
+}
+if descriptor >= 0 { watcher.resume() }
 
 let service = HelperService()
 let listener = NSXPCListener(machServiceName: HelperIdentity.label)

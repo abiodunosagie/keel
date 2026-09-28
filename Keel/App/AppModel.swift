@@ -3,13 +3,14 @@ import Observation
 
 // Sections of the main window, in sidebar order.
 enum AppSection: String, CaseIterable, Identifiable, Hashable {
-  case dashboard, charge, schedule, calibration, appearance, general
+  case dashboard, history, charge, schedule, calibration, appearance, general
 
   var id: String { rawValue }
 
   var title: String {
     switch self {
     case .dashboard: return "Dashboard"
+    case .history: return "History"
     case .charge: return "Charge"
     case .schedule: return "Schedule"
     case .calibration: return "Calibration"
@@ -21,6 +22,7 @@ enum AppSection: String, CaseIterable, Identifiable, Hashable {
   var symbol: String {
     switch self {
     case .dashboard: return "chart.bar.xaxis"
+    case .history: return "heart.text.square"
     case .charge: return "battery.75percent"
     case .schedule: return "calendar"
     case .calibration: return "arrow.triangle.2.circlepath"
@@ -41,6 +43,7 @@ final class AppModel {
   let history = BatteryHistory()
   let scheduler: Scheduler
   let notifier = Notifier()
+  let insights = PowerInsights()
   var section: AppSection = .dashboard
 
   private init() {
@@ -49,6 +52,12 @@ final class AppModel {
     controller.onEvent = { [notifier, controller] event in
       guard controller.options.notifications else { return }
       notifier.post(event)
+    }
+    controller.onRefresh = { [insights] snapshot, drainExpected in
+      insights.update(snapshot, drainExpected: drainExpected, now: .now)
+    }
+    insights.onProblem = { [controller] problem in
+      controller.onEvent?(.chargerProblem(problem.message))
     }
   }
 

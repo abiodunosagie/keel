@@ -9,6 +9,9 @@ enum ChargeEvent: Equatable, Sendable {
   case heatPauseStarted(Double)
   case calibrationFinished
   case calibrationStopped(String)
+  case chargerProblem(String)
+  case temperatureHigh(Double)
+  case overLimitOnLaunch(percent: Int, limit: Int)
 }
 
 // The privileged side: the charger switch and the MagSafe light. HelperClient in the app, a
@@ -60,6 +63,8 @@ final class ChargeController {
   }
 
   var onEvent: ((ChargeEvent) -> Void)?
+  // Every reading, and whether Keel itself is running the Mac on battery right now.
+  var onRefresh: ((BatterySnapshot, _ drainExpected: Bool) -> Void)?
   weak var charger: ChargerControl?
 
   private let backend: ChargeBackend
@@ -75,6 +80,7 @@ final class ChargeController {
   private var chargerConnected = true
   private var light: MagSafeLight = .system
   private var refreshCount = 0
+  private var temperatureAlertArmed = true
   private var effects: [UUID: Task<Void, Never>] = [:]
   // Set once Keel is quitting or being removed; no more limit writes after that.
   private var isStopped = false
@@ -139,6 +145,7 @@ final class ChargeController {
       onEvent?(.calibrationStopped("Keel was closed during calibration, so it stopped."))
     }
     refresh()
+    announceIfOverLimit()
     timer = Timer.scheduledTimer(withTimeInterval: Self.refreshInterval, repeats: true) { [weak self] _ in
       MainActor.assumeIsolated { self?.refresh() }
     }
@@ -178,11 +185,33 @@ final class ChargeController {
       onEvent?(.limitReached(limit))
     }
     state = decision.state
+    checkTemperature(snapshot)
+    onRefresh?(snapshot, state == .discharging || calibrationStep == .dischargeLow)
     apply(decision.limit)
     setCharger(connected: decision.chargerConnected)
     updateLight()
     updateSleep()
     reconcileIfDue()
+  }
+
+  // AlDente's "overcharged on launch" notice: the battery is well above the limit when Keel
+  // starts, for example after the Mac charged to 100% while switched off.
+  private func announceIfOverLimit() {
+    guard options.overLimitAlert, let snapshot, isAvailable else { return }
+    let target = ChargePolicy.target(settings: settings, hardwareOffset: hardwareOffset.value, limitRange: limitRange)
+    guard target < limitRange.upperBound, snapshot.macOSPercent > target + 2 else { return }
+    onEvent?(.overLimitOnLaunch(percent: snapshot.macOSPercent, limit: target))
+  }
+
+  // One alert per crossing; it re-arms once the battery is 2 °C below the limit.
+  private func checkTemperature(_ snapshot: BatterySnapshot) {
+    guard options.temperatureAlert, let temperature = snapshot.temperature else { return }
+    if temperature >= options.temperatureAlertLimit, temperatureAlertArmed {
+      temperatureAlertArmed = false
+      onEvent?(.temperatureHigh(temperature))
+    } else if temperature < options.temperatureAlertLimit - 2 {
+      temperatureAlertArmed = true
+    }
   }
 
   // MARK: Actions

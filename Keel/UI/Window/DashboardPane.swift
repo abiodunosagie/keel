@@ -4,22 +4,54 @@ import SwiftUI
 struct DashboardPane: View {
   @Environment(ChargeController.self) private var controller
   @Environment(BatteryHistory.self) private var history
+  @Environment(HelperClient.self) private var helper
+  @Environment(PowerInsights.self) private var insights
+  @State private var apps: [EnergyApp]?
+  @State private var chip: ChipPower?
   @State private var range: ChartRange = .day
   @State private var metric: ChartMetric = .charge
   @State private var averageMinutes = 15
 
   var body: some View {
     PaneHeader(title: "Battery at a glance", lede: "Live readings from the battery controller, refreshed every few seconds.")
+      .background(sampling())
     if let snapshot = controller.snapshot {
+      if let problem = insights.problem {
+        ProblemBanner(text: problem.message)
+      }
       tiles(snapshot)
       RowGroup {
         PowerFlowRow(snapshot: snapshot)
           .padding(14)
+        PowerBreakdown(snapshot: snapshot, chip: chip, helperReady: helper.isReady)
       }
+      ChargerPanel(snapshot: snapshot)
+      DrainPanel(lines: DrainSummary.sentences(
+        snapshot: snapshot, averageWatts: history.averageWatts(lastMinutes: 15), chip: chip, apps: apps ?? []
+      ))
       chartPanel
       consumption(snapshot)
-      EnergyAppsPanel()
+      EnergyAppsPanel(apps: apps)
     }
+  }
+
+  // Live samples that cost something (a `top` run, a powermetrics run in the helper) are only
+  // taken while the dashboard is on screen.
+  func sampling() -> some View {
+    EmptyView()
+      .task {
+        while !Task.isCancelled {
+          apps = await Task.detached(priority: .utility) { EnergyApp.sample() }.value
+          try? await Task.sleep(for: .seconds(15))
+        }
+      }
+      .task(id: helper.isReady) {
+        guard helper.isReady else { return }
+        while !Task.isCancelled {
+          chip = await helper.readChipPower()
+          try? await Task.sleep(for: .seconds(10))
+        }
+      }
   }
 
   private func tiles(_ snapshot: BatterySnapshot) -> some View {

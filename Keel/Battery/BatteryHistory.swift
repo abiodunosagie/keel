@@ -79,6 +79,18 @@ final class BatteryHistory {
     unsaved = 0
   }
 
+  // Every reading as CSV, for a spreadsheet.
+  func csv() -> String {
+    var lines = ["time,percent,watts,temperature_c,plugged_in"]
+    for sample in samples {
+      lines.append([
+        CSV.date(sample.date), "\(sample.percent)", sample.watts.map { String(format: "%.2f", $0) } ?? "",
+        sample.temperature.map { String(format: "%.1f", $0) } ?? "", sample.pluggedIn ? "yes" : "no",
+      ].joined(separator: ","))
+    }
+    return lines.joined(separator: "\n") + "\n"
+  }
+
   func samples(since date: Date) -> [BatterySample] {
     samples.filter { $0.date >= date }
   }

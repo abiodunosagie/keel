@@ -51,6 +51,7 @@ struct KeelApp: App {
         .environment(model.helper)
         .environment(model.scheduler)
         .environment(model.history)
+        .environment(model.insights)
     }
     .windowResizability(.contentMinSize)
     .defaultPosition(.center)

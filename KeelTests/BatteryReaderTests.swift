@@ -112,3 +112,25 @@ final class PowerLogTests: XCTestCase {
     XCTAssertEqual(samples[0].date, Date(timeIntervalSince1970: 1_790_492_773))
   }
 }
+
+final class ChargerReadingTests: XCTestCase {
+  func testReadsTheAdapterAndPowerIn() {
+    // Shape copied from this Mac on the 87 W USB-C adapter.
+    let properties: [String: Any] = [
+      "CurrentCapacity": 42, "ExternalConnected": true, "IsCharging": true,
+      "AdapterDetails": ["Name": "87W USB-C Power Adapter", "Manufacturer": "Apple Inc.", "Watts": 86,
+                         "AdapterVoltage": 20000, "Current": 4290],
+      "PowerTelemetryData": ["SystemLoad": 11244, "SystemPowerIn": 81108],
+      "ChargerData": ["NotChargingReason": 0, "SlowChargingReason": 0],
+    ]
+    let snapshot = BatteryReader.snapshot(from: properties, temperature: nil, adapterWatts: 86)
+    XCTAssertEqual(snapshot.charger, ChargerInfo(name: "87W USB-C Power Adapter", manufacturer: "Apple Inc.",
+                                                 watts: 86, volts: 20, amps: 4.29))
+    XCTAssertEqual(snapshot.powerIn ?? 0, 81.108, accuracy: 0.001)
+  }
+
+  func testNoChargerWhenUnplugged() {
+    let properties: [String: Any] = ["ExternalConnected": false, "AdapterDetails": ["Watts": 86]]
+    XCTAssertNil(BatteryReader.snapshot(from: properties, temperature: nil, adapterWatts: nil).charger)
+  }
+}

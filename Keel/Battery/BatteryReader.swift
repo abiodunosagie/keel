@@ -16,7 +16,9 @@ enum BatteryReader {
           let properties = unmanaged?.takeRetainedValue() as? [String: Any] else {
       return nil
     }
-    return snapshot(from: properties, temperature: smcTemperature(), adapterWatts: adapterWatts())
+    var snapshot = snapshot(from: properties, temperature: smcTemperature(), adapterWatts: adapterWatts())
+    snapshot.displayWatts = smcWatts("PDBR")
+    return snapshot
   }
 
   static func snapshot(from properties: [String: Any], temperature: Double?, adapterWatts: Int?) -> BatterySnapshot {
@@ -37,13 +39,15 @@ enum BatteryReader {
     }
 
     let load = int("SystemLoad", in: telemetry).map { Double($0) / 1000 }
+    let chargerData = properties["ChargerData"] as? [String: Any] ?? [:]
+    let isPluggedIn = properties["ExternalConnected"] as? Bool ?? false
     return BatterySnapshot(
       macOSPercent: int("CurrentCapacity", in: properties) ?? 0,
       remainingCapacity: int("RemainingCapacity", in: data) ?? int("AppleRawCurrentCapacity", in: properties) ?? 0,
       fullChargeCapacity: int("FullChargeCapacity", in: data) ?? int("AppleRawMaxCapacity", in: properties) ?? 0,
       designCapacity: int("DesignCapacity", in: data) ?? int("DesignCapacity", in: properties) ?? 0,
       cycleCount: int("CycleCount", in: properties) ?? 0,
-      isPluggedIn: properties["ExternalConnected"] as? Bool ?? false,
+      isPluggedIn: isPluggedIn,
       isCharging: properties["IsCharging"] as? Bool ?? false,
       isFullyCharged: properties["FullyCharged"] as? Bool ?? false,
       voltage: Double(int("Voltage", in: properties) ?? 0) / 1000,
@@ -52,8 +56,32 @@ enum BatteryReader {
       systemLoad: load.flatMap { $0 > 0 ? $0 : nil },
       adapterWatts: adapterWatts,
       minutesToEmpty: minutes("AvgTimeToEmpty"),
-      minutesToFull: minutes("AvgTimeToFull")
+      minutesToFull: minutes("AvgTimeToFull"),
+      charger: isPluggedIn ? charger(from: properties["AdapterDetails"] as? [String: Any]) : nil,
+      powerIn: isPluggedIn ? int("SystemPowerIn", in: telemetry).map { Double($0) / 1000 } : nil,
+      notChargingReason: int("NotChargingReason", in: chargerData) ?? 0,
+      slowChargingReason: int("SlowChargingReason", in: chargerData) ?? 0
     )
+  }
+
+  // AdapterDetails carries the charger's name, rating and negotiated voltage and current.
+  static func charger(from details: [String: Any]?) -> ChargerInfo? {
+    guard let details, let watts = (details["Watts"] as? NSNumber)?.intValue, watts > 0 else { return nil }
+    let name = (details["Name"] as? String) ?? (details["Description"] as? String) ?? "\(watts) W charger"
+    return ChargerInfo(
+      name: name,
+      manufacturer: details["Manufacturer"] as? String,
+      watts: watts,
+      volts: (details["AdapterVoltage"] as? NSNumber).map { $0.doubleValue / 1000 },
+      amps: (details["Current"] as? NSNumber).map { $0.doubleValue / 1000 }
+    )
+  }
+
+  private static func smcWatts(_ key: String) -> Double? {
+    guard let value = KeelSMC.shared()?.float(forKey: key), value.isFinite, value >= 0, value < 500 else {
+      return nil
+    }
+    return value
   }
 
   // TB0T is the battery temperature sensor in degrees Celsius.

@@ -33,6 +33,7 @@ struct MainWindow: View {
   private func pane(for section: AppSection) -> some View {
     switch section {
     case .dashboard: DashboardPane()
+    case .history: HistoryPane()
     case .charge: ChargePane()
     case .schedule: SchedulePane()
     case .calibration: CalibrationPane()

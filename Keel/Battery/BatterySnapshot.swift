@@ -18,6 +18,14 @@ struct BatterySnapshot: Equatable, Sendable {
   var adapterWatts: Int?
   var minutesToEmpty: Int?
   var minutesToFull: Int?
+  var charger: ChargerInfo? = nil
+  // Watts coming in from the charger, after its own losses.
+  var powerIn: Double? = nil
+  // Non-zero when the battery controller refuses or slows charging (thermal, weak charger).
+  var notChargingReason = 0
+  var slowChargingReason = 0
+  // Display backlight power (SMC PDBR), when the Mac reports it.
+  var displayWatts: Double? = nil
 
   // The battery controller's own charge level, usually a few points below the macOS figure.
   var hardwarePercent: Double {
@@ -36,4 +44,13 @@ struct BatterySnapshot: Equatable, Sendable {
   func percent(useHardware: Bool) -> Double {
     useHardware ? hardwarePercent : Double(macOSPercent)
   }
+}
+
+// The connected power adapter, as the battery controller reports it.
+struct ChargerInfo: Codable, Equatable, Hashable, Sendable {
+  var name: String
+  var manufacturer: String?
+  var watts: Int
+  var volts: Double?
+  var amps: Double?
 }

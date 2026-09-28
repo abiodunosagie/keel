@@ -29,8 +29,20 @@ struct AppearancePane: View {
         .fixedSize()
         .disabled(!helper.isReady)
       }
-      SettingRow(title: "Notifications", detail: "Limit reached, charging paused for heat, calibration finished or stopped.") {
+      SettingRow(title: "Notifications", detail: "Limit reached, charging paused for heat, calibration finished or stopped, charger problems.") {
         Toggle("Notifications", isOn: $controller.options.notifications).labelsHidden().toggleStyle(.switch)
+      }
+      SettingRow(title: "Hot battery alert", detail: "Warn once each time the battery gets this hot.") {
+        HStack(spacing: 10) {
+          Stepper(value: $controller.options.temperatureAlertLimit, in: HeatGuard.temperatureRange, step: 1) {
+            ValueChip(text: String(format: "%.0f °C", controller.options.temperatureAlertLimit))
+          }
+          .disabled(!controller.options.temperatureAlert)
+          Toggle("Hot battery alert", isOn: $controller.options.temperatureAlert).labelsHidden().toggleStyle(.switch)
+        }
+      }
+      SettingRow(title: "Above-limit alert", detail: "When Keel starts and the battery is well above your limit, for example after charging while switched off.") {
+        Toggle("Above-limit alert", isOn: $controller.options.overLimitAlert).labelsHidden().toggleStyle(.switch)
       }
     }
   }

@@ -1,9 +1,9 @@
 import SwiftUI
 
-// "Apps using significant energy", from the energy impact column of `top`. Sampled only while
-// the dashboard is on screen.
+// "Apps using significant energy", from the energy impact column of `top`. The dashboard
+// samples it only while it is on screen.
 struct EnergyAppsPanel: View {
-  @State private var apps: [EnergyApp] = []
+  let apps: [EnergyApp]?
 
   var body: some View {
     RowGroup {
@@ -11,16 +11,11 @@ struct EnergyAppsPanel: View {
         EmptyView()
       }
     }
-    .task {
-      while !Task.isCancelled {
-        apps = await Task.detached(priority: .utility) { EnergyApp.sample() }.value
-        try? await Task.sleep(for: .seconds(15))
-      }
-    }
   }
 
   private var summary: String {
-    guard !apps.isEmpty else { return "Measuring…" }
+    guard let apps else { return "Measuring…" }
+    guard !apps.isEmpty else { return "No app is using much energy right now." }
     return apps.map { "\($0.name) \(String(format: "%.1f", $0.impact))" }.joined(separator: ", ")
       + ". Energy impact, as in Activity Monitor."
   }

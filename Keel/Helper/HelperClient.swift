@@ -1,6 +1,7 @@
 import Foundation
 import Observation
 import ServiceManagement
+import os
 
 // Installs and talks to the privileged helper that switches the charger off for calibration,
 // drives the MagSafe light and keeps the Mac awake with the lid closed.
@@ -17,6 +18,7 @@ final class HelperClient: ChargerControl {
   private(set) var status: Status = .notInstalled
 
   private let service = SMAppService.daemon(plistName: HelperIdentity.plistName)
+  private let log = Logger(subsystem: "com.abiodunosagie.Keel", category: "helper")
   private var connection: NSXPCConnection?
 
   var isReady: Bool { status == .ready }
@@ -36,7 +38,20 @@ final class HelperClient: ChargerControl {
   // new approval. Version 1 can't, so it is re-registered (macOS then asks for approval again).
   func replaceIfOutdated() async {
     refreshStatus()
-    guard isReady, let running = await version(), running != HelperIdentity.version else { return }
+    guard isReady else {
+      log.notice("Helper not ready: \(String(describing: self.status), privacy: .public)")
+      return
+    }
+    let running = await version()
+    log.notice("Helper running version \(running.map(String.init) ?? "none", privacy: .public), app expects \(HelperIdentity.version, privacy: .public)")
+    guard let running else {
+      // Registered but unreachable: an old helper from before an update, which the app can no
+      // longer verify. Re-registering replaces it; macOS then asks for approval once.
+      try? await service.unregister()
+      install()
+      return
+    }
+    guard running != HelperIdentity.version else { return }
     if running >= 2 {
       _ = await call { proxy, done in proxy.exitForUpdate { done(true) } } as Bool?
     } else {
@@ -97,6 +112,15 @@ final class HelperClient: ChargerControl {
   @discardableResult
   func setSleepDisabled(_ disabled: Bool) async -> Bool {
     await call { proxy, done in proxy.setSleepDisabled(disabled) { done($0) } } ?? false
+  }
+
+  func readChipPower() async -> ChipPower? {
+    let result: ChipPower?? = await call { proxy, done in
+      proxy.readChipPower { cpu, gpu, ane, ok in
+        done(ok ? ChipPower(cpu: cpu, gpu: gpu, neuralEngine: ane) : nil)
+      }
+    }
+    return result ?? nil
   }
 
   @discardableResult

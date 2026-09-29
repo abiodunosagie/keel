@@ -101,6 +101,8 @@ private struct LimitSlider: View {
     }
     .frame(height: 26)
     .focusable()
+    // Arrow keys still work; the system focus ring around the whole track does not fit the design.
+    .focusEffectDisabled()
     .onKeyPress(.leftArrow) {
       onCommit(max(value - 1, range.lowerBound))
       return .handled
@@ -122,15 +124,20 @@ private struct LimitSlider: View {
     }
   }
 
+  // The knob's centre travels between its radius and width minus its radius, so the knob never
+  // hangs over the card's edge at 80% or 100%.
+  private static let knobRadius: CGFloat = 11
+
   private func position(_ percent: Double, _ width: CGFloat) -> CGFloat {
     let span = Double(range.upperBound - range.lowerBound)
     let clamped = min(max(percent, Double(range.lowerBound)), Double(range.upperBound))
-    return CGFloat((clamped - Double(range.lowerBound)) / span) * width
+    let travel = max(width - 2 * Self.knobRadius, 1)
+    return Self.knobRadius + CGFloat((clamped - Double(range.lowerBound)) / span) * travel
   }
 
   private func percent(at x: CGFloat, width: CGFloat) -> Int {
-    guard width > 0 else { return value }
-    let fraction = min(max(x / width, 0), 1)
+    guard width > 2 * Self.knobRadius else { return value }
+    let fraction = min(max((x - Self.knobRadius) / (width - 2 * Self.knobRadius), 0), 1)
     return range.lowerBound + Int((Double(fraction) * Double(range.upperBound - range.lowerBound)).rounded())
   }
 }

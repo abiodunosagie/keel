@@ -35,6 +35,14 @@ final class ParserTests: XCTestCase {
     XCTAssertNil(PowerModeReader.parse("nothing here"))
   }
 
+  func testSystemProcessesGetPlainNames() {
+    // Translated names keep the process name in brackets, so this holds in every language.
+    XCTAssertNotEqual(EnergyApp.displayName(for: "WindowServer"), "WindowServer")
+    XCTAssertTrue(EnergyApp.displayName(for: "WindowServer").contains("(WindowServer)"))
+    XCTAssertTrue(EnergyApp.displayName(for: "kernel_task").contains("(kernel_task)"))
+    XCTAssertEqual(EnergyApp.displayName(for: "Xcode"), "Xcode")
+  }
+
   func testEnergyAppsUseTheSecondSample() {
     let output = """
     Processes: 1

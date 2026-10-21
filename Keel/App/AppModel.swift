@@ -85,8 +85,9 @@ final class AppModel {
     observeAppearance()
     showFirstRunWindows()
     helper.refreshStatus()
-    await helper.replaceIfOutdated()
+    // The limit comes first: it needs only powerd, and a slow or broken helper must never delay it.
     await controller.start()
+    if await helper.replaceIfOutdated() { controller.helperRestarted() }
     history.start(reading: { [controller] in controller.snapshot })
     await history.importPowerLog()
     scheduler.start()

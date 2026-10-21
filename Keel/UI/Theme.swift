@@ -1,22 +1,21 @@
 import AppKit
 import SwiftUI
 
-// The approved mockup's palette. Green = held at the limit and amber = moving toward it, the
-// MagSafe light's own colours; slate neutrals with a slight blue bias.
+// The Keel brand palette (brand/README.md). Deep Water neutrals; Held Green = held at the limit and
+// amber = moving toward it, the MagSafe light's own colours.
 enum Theme {
   static let surface = dynamic(light: 0xF6F8F9, dark: 0x22282C)
   static let panel = dynamic(light: 0xFFFFFF, dark: 0x1B2023)
   static let chip = dynamic(light: 0xEEF1F3, dark: 0x2B3236)
-  static let track = dynamic(light: 0xE3E8EB, dark: 0x343C41)
   static let line = dynamic(light: 0x1B2226, dark: 0xFFFFFF, lightAlpha: 0.10, darkAlpha: 0.09)
   static let ink = dynamic(light: 0x1B2226, dark: 0xEEF2F4)
   static let ink2 = dynamic(light: 0x55626B, dark: 0xA9B5BC)
   // Secondary text at 11 pt, kept at 4.5:1 or better against the panels.
   static let ink3 = dynamic(light: 0x66727A, dark: 0x8D9AA3)
-  static let held = dynamic(light: 0x3F9A5C, dark: 0x63C283)
+  static let held = dynamic(light: 0x1F9A5A, dark: 0x3DD68C)
   static let moving = dynamic(light: 0xD9822B, dark: 0xF0A14D)
   static let heat = dynamic(light: 0xC8483A, dark: 0xEC6A5B)
-  static let accent = dynamic(light: 0x2F6F8F, dark: 0x6FB3D3)
+  static let accent = dynamic(light: 0x1E5A78, dark: 0x7FB8D4)
 
   static func mono(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
     .system(size: size, weight: weight, design: .monospaced)
@@ -50,7 +49,7 @@ enum Theme {
   }
 }
 
-// A bordered inner card, as in the mockup.
+// A bordered inner panel for the dashboard window's groups.
 struct PanelBackground: ViewModifier {
   var radius: CGFloat = 12
 

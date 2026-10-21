@@ -141,6 +141,11 @@ final class ChargeController {
     ChargeBackendError.unavailable.errorDescription ?? ""
   }
 
+  // The limit to draw on the mark, nil when macOS has no charge limit to hold.
+  var displayLimit: Int? {
+    isAvailable ? effectiveSettings.limit : nil
+  }
+
   var displayPercent: Double? {
     snapshot?.percent(useHardware: settings.useHardwarePercent)
   }
@@ -482,6 +487,15 @@ final class ChargeController {
         self.stopCalibration(reason: failure)
       }
     }
+  }
+
+  // A restarted helper has put the charger, light and sleep back to the system defaults; forget
+  // what Keel last sent so the next refresh sends it again.
+  func helperRestarted() {
+    chargerConnected = true
+    light = .system
+    sleepGuard.reconcile(lidSleepDisabled: false)
+    refresh()
   }
 
   // Calibration can't run on without the helper: stop it rather than leave the charger in an

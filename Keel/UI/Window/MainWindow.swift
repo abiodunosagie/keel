@@ -1,6 +1,6 @@
 import SwiftUI
 
-// The dashboard and settings window from the mockup: a sidebar of sections and one pane.
+// The dashboard and settings window: a sidebar of sections and one pane.
 struct MainWindow: View {
   static let id = "main"
 
@@ -44,7 +44,7 @@ struct MainWindow: View {
   }
 }
 
-// A pane heading and one-line explanation, as in the mockup. Callers pass text already
+// A pane heading and a one-line explanation. Callers pass text already
 // translated with String(localized:).
 struct PaneHeader: View {
   let title: String
@@ -107,7 +107,7 @@ struct SettingRow<Control: View>: View {
   }
 }
 
-// A small monospaced value chip, like the mockup's fields.
+// A small monospaced value chip for readings and settings values.
 struct ValueChip: View {
   let text: String
 

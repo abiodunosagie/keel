@@ -40,9 +40,27 @@ struct EnergyApp: Equatable, Sendable {
       guard fields.count == 2, let impact = Double(fields[0]), impact > 0 else { return nil }
       let name = fields[1].trimmingCharacters(in: .whitespaces)
       // `top` measuring itself is noise.
-      return name == "top" ? nil : EnergyApp(name: name, impact: impact)
+      return name == "top" ? nil : EnergyApp(name: displayName(for: name), impact: impact)
     }
     .prefix(limit)
     .map { $0 }
+  }
+
+  // macOS's own background processes, which `top` lists by their raw names. "WindowServer" reads
+  // like Microsoft Windows to most people; it draws everything on the screen.
+  private static let systemNames: [String: String] = [
+    "WindowServer": String(localized: "Screen drawing (WindowServer)"),
+    "kernel_task": String(localized: "macOS core (kernel_task)"),
+    "mds_stores": String(localized: "Spotlight indexing"),
+    "mds": String(localized: "Spotlight indexing"),
+    "mdworker_shared": String(localized: "Spotlight indexing"),
+    "coreaudiod": String(localized: "Sound (coreaudiod)"),
+    "bluetoothd": String(localized: "Bluetooth"),
+    "backupd": String(localized: "Time Machine backup"),
+    "photoanalysisd": String(localized: "Photos analysis"),
+  ]
+
+  static func displayName(for process: String) -> String {
+    systemNames[process] ?? process
   }
 }

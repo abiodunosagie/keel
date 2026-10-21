@@ -22,7 +22,7 @@ struct HelperSection: View {
     }
     .task(id: helper.status) {
       helper.refreshStatus()
-      running = helper.isReady ? await helper.version() != nil : nil
+      running = helper.isReady ? await helper.isResponding() : nil
     }
   }
 

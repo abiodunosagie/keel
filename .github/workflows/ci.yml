@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build and test
+    # GitHub's Xcode 27 runner: the same macOS 27 and Xcode the app is built with; macos-latest
+    # still ships Xcode 26. Tests use a fake charge backend and never touch powerd or the SMC.
+    runs-on: xcode-27
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Test without signing
+        run: |
+          set -o pipefail
+          xcodebuild test -project Keel.xcodeproj -scheme Keel -destination 'platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO | tail -40
+      - name: Release build without signing
+        run: |
+          set -o pipefail
+          xcodebuild -project Keel.xcodeproj -scheme Keel -configuration Release -destination 'platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO build | tail -20

@@ -9,8 +9,9 @@ struct AppearancePane: View {
     @Bindable var controller = controller
     PaneHeader(title: String(localized: "Appearance"), lede: String(localized: "What the menu bar shows and how the MagSafe light behaves."))
     RowGroup {
-      SettingRow(title: String(localized: "Menu bar icon"), detail: String(localized: "State symbols, an iPhone-style battery with the level inside, or a tiny graph of the last half hour.")) {
+      SettingRow(title: String(localized: "Menu bar icon"), detail: String(localized: "The Keel mark filling to your level, state symbols, an iPhone-style battery with the level inside, or a tiny graph of the last half hour.")) {
         Picker("Menu bar icon", selection: $controller.options.iconStyle) {
+          Text("Keel").tag(AppOptions.IconStyle.mark)
           Text("Symbols").tag(AppOptions.IconStyle.symbol)
           Text("Battery").tag(AppOptions.IconStyle.battery)
           Text("Graph").tag(AppOptions.IconStyle.graph)

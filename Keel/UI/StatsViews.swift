@@ -86,22 +86,7 @@ private struct Ribbon: Shape {
   }
 }
 
-struct StatsRow: View {
-  let snapshot: BatterySnapshot
-
-  var body: some View {
-    StatStrip(items: [
-      (String(localized: "Health"), Format.percent(snapshot.health)),
-      (String(localized: "Cycles"), "\(snapshot.cycleCount)"),
-      (String(localized: "Temp"), snapshot.temperature.map { "\(Format.number($0, digits: 1))°" } ?? String(localized: "n/a")),
-      (String(localized: "Adapter"), snapshot.adapterWatts.map { "\($0) W" } ?? String(localized: "none")),
-    ], valueSize: 13, padding: 7)
-    .padding(.top, 10)
-    .overlay(alignment: .top) { Rectangle().fill(Theme.line).frame(height: 1) }
-  }
-}
-
-// Labels over monospaced values, split by hairlines: the popover's stats and the dashboard tiles.
+// Labels over monospaced values, split by hairlines, for the dashboard's battery tiles.
 struct StatStrip: View {
   let items: [(String, String)]
   var valueSize: CGFloat = 13

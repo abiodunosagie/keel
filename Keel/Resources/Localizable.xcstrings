@@ -1,35 +1,6 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    " (%lld%% as macOS counts it)": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " (%lld %% laut macOS)"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " (%lld%% según macOS)"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " (%lld %% selon macOS)"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " (%lld%% na contagem do macOS)"
-          }
-        }
-      }
-    },
     " A forecast appears after two weeks of daily records.": {
       "extractionState": "manual",
       "localizations": {
@@ -262,31 +233,31 @@
         }
       }
     },
-    "%@ in": {
+    "%@ left": {
       "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ rein"
+            "value": "Noch %@"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ de entrada"
+            "value": "Quedan %@"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ entrants"
+            "value": "%@ restantes"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ a entrar"
+            "value": "Restam %@"
           }
         }
       }
@@ -403,35 +374,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@.csv"
-          }
-        }
-      }
-    },
-    "%lld W": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld W"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld W"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld W"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld W"
           }
         }
       }
@@ -635,6 +577,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld%% em %@. Uma alteração aqui vale até mudar de rede."
+          }
+        }
+      }
+    },
+    "%lld%% on the chip is 100%% in macOS right now, so nothing stops charging. Lower the limit.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld %% auf dem Chip sind gerade 100 %% in macOS, also stoppt nichts das Laden. Senke das Limit."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%% en el chip equivale ahora al 100%% en macOS, así que nada detiene la carga. Baja el límite."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld %% sur la puce correspond à 100 %% dans macOS en ce moment, donc rien n'arrête la charge. Baissez la limite."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%% no chip corresponde agora a 100%% no macOS, por isso nada para o carregamento. Baixe o limite."
           }
         }
       }
@@ -1256,35 +1227,6 @@
         }
       }
     },
-    "Adapter": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Netzteil"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cargador"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chargeur"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Carregador"
-          }
-        }
-      }
-    },
     "Add": {
       "extractionState": "manual",
       "localizations": {
@@ -1749,6 +1691,35 @@
         }
       }
     },
+    "Back to your limit afterwards": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Danach zurück zu deinem Limit"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Después vuelve a tu límite"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retour à votre limite ensuite"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Depois volta ao seu limite"
+          }
+        }
+      }
+    },
     "Base": {
       "extractionState": "manual",
       "localizations": {
@@ -1952,35 +1923,6 @@
         }
       }
     },
-    "Battery now: %lld%%": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Akku gerade: %lld %%"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Batería ahora: %lld%%"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Batterie actuelle : %lld %%"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bateria agora: %lld%%"
-          }
-        }
-      }
-    },
     "Battery temperature, recorded every minute. Dashed line: Heat Protection's limit.": {
       "extractionState": "manual",
       "localizations": {
@@ -2006,6 +1948,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "Temperatura da bateria, registada a cada minuto. Linha tracejada: limite da Proteção térmica."
+          }
+        }
+      }
+    },
+    "Bluetooth": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth"
           }
         }
       }
@@ -2561,60 +2532,31 @@
         }
       }
     },
-    "Charge to 100% until you unplug, then go back to your limit.": {
+    "Charge to 100% until you unplug, then back to your limit": {
       "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bis zum Abstecken auf 100% laden, dann zurück zu deinem Limit."
+            "value": "Bis zum Abstecken auf 100 % laden, dann zurück zum Limit"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cargar al 100% hasta que desconectes y luego volver a tu límite."
+            "value": "Cargar al 100% hasta desconectar y luego volver a tu límite"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Charger jusqu'à 100% jusqu'au débranchement, puis revenir à votre limite."
+            "value": "Charger à 100 % jusqu'au débranchement, puis revenir à la limite"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Carregar até 100% até desligar e depois voltar ao seu limite."
-          }
-        }
-      }
-    },
-    "Charge to 100%%, down to %lld%%, back to 100%%, hold an hour, then your limit.": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auf 100 %% laden, auf %lld %% entladen, wieder auf 100 %%, eine Stunde halten, dann dein Limit."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cargar al 100%%, bajar al %lld%%, volver al 100%%, mantener una hora y luego tu límite."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Charger à 100 %%, descendre à %lld %%, revenir à 100 %%, tenir une heure, puis votre limite."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Carregar até 100%%, descer a %lld%%, voltar a 100%%, manter uma hora e depois o seu limite."
+            "value": "Carregar a 100% até desligar e depois voltar ao limite"
           }
         }
       }
@@ -2909,31 +2851,31 @@
         }
       }
     },
-    "Charging paused until the battery cools. %@": {
+    "Charging resumes when the battery cools": {
       "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Laden pausiert, bis der Akku abkühlt. %@"
+            "value": "Das Laden geht weiter, wenn der Akku abkühlt"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Carga en pausa hasta que la batería se enfríe. %@"
+            "value": "La carga se reanuda cuando la batería se enfríe"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Charge en pause jusqu'au refroidissement de la batterie. %@"
+            "value": "La charge reprend quand la batterie refroidit"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Carregamento em pausa até a bateria arrefecer. %@"
+            "value": "O carregamento retoma quando a bateria arrefecer"
           }
         }
       }
@@ -2996,31 +2938,118 @@
         }
       }
     },
-    "Charging, full in %@. %@": {
+    "Charging stops here (%lld%% in macOS), even while asleep or with Keel closed.": {
       "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lädt, voll in %@. %@"
+            "value": "Das Laden stoppt hier (%lld %% in macOS), auch im Ruhezustand oder wenn Keel geschlossen ist."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cargando, llena en %@. %@"
+            "value": "La carga se detiene aquí (%lld%% en macOS), incluso en reposo o con Keel cerrado."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "En charge, pleine dans %@. %@"
+            "value": "La charge s'arrête ici (%lld %% dans macOS), même en veille ou Keel fermé."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "A carregar, cheia em %@. %@"
+            "value": "O carregamento para aqui (%lld%% no macOS), mesmo em repouso ou com o Keel fechado."
+          }
+        }
+      }
+    },
+    "Charging stops here, even while asleep or with Keel closed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Laden stoppt hier, auch im Ruhezustand oder wenn Keel geschlossen ist."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La carga se detiene aquí, incluso en reposo o con Keel cerrado."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La charge s'arrête ici, même en veille ou Keel fermé."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O carregamento para aqui, mesmo em repouso ou com o Keel fechado."
+          }
+        }
+      }
+    },
+    "Charging to %lld%%": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lädt bis %lld %%"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cargando hasta %lld%%"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge jusqu'à %lld %%"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A carregar até %lld%%"
+          }
+        }
+      }
+    },
+    "Charging to 100% until you unplug": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lädt auf 100 %, bis du absteckst"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cargando al 100% hasta que desconectes"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge à 100 % jusqu'au débranchement"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A carregar a 100% até desligar"
           }
         }
       }
@@ -3166,6 +3195,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "A recolher dados. O Keel regista uma leitura por minuto."
+          }
+        }
+      }
+    },
+    "Coming in": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eingang"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrando"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrant"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A entrar"
           }
         }
       }
@@ -3340,6 +3398,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "Personalizar"
+          }
+        }
+      }
+    },
+    "Customize Sections…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bereiche anpassen…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personalizar secciones…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personnaliser les sections…"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personalizar secções…"
           }
         }
       }
@@ -3692,35 +3779,6 @@
         }
       }
     },
-    "Discharge works on the charger when the battery is above the limit.": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entladen funktioniert am Netzteil, wenn der Akku über dem Limit ist."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La descarga funciona con el cargador cuando la batería supera el límite."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La décharge fonctionne sur secteur quand la batterie dépasse la limite."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A descarga funciona com o carregador quando a bateria está acima do limite."
-          }
-        }
-      }
-    },
     "Discharging": {
       "extractionState": "manual",
       "localizations": {
@@ -4069,6 +4127,64 @@
         }
       }
     },
+    "Full cycle so the percentage stays accurate": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voller Zyklus, damit die Prozentanzeige genau bleibt"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ciclo completo para que el porcentaje sea exacto"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cycle complet pour garder un pourcentage précis"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ciclo completo para a percentagem ficar exata"
+          }
+        }
+      }
+    },
+    "Full in %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voll in %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Llena en %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pleine dans %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cheia em %@"
+          }
+        }
+      }
+    },
     "General": {
       "extractionState": "manual",
       "localizations": {
@@ -4268,35 +4384,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Percentagem de hardware"
-          }
-        }
-      }
-    },
-    "Hardware reads %@.": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hardware zeigt %@."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El hardware marca %@."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Le matériel indique %@."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O hardware indica %@."
           }
         }
       }
@@ -4504,64 +4591,6 @@
         }
       }
     },
-    "Held by macOS%@, keeps working while asleep and when Keel is closed.": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Von macOS gehalten%@, wirkt auch im Ruhezustand und bei geschlossenem Keel."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mantenido por macOS%@, sigue funcionando en reposo y con Keel cerrado."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maintenue par macOS%@, fonctionne aussi en veille et Keel fermé."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mantido pelo macOS%@, continua a funcionar em repouso e com o Keel fechado."
-          }
-        }
-      }
-    },
-    "Hide": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ausblenden"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ocultar"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Masquer"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ocultar"
-          }
-        }
-      }
-    },
     "Hide the menu bar icon": {
       "extractionState": "manual",
       "localizations": {
@@ -4703,35 +4732,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Manter uma hora"
-          }
-        }
-      }
-    },
-    "Hold, hide and reorder cards": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Karten halten, ausblenden und anordnen"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mantén pulsado, oculta y reordena tarjetas"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maintenez, masquez et réordonnez les cartes"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mantenha premido, oculte e reordene cartões"
           }
         }
       }
@@ -5051,6 +5051,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "Instalado"
+          }
+        }
+      }
+    },
+    "Into the battery": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In den Akku"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hacia la batería"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vers la batterie"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para a bateria"
           }
         }
       }
@@ -6273,6 +6302,35 @@
         }
       }
     },
+    "Mac is using": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mac verbraucht"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El Mac usa"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le Mac utilise"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Mac usa"
+          }
+        }
+      }
+    },
     "MagSafe Light": {
       "extractionState": "manual",
       "localizations": {
@@ -7114,6 +7172,35 @@
         }
       }
     },
+    "Not connected": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht verbunden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No conectado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non connecté"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não ligado"
+          }
+        }
+      }
+    },
     "Not responding": {
       "extractionState": "manual",
       "localizations": {
@@ -7346,64 +7433,6 @@
         }
       }
     },
-    "On battery, %@ left. %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Akkubetrieb, noch %@. %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Con batería, quedan %@. %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sur batterie, %@ restantes. %@"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Com bateria, restam %@. %@"
-          }
-        }
-      }
-    },
-    "On battery. %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Akkubetrieb. %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Con batería. %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sur batterie. %@"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Com bateria. %@"
-          }
-        }
-      }
-    },
     "Once or twice a week": {
       "extractionState": "manual",
       "localizations": {
@@ -7487,6 +7516,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abrir painel"
+          }
+        }
+      }
+    },
+    "Open Dashboard…": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dashboard öffnen…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir panel…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir le tableau de bord…"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir painel…"
           }
         }
       }
@@ -7868,6 +7926,35 @@
         }
       }
     },
+    "Photos analysis": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotos-Analyse"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Análisis de Fotos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyse de Photos"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Análise de Fotografias"
+          }
+        }
+      }
+    },
     "Plug in the charger to start calibration.": {
       "extractionState": "manual",
       "localizations": {
@@ -7893,6 +7980,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ligue o carregador para iniciar a calibração."
+          }
+        }
+      }
+    },
+    "Plug in the charger to top up": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schließe das Ladegerät an, um aufzuladen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conecta el cargador para cargar al 100%"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Branchez le chargeur pour recharger à 100 %"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ligue o carregador para carregar a 100%"
           }
         }
       }
@@ -7955,35 +8071,6 @@
         }
       }
     },
-    "Plugged in and charging. %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Angeschlossen und lädt. %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Conectado y cargando. %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Branché et en charge. %@"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ligado e a carregar. %@"
-          }
-        }
-      }
-    },
     "Plugged in at a desk": {
       "extractionState": "manual",
       "localizations": {
@@ -8009,64 +8096,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ligado a uma secretária"
-          }
-        }
-      }
-    },
-    "Plugged in, running on battery down to the limit. %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Angeschlossen, läuft bis zum Limit auf Akku. %@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Conectado, funcionando con batería hasta el límite. %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Branché, fonctionne sur batterie jusqu'à la limite. %@"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ligado, a funcionar com bateria até ao limite. %@"
-          }
-        }
-      }
-    },
-    "Plugged in, running on the charger. %@ Battery idle.": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Angeschlossen, läuft über das Netzteil. %@ Akku ruht."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Conectado, funcionando con el cargador. %@ Batería en reposo."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Branché, fonctionne sur secteur. %@ Batterie au repos."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ligado, a funcionar com o carregador. %@ Bateria em repouso."
           }
         }
       }
@@ -8241,6 +8270,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fluxo de energia"
+          }
+        }
+      }
+    },
+    "Power from": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strom von"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Energía desde"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alimentation"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Energia de"
           }
         }
       }
@@ -8473,6 +8531,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "Raramente"
+          }
+        }
+      }
+    },
+    "Rated": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nennleistung"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nominal"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nominal"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nominal"
           }
         }
       }
@@ -8825,35 +8912,6 @@
         }
       }
     },
-    "Run on battery down to your limit, then go back to the charger.": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bis zu deinem Limit auf Akku laufen, dann zurück zum Netzteil."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Funcionar con batería hasta tu límite y luego volver al cargador."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fonctionner sur batterie jusqu'à votre limite, puis revenir au secteur."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Funcionar com bateria até ao seu limite e depois voltar ao carregador."
-          }
-        }
-      }
-    },
     "Run when the Mac wakes if missed": {
       "extractionState": "manual",
       "localizations": {
@@ -8908,6 +8966,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "A funcionar com bateria até ao seu limite."
+          }
+        }
+      }
+    },
+    "Running on the charger, battery resting": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Läuft am Ladegerät, Akku ruht"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funcionando con el cargador, batería en reposo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sur le chargeur, batterie au repos"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A funcionar com o carregador, bateria em repouso"
           }
         }
       }
@@ -9053,6 +9140,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ecrã"
+          }
+        }
+      }
+    },
+    "Screen drawing (WindowServer)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildschirmdarstellung (WindowServer)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dibujo de pantalla (WindowServer)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Affichage de l'écran (WindowServer)"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desenho do ecrã (WindowServer)"
+          }
+        }
+      }
+    },
+    "Sections": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bereiche"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secciones"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sections"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secções"
           }
         }
       }
@@ -9260,35 +9405,6 @@
         }
       }
     },
-    "Settings": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Einstellungen"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ajustes"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Réglages"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Definições"
-          }
-        }
-      }
-    },
     "Settings…": {
       "extractionState": "manual",
       "localizations": {
@@ -9314,35 +9430,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Definições…"
-          }
-        }
-      }
-    },
-    "Show": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Einblenden"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mostrar"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Afficher"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mostrar"
           }
         }
       }
@@ -9488,6 +9575,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "Às vezes"
+          }
+        }
+      }
+    },
+    "Sound (coreaudiod)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ton (coreaudiod)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sonido (coreaudiod)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son (coreaudiod)"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Som (coreaudiod)"
+          }
+        }
+      }
+    },
+    "Spotlight indexing": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spotlight-Indexierung"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Indexación de Spotlight"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Indexation Spotlight"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Indexação do Spotlight"
           }
         }
       }
@@ -9691,35 +9836,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Começa"
-          }
-        }
-      }
-    },
-    "State symbols, an iPhone-style battery with the level inside, or a tiny graph of the last half hour.": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Statussymbole, ein Akku im iPhone-Stil mit dem Stand darin oder ein kleines Diagramm der letzten halben Stunde."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Símbolos de estado, una batería al estilo iPhone con el nivel dentro o un pequeño gráfico de la última media hora."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Symboles d'état, une batterie façon iPhone avec le niveau à l'intérieur, ou un petit graphique de la dernière demi-heure."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Símbolos de estado, uma bateria ao estilo iPhone com o nível lá dentro, ou um pequeno gráfico da última meia hora."
           }
         }
       }
@@ -10101,35 +10217,6 @@
         }
       }
     },
-    "Temp": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Temp."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Temp."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Temp."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Temp."
-          }
-        }
-      }
-    },
     "Temperature": {
       "extractionState": "manual",
       "localizations": {
@@ -10184,6 +10271,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "O carregador de %lld W"
+          }
+        }
+      }
+    },
+    "The Keel mark filling to your level, state symbols, an iPhone-style battery with the level inside, or a tiny graph of the last half hour.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Keel-Zeichen, gefüllt bis zu deinem Stand, Statussymbole, ein Akku im iPhone-Stil mit dem Stand darin oder ein kleines Diagramm der letzten halben Stunde."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La marca Keel llenándose hasta tu nivel, símbolos de estado, una batería al estilo iPhone con el nivel dentro o un pequeño gráfico de la última media hora."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La marque Keel remplie jusqu'à votre niveau, symboles d'état, une batterie façon iPhone avec le niveau à l'intérieur, ou un petit graphique de la dernière demi-heure."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A marca Keel a encher até ao seu nível, símbolos de estado, uma bateria ao estilo iPhone com o nível lá dentro, ou um pequeno gráfico da última meia hora."
           }
         }
       }
@@ -11000,6 +11116,35 @@
         }
       }
     },
+    "Time Machine backup": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time Machine-Backup"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copia de Time Machine"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sauvegarde Time Machine"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cópia do Time Machine"
+          }
+        }
+      }
+    },
     "Times it couldn't keep up and the battery had to help: %lld.": {
       "extractionState": "manual",
       "localizations": {
@@ -11373,6 +11518,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "Usar a leitura do próprio controlador da bateria, normalmente alguns pontos abaixo do que o macOS mostra."
+          }
+        }
+      }
+    },
+    "Use the battery down to your limit, on the charger": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akku bis zum Limit nutzen, am Ladegerät"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usar la batería hasta tu límite, con el cargador"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utiliser la batterie jusqu'à la limite, sur le chargeur"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usar a bateria até ao limite, com o carregador"
+          }
+        }
+      }
+    },
+    "Using the battery down to %lld%%": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nutzt den Akku bis %lld %%"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usando la batería hasta %lld%%"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utilise la batterie jusqu'à %lld %%"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A usar a bateria até %lld%%"
           }
         }
       }
@@ -11899,6 +12102,35 @@
         }
       }
     },
+    "Works on the charger when above the limit": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geht am Ladegerät über dem Limit"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funciona con el cargador por encima del límite"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fonctionne sur le chargeur au-dessus de la limite"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funciona com o carregador acima do limite"
+          }
+        }
+      }
+    },
     "Yearly": {
       "extractionState": "manual",
       "localizations": {
@@ -12127,6 +12359,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "O macOS não consegue manter a bateria abaixo de %lld%%."
+          }
+        }
+      }
+    },
+    "macOS core (kernel_task)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS-Kern (kernel_task)"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Núcleo de macOS (kernel_task)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noyau de macOS (kernel_task)"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Núcleo do macOS (kernel_task)"
           }
         }
       }
@@ -12363,31 +12624,31 @@
         }
       }
     },
-    "macOS shows %lld%%.": {
+    "macOS shows": {
       "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS zeigt %lld %%."
+            "value": "macOS zeigt"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS muestra %lld%%."
+            "value": "macOS muestra"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS affiche %lld %%."
+            "value": "macOS affiche"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "O macOS mostra %lld%%."
+            "value": "O macOS mostra"
           }
         }
       }
@@ -12450,35 +12711,6 @@
         }
       }
     },
-    "n/a": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "k. A."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "n/d"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "n.d."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "n/d"
-          }
-        }
-      }
-    },
     "negotiated %@ V at %@ A": {
       "extractionState": "manual",
       "localizations": {
@@ -12504,35 +12736,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "negociado %@ V a %@ A"
-          }
-        }
-      }
-    },
-    "none": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "keins"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ninguno"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "aucun"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "nenhum"
           }
         }
       }

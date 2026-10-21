@@ -43,6 +43,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.abiodunosagie.Keel
         PRODUCT_NAME: Keel
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_FILE: Keel/Resources/Info.plist
         CODE_SIGN_ENTITLEMENTS: Keel/Resources/Keel.entitlements
         SWIFT_OBJC_BRIDGING_HEADER: Keel/ObjC/Keel-Bridging-Header.h

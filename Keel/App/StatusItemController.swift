@@ -27,6 +27,8 @@ final class StatusItemController: NSObject {
 
   func showPopover() {
     guard let button = item.button, !popover.isShown else { return }
+    // The timer reads every few seconds; read now so the popover never opens on old numbers.
+    model.controller.refresh()
     popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
     popover.contentViewController?.view.window?.makeKey()
   }
@@ -56,6 +58,7 @@ final class StatusItemController: NSObject {
     let rendering = MenuBarRendering(
       state: controller.state,
       percent: controller.displayPercent,
+      limit: controller.displayLimit,
       snapshot: controller.snapshot,
       options: options,
       recent: options.iconStyle == .graph ? model.history.samples(since: .now.addingTimeInterval(-30 * 60)) : []

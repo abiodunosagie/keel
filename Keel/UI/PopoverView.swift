@@ -1,247 +1,162 @@
-import Charts
 import SwiftUI
 
-// The menu bar popover, laid out as in the approved mockup. Hold any card to rearrange or hide
-// cards; the layout is saved.
+// The menu bar popover. Plain sections split by dividers, in the style of the system's own
+// menu bar modules: the level, the limit, the actions, the details, then the app's commands.
+// Hold a section (or right-click it) to rearrange or hide sections; the layout is saved.
 struct PopoverView: View {
   @Environment(AppModel.self) private var model
   @Environment(ChargeController.self) private var controller
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      header
+    VStack(alignment: .leading, spacing: 0) {
       if model.isEditingPopover {
         PopoverEditor()
       } else if let snapshot = controller.snapshot {
-        ForEach(model.popoverLayout.visible) { card in
-          if card.isInteractive {
-            // The slider and buttons keep their own gestures; hold any other card to edit.
-            view(for: card, snapshot: snapshot)
-          } else {
-            view(for: card, snapshot: snapshot)
-              .contentShape(Rectangle())
-              .onLongPressGesture(minimumDuration: 0.6) { model.isEditingPopover = true }
-          }
+        ForEach(Array(model.popoverLayout.visible.enumerated()), id: \.element) { index, card in
+          if index > 0 { SectionDivider() }
+          section(for: card, snapshot: snapshot)
         }
       } else {
-        Text("No battery found.").foregroundStyle(Theme.ink2)
+        Text("No battery found.")
+          .foregroundStyle(.secondary)
+          .padding(.vertical, 10)
       }
       if let error = controller.lastError {
-        Label(error, systemImage: "exclamationmark.triangle")
-          .font(.caption)
+        Label(error, systemImage: "exclamationmark.triangle.fill")
+          .font(.callout)
           .foregroundStyle(Theme.heat)
+          .padding(.vertical, 8)
       }
+      SectionDivider()
+      PopoverCommands(open: model.open)
     }
-    .padding(14)
-    .frame(width: 340)
+    .padding(.horizontal, 14)
+    .padding(.vertical, 12)
+    .frame(width: 300)
     .background(controller.options.reduceTransparency ? Theme.surface : .clear)
   }
 
   @ViewBuilder
-  private func view(for card: PopoverLayout.Card, snapshot: BatterySnapshot) -> some View {
+  private func section(for card: PopoverLayout.Card, snapshot: BatterySnapshot) -> some View {
+    let content = cardView(card, snapshot: snapshot)
+    if card.isInteractive {
+      // The slider and rows keep their own gestures; right-click still offers the editor.
+      content.contextMenu { customizeButton }
+    } else {
+      content
+        .contentShape(Rectangle())
+        .onLongPressGesture(minimumDuration: 0.6) { model.isEditingPopover = true }
+        .contextMenu { customizeButton }
+    }
+  }
+
+  private var customizeButton: some View {
+    Button("Customize Sections…") { model.isEditingPopover = true }
+  }
+
+  @ViewBuilder
+  private func cardView(_ card: PopoverLayout.Card, snapshot: BatterySnapshot) -> some View {
     switch card {
     case .summary:
-      SummaryCard(snapshot: snapshot)
+      LevelSection(snapshot: snapshot)
     case .limit:
       if controller.isAvailable {
-        LimitCard()
+        LimitSection()
       } else {
-        Text(controller.unavailableReason).font(.callout).foregroundStyle(Theme.ink2)
+        Text(controller.unavailableReason)
+          .font(.callout)
+          .foregroundStyle(.secondary)
+          .padding(.vertical, 10)
       }
     case .actions:
-      if controller.isAvailable { ActionRow(open: model.open) }
+      if controller.isAvailable { ActionList(open: model.open) }
     case .powerFlow:
-      PowerFlowRow(snapshot: snapshot)
+      PowerSection(snapshot: snapshot)
     case .stats:
-      StatsRow(snapshot: snapshot)
+      BatteryDetailsSection(snapshot: snapshot)
     case .charger:
-      ChargerLine(snapshot: snapshot)
+      ChargerSection(snapshot: snapshot)
     case .chart:
       MiniChart()
     }
   }
-
-  private var header: some View {
-    HStack {
-      if model.isEditingPopover {
-        Text("Hold, hide and reorder cards").font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.ink2)
-        Spacer()
-        Button("Done") { model.isEditingPopover = false }
-      } else {
-        StatePill(state: controller.state)
-        Spacer()
-        Button { model.open(.dashboard) } label: {
-          Label("Open Dashboard", systemImage: "square.grid.2x2").labelStyle(.iconOnly)
-        }
-        .buttonStyle(IconButtonStyle())
-        .help("Open Dashboard")
-        Button { model.open(.charge) } label: {
-          Label("Settings", systemImage: "gearshape").labelStyle(.iconOnly)
-        }
-        .buttonStyle(IconButtonStyle())
-        .help("Settings")
-      }
-    }
-  }
 }
 
-private struct SummaryCard: View {
+// The battery level as one number, with what is happening right now under it.
+private struct LevelSection: View {
   @Environment(ChargeController.self) private var controller
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
   let snapshot: BatterySnapshot
 
   var body: some View {
+    let percent = Int((controller.displayPercent ?? 0).rounded())
+    let color = Theme.color(for: controller.state)
     HStack(alignment: .center, spacing: 12) {
-      HStack(alignment: .lastTextBaseline, spacing: 1) {
-        Text(verbatim: "\(Int((controller.displayPercent ?? 0).rounded()))")
-          .font(.system(size: 46, weight: .semibold))
+      VStack(alignment: .leading, spacing: 3) {
+        Text(verbatim: "\(percent)%")
+          .font(.system(size: 30, weight: .semibold))
           .monospacedDigit()
-        Text(verbatim: "%")
-          .font(Theme.mono(20, weight: .medium))
-          .foregroundStyle(Theme.ink3)
+          .contentTransition(.numericText(value: Double(percent)))
+          .animation(reduceMotion ? nil : .snappy, value: percent)
+        Label(controller.state.title, systemImage: controller.state.symbol)
+          .font(.callout.weight(.medium))
+          .foregroundStyle(color)
+          .help(controller.state == .macOSOverride
+                ? Text("macOS sometimes charges to 100% to recalibrate its battery gauge. It goes back to the limit afterwards.")
+                : Text(verbatim: ""))
+        if let detail {
+          Text(detail)
+            .font(.callout)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+        }
       }
-      .foregroundStyle(Theme.ink)
-      Text(detail)
-        .font(.system(size: 12))
-        .foregroundStyle(Theme.ink2)
-        .fixedSize(horizontal: false, vertical: true)
+      Spacer(minLength: 0)
+      // On battery the state colour is a neutral grey; the mark keeps the brand green for the level.
+      LiveMark(level: Double(percent) / 100, limit: controller.displayLimit,
+               color: controller.state == .onBattery ? Theme.held : color)
     }
+    .padding(.vertical, 10)
+    .accessibilityElement(children: .combine)
   }
 
-  private var detail: String {
-    let other = controller.settings.useHardwarePercent
-      ? String(localized: "macOS shows \(snapshot.macOSPercent)%.")
-      : String(localized: "Hardware reads \(Format.percent(snapshot.hardwarePercent)).")
+  private var detail: String? {
+    let limit = controller.effectiveSettings.limit
     switch controller.state {
     case .onBattery:
-      if let minutes = snapshot.minutesToEmpty { return String(localized: "On battery, \(Format.duration(minutes)) left. \(other)") }
-      return String(localized: "On battery. \(other)")
-    case .charging, .topUp, .macOSOverride:
-      if let minutes = snapshot.minutesToFull { return String(localized: "Charging, full in \(Format.duration(minutes)). \(other)") }
-      return String(localized: "Plugged in and charging. \(other)")
+      return snapshot.minutesToEmpty.map { String(localized: "\(Format.duration($0)) left") }
+    case .charging:
+      if let minutes = snapshot.minutesToFull { return String(localized: "Full in \(Format.duration(minutes))") }
+      return String(localized: "Charging to \(limit)%")
+    case .topUp:
+      return String(localized: "Charging to 100% until you unplug")
+    case .macOSOverride:
+      return String(localized: "Back to your limit afterwards")
     case .discharging:
-      return String(localized: "Plugged in, running on battery down to the limit. \(other)")
+      return String(localized: "Using the battery down to \(limit)%")
     case .heatProtect:
-      return String(localized: "Charging paused until the battery cools. \(other)")
+      return String(localized: "Charging resumes when the battery cools")
     case .calibration:
-      let step = controller.calibrationStep?.title ?? String(localized: "Calibrating")
-      return "\(step). \(other)"
+      return controller.calibrationStep?.title
     case .paused:
-      return String(localized: "Plugged in, running on the charger. \(other) Battery idle.")
+      return String(localized: "Running on the charger, battery resting")
     case .unavailable:
-      return other
+      return nil
     }
   }
 }
 
-private struct ChargerLine: View {
-  let snapshot: BatterySnapshot
-
-  var body: some View {
-    HStack(spacing: 8) {
-      Image(systemName: "powerplug").foregroundStyle(Theme.accent)
-      if let charger = snapshot.charger {
-        Text(charger.name).foregroundStyle(Theme.ink)
-        Spacer()
-        Text(snapshot.powerIn.map { "\(Format.watts($0)) in" } ?? "\(charger.watts) W")
-          .font(Theme.mono(12, weight: .semibold))
-          .foregroundStyle(Theme.ink)
-      } else {
-        Text("No charger").foregroundStyle(Theme.ink2)
-        Spacer()
-      }
+extension ChargeState {
+  var symbol: String {
+    switch self {
+    case .charging, .macOSOverride: return "bolt.fill"
+    case .topUp: return "bolt.badge.clock.fill"
+    case .paused: return "checkmark.circle.fill"
+    case .discharging: return "arrow.down.circle.fill"
+    case .heatProtect: return "thermometer.high"
+    case .calibration: return "arrow.triangle.2.circlepath"
+    case .onBattery: return "battery.75percent"
+    case .unavailable: return "exclamationmark.circle"
     }
-    .font(.system(size: 12))
-  }
-}
-
-// The last 24 hours of charge, small.
-private struct MiniChart: View {
-  @Environment(AppModel.self) private var model
-
-  var body: some View {
-    let samples = model.history.samples(since: .now.addingTimeInterval(-86_400))
-    Chart(samples) { sample in
-      LineMark(x: .value(String(localized: "Time"), sample.date), y: .value(String(localized: "Percent"), sample.percent))
-        .foregroundStyle(Theme.held)
-    }
-    .chartYScale(domain: 0...100)
-    .chartXAxis(.hidden)
-    .chartYAxis { AxisMarks(values: [0, 50, 100]) { AxisValueLabel() } }
-    .frame(height: 60)
-  }
-}
-
-// Edit mode: every card with show or hide and move up or down.
-private struct PopoverEditor: View {
-  @Environment(AppModel.self) private var model
-
-  var body: some View {
-    VStack(spacing: 0) {
-      ForEach(Array(model.popoverLayout.order.enumerated()), id: \.element) { index, card in
-        let hidden = model.popoverLayout.hidden.contains(card)
-        HStack(spacing: 10) {
-          Button {
-            model.popoverLayout.toggle(card)
-          } label: {
-            Label(hidden ? "Show" : "Hide", systemImage: hidden ? "eye.slash" : "eye").labelStyle(.iconOnly)
-          }
-          .buttonStyle(IconButtonStyle())
-          Text(card.title)
-            .foregroundStyle(hidden ? Theme.ink3 : Theme.ink)
-          Spacer()
-          Button { model.popoverLayout.move(card, by: -1) } label: {
-            Label("Move up", systemImage: "chevron.up").labelStyle(.iconOnly)
-          }
-          .buttonStyle(IconButtonStyle())
-          .disabled(index == 0)
-          Button { model.popoverLayout.move(card, by: 1) } label: {
-            Label("Move down", systemImage: "chevron.down").labelStyle(.iconOnly)
-          }
-          .buttonStyle(IconButtonStyle())
-          .disabled(index == model.popoverLayout.order.count - 1)
-        }
-        .font(.system(size: 12.5))
-        .padding(.vertical, 5)
-      }
-      Button("Reset Layout") { model.popoverLayout = PopoverLayout() }
-        .padding(.top, 8)
-    }
-    .padding(12)
-    .panel()
-  }
-}
-
-struct StatePill: View {
-  let state: ChargeState
-
-  var body: some View {
-    let color = Theme.color(for: state)
-    HStack(spacing: 7) {
-      Circle()
-        .fill(color)
-        .frame(width: 8, height: 8)
-        .overlay(Circle().stroke(color.opacity(0.3), lineWidth: 3))
-      Text(state.title)
-    }
-    .font(.system(size: 12, weight: .semibold))
-    .foregroundStyle(color)
-    .padding(.vertical, 4)
-    .padding(.leading, 8)
-    .padding(.trailing, 10)
-    .background(color.opacity(0.15), in: Capsule())
-    .help(state == .macOSOverride
-          ? String(localized: "macOS sometimes charges to 100% to recalibrate its battery gauge. It goes back to the limit afterwards.")
-          : "")
-  }
-}
-
-struct IconButtonStyle: ButtonStyle {
-  func makeBody(configuration: Configuration) -> some View {
-    configuration.label
-      .font(.system(size: 14))
-      .foregroundStyle(Theme.ink2)
-      .frame(width: 26, height: 26)
-      .background(configuration.isPressed ? Theme.line : .clear, in: RoundedRectangle(cornerRadius: 7))
-      .contentShape(Rectangle())
   }
 }

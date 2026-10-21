@@ -251,16 +251,29 @@ let service = HelperService()
 
 // Only a delete or rename counts: that is what replacing the app does. A touch or an
 // attribute change (which any process of the user could make) must not restart the helper.
-let executable = URL(fileURLWithPath: CommandLine.arguments[0]).resolvingSymlinksInPath().path
-let descriptor = open(executable, O_EVTONLY)
-let watcher = DispatchSource.makeFileSystemObjectSource(
-  fileDescriptor: descriptor, eventMask: [.delete, .rename], queue: service.queue
-)
-watcher.setEventHandler {
-  restoreDefaults()
-  exit(0)
+// launchd may start the helper with a relative argv[0] (macOS 27.0.1 passes
+// "Contents/MacOS/KeelHelper"), so ask the kernel for the absolute path instead.
+func executablePath() -> String? {
+  var buffer = [CChar](repeating: 0, count: Int(MAXPATHLEN) * 4)
+  guard proc_pidpath(getpid(), &buffer, UInt32(buffer.count)) > 0 else { return nil }
+  return String(cString: buffer)
 }
-if descriptor >= 0 { watcher.resume() }
+
+// Dispatch traps on a negative descriptor, so the watcher only exists when the file opened.
+// Without it the helper still works; it just won't exit by itself after an update.
+let descriptor = executablePath().map { open($0, O_EVTONLY) } ?? -1
+var watcher: DispatchSourceFileSystemObject?
+if descriptor >= 0 {
+  let source = DispatchSource.makeFileSystemObjectSource(
+    fileDescriptor: descriptor, eventMask: [.delete, .rename], queue: service.queue
+  )
+  source.setEventHandler {
+    restoreDefaults()
+    exit(0)
+  }
+  source.resume()
+  watcher = source
+}
 let listener = NSXPCListener(machServiceName: HelperIdentity.label)
 listener.delegate = service
 listener.resume()

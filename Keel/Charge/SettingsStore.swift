@@ -17,7 +17,7 @@ struct AppOptions: Equatable, Sendable {
   var temperatureAlert = true
   var temperatureAlertLimit: Double = 40
   var overLimitAlert = true
-  var iconStyle: IconStyle = .symbol
+  var iconStyle: IconStyle = .mark
   var rightClick: RightClick = .menu
   var hideMenuBarIcon = false
   var showDockIcon = false
@@ -25,6 +25,7 @@ struct AppOptions: Equatable, Sendable {
   var reduceTransparency = true
 
   enum IconStyle: String, Sendable, CaseIterable {
+    case mark // the Keel mark: the level fills the ring up to the limit line
     case symbol // state symbols: plug, bolt, thermometer
     case battery // iPhone-style battery with the level inside
     case graph // a tiny charge graph of the last half hour

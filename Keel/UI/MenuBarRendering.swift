@@ -4,6 +4,8 @@ import AppKit
 struct MenuBarRendering {
   let state: ChargeState
   let percent: Double?
+  // The charge limit on the same scale as `percent`, nil when there is none.
+  let limit: Int?
   let snapshot: BatterySnapshot?
   let options: AppOptions
   let recent: [BatterySample]
@@ -25,6 +27,7 @@ struct MenuBarRendering {
 
   func image() -> NSImage? {
     switch options.iconStyle {
+    case .mark: return markImage()
     case .symbol: return symbolImage()
     case .battery: return batteryImage()
     case .graph: return graphImage()
@@ -49,6 +52,41 @@ struct MenuBarRendering {
       default: return "battery.0percent"
       }
     }
+  }
+
+  // The Keel mark, live: a ring cut by the limit line, filled to the current level.
+  private func markImage() -> NSImage {
+    let mark = MarkGeometry(side: 15, level: (percent ?? 0) / 100, limit: limit)
+    let image = NSImage(size: NSSize(width: 16, height: 16), flipped: false) { rect in
+      let center = NSPoint(x: rect.midX, y: rect.midY)
+      // AppKit's y grows upward, so heights go up from the disc's bottom edge.
+      let discBottom = center.y - mark.inner
+      NSColor.black.set()
+      let ring = NSBezierPath(ovalIn: NSRect(x: center.x - mark.outer + mark.ringWidth / 2,
+                                             y: center.y - mark.outer + mark.ringWidth / 2,
+                                             width: 2 * mark.outer - mark.ringWidth,
+                                             height: 2 * mark.outer - mark.ringWidth))
+      ring.lineWidth = mark.ringWidth
+      NSGraphicsContext.saveGraphicsState()
+      if let lineHeight = mark.lineHeight {
+        // Everything but a thin band at the limit line, so the line cuts through the ring.
+        let keep = NSBezierPath(rect: rect)
+        keep.append(NSBezierPath(rect: NSRect(x: 0, y: discBottom + lineHeight - mark.gap / 2,
+                                              width: rect.width, height: mark.gap)))
+        keep.windingRule = .evenOdd
+        keep.addClip()
+      }
+      ring.stroke()
+      NSGraphicsContext.restoreGraphicsState()
+      NSGraphicsContext.saveGraphicsState()
+      NSBezierPath(ovalIn: NSRect(x: center.x - mark.inner, y: center.y - mark.inner,
+                                  width: 2 * mark.inner, height: 2 * mark.inner)).addClip()
+      NSBezierPath(rect: NSRect(x: 0, y: 0, width: rect.width, height: discBottom + mark.fillHeight)).fill()
+      NSGraphicsContext.restoreGraphicsState()
+      return true
+    }
+    image.isTemplate = true
+    return image
   }
 
   private func symbolImage() -> NSImage? {

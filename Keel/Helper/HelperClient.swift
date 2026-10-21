@@ -36,38 +36,50 @@ final class HelperClient: ChargerControl {
   // launchd start the one inside the current Keel.app.
   // Helpers from version 2 on can exit on request, so launchd picks up the new binary without a
   // new approval. Version 1 can't, so it is re-registered (macOS then asks for approval again).
-  func replaceIfOutdated() async {
+  // Returns true when the helper was restarted or replaced, which resets its charger switch,
+  // light and sleep setting to the system defaults.
+  @discardableResult
+  func replaceIfOutdated() async -> Bool {
     refreshStatus()
     guard isReady else {
       log.notice("Helper not ready: \(String(describing: self.status), privacy: .public)")
-      return
+      return false
     }
-    // A helper that was just launched can miss the first call; only a helper that stays silent
-    // counts as unreachable.
-    var running = await version()
-    for _ in 0..<2 where running == nil {
+    // A helper that was just launched can miss the first call; only a helper that keeps refusing
+    // the connection counts as unreachable.
+    var probe = await probeVersion()
+    for _ in 0..<2 where probe == .unreachable {
       try? await Task.sleep(for: .seconds(1))
       connection?.invalidate()
       connection = nil
-      running = await version()
+      probe = await probeVersion()
     }
-    log.notice("Helper running version \(running.map(String.init) ?? "none", privacy: .public), app expects \(HelperIdentity.version, privacy: .public)")
-    guard let running else {
-      // Registered but unreachable: an old helper from before an update, which the app can no
-      // longer verify. Re-registering replaces it; macOS then asks for approval once.
+    switch probe {
+    case .timedOut:
+      // Registered but silent (launchd can't start it, or it is busy): replacing it would ask the
+      // owner for approval again and fix nothing, so Keel runs without it for now.
+      log.error("Helper didn't answer within \(Self.probeTimeout, privacy: .public) s, leaving it registered")
+      return false
+    case .unreachable:
+      // Registered but refusing the connection: an old helper from before an update, which the
+      // app can no longer verify. Re-registering replaces it; macOS then asks for approval once.
+      log.notice("Helper unreachable, re-registering")
       try? await service.unregister()
       install()
-      return
+      return true
+    case .reply(let running):
+      log.notice("Helper running version \(running, privacy: .public), app expects \(HelperIdentity.version, privacy: .public)")
+      guard running != HelperIdentity.version else { return false }
+      if running >= 2 {
+        _ = await call { proxy, done in proxy.exitForUpdate { done(true) } } as Bool?
+      } else {
+        try? await service.unregister()
+        install()
+      }
+      connection?.invalidate()
+      connection = nil
+      return true
     }
-    guard running != HelperIdentity.version else { return }
-    if running >= 2 {
-      _ = await call { proxy, done in proxy.exitForUpdate { done(true) } } as Bool?
-    } else {
-      try? await service.unregister()
-      install()
-    }
-    connection?.invalidate()
-    connection = nil
   }
 
   func install() {
@@ -95,8 +107,18 @@ final class HelperClient: ChargerControl {
     try await service.unregister()
   }
 
-  func version() async -> Int? {
-    await call { proxy, done in proxy.version { done($0) } }
+  // Only the startup check waits with a deadline: a crash-looping helper never answers and never
+  // errors. Every other call waits for its answer, so a slow helper is never mistaken for a dead one.
+  static let probeTimeout: TimeInterval = 5
+
+  // Whether the helper answers at all, for the status shown in Settings.
+  func isResponding() async -> Bool {
+    if case .reply = await probeVersion() { return true }
+    return false
+  }
+
+  private func probeVersion() async -> Outcome<Int> {
+    await request(timeout: Self.probeTimeout) { proxy, done in proxy.version { done($0) } }
   }
 
   // Returns nil on success, otherwise why it failed.
@@ -140,6 +162,12 @@ final class HelperClient: ChargerControl {
     await call { proxy, done in proxy.setPowerMode(mode) { done($0) } } ?? false
   }
 
+  private enum Outcome<T: Sendable & Equatable>: Sendable, Equatable {
+    case reply(T)
+    case unreachable
+    case timedOut
+  }
+
   // One XPC round trip. nil when the helper can't be reached or the connection drops.
   private func call<T: Sendable>(
     _ body: @escaping (HelperProtocol, @escaping @Sendable (T) -> Void) -> Void
@@ -147,13 +175,37 @@ final class HelperClient: ChargerControl {
     guard status == .ready else { return nil }
     let connection = currentConnection()
     return await withCheckedContinuation { continuation in
-      let once = Once(continuation)
+      let once = Once<T?>(continuation)
       let proxy = connection.remoteObjectProxyWithErrorHandler { _ in once.resume(nil) }
       guard let helper = proxy as? HelperProtocol else {
         once.resume(nil)
         return
       }
       body(helper) { once.resume($0) }
+    }
+  }
+
+  // One round trip that also gives up after `timeout`, telling a timeout apart from a refusal.
+  private func request<T: Sendable & Equatable>(
+    timeout: TimeInterval,
+    _ body: @escaping (HelperProtocol, @escaping @Sendable (T) -> Void) -> Void
+  ) async -> Outcome<T> {
+    guard status == .ready else { return .unreachable }
+    let connection = currentConnection()
+    return await withCheckedContinuation { continuation in
+      let once = Once<Outcome<T>>(continuation)
+      let deadline = DispatchWorkItem { once.resume(.timedOut) }
+      DispatchQueue.global().asyncAfter(deadline: .now() + timeout, execute: deadline)
+      let finish: @Sendable (Outcome<T>) -> Void = { outcome in
+        deadline.cancel()
+        once.resume(outcome)
+      }
+      let proxy = connection.remoteObjectProxyWithErrorHandler { _ in finish(.unreachable) }
+      guard let helper = proxy as? HelperProtocol else {
+        finish(.unreachable)
+        return
+      }
+      body(helper) { finish(.reply($0)) }
     }
   }
 
@@ -175,16 +227,17 @@ final class HelperClient: ChargerControl {
   }
 }
 
-// Resumes a continuation exactly once, whichever of the reply or the error handler comes first.
+// Resumes a continuation exactly once, whichever of the reply, the error handler or a deadline
+// comes first.
 private final class Once<T: Sendable>: @unchecked Sendable {
   private let lock = NSLock()
-  private var continuation: CheckedContinuation<T?, Never>?
+  private var continuation: CheckedContinuation<T, Never>?
 
-  init(_ continuation: CheckedContinuation<T?, Never>) {
+  init(_ continuation: CheckedContinuation<T, Never>) {
     self.continuation = continuation
   }
 
-  func resume(_ value: T?) {
+  func resume(_ value: T) {
     lock.lock()
     let pending = continuation
     continuation = nil
